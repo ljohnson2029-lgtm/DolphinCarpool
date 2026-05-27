@@ -211,14 +211,14 @@ const Login = () => {
               </motion.div>
               
               <h1 className="text-4xl xl:text-5xl font-bold text-gray-900 leading-tight">
-                Connecting Chadwick
+                Connecting ​Car Pool
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400">
                   Families Together
                 </span>
               </h1>
               
               <p className="text-lg text-gray-600 leading-relaxed">
-                Join hundreds of Chadwick School families who save time, reduce traffic, 
+                Join hundreds of ​Car Pool families who save time, reduce traffic, 
                 and build community through smart carpooling.
               </p>
             </div>
@@ -267,7 +267,7 @@ const Login = () => {
                         <Car className="w-8 h-8 text-white" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
-                      <p className="text-gray-500">Sign in to your SchoolPool account</p>
+                      <p className="text-gray-500">Sign in to your ​Dolphin account</p>
                     </div>
 
                     {/* Error */}
