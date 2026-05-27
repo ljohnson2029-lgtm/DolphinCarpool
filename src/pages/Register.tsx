@@ -388,7 +388,7 @@ const Register = () => {
         navigate("/login");
       } else {
         toast({
-          title: "Welcome to SchoolPool!",
+          title: "Welcome to ​Dolphin!",
           description: "Your account has been created. Let's set up your profile.",
         });
         // AuthContext will pick up the session and RequireProfileComplete will redirect to /profile/setup
@@ -578,7 +578,7 @@ const Register = () => {
                     <ul className="text-sm text-muted-foreground space-y-1">
                       <li className="flex items-center gap-2">
                         <GraduationCap className="w-4 h-4 text-primary" />
-                        <span><strong>Students:</strong> Use your @chadwickschool.org email</span>
+                        <span><strong>Students:</strong> Use your ​Car Pool email</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-primary" />

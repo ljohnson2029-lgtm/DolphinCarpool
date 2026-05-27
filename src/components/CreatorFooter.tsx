@@ -27,11 +27,11 @@ const CreatorFooter = () => {
           <DialogHeader>
             <DialogTitle>About the Creators</DialogTitle>
             <DialogDescription>
-              Learn more about the creators of SchoolPool.
+              Learn more about the creators of ​Dolphin.
             </DialogDescription>
           </DialogHeader>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            SchoolPool was created by Ethan Fang and Luke Johnson to make carpooling safer and easier for Chadwick School families. We built this platform to help parents coordinate rides, reduce traffic, and build a stronger school community.
+            ​Dolphin was created by Ethan Fang and Luke Johnson to make carpooling safer and easier for ​Car Pool families. We built this platform to help parents coordinate rides, reduce traffic, and build a stronger school community.
           </p>
         </DialogContent>
       </Dialog>
