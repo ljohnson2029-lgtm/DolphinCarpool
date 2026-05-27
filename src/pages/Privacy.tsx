@@ -118,10 +118,10 @@ const Privacy = () => {
               <CardContent className="space-y-4">
                 <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                   <p className="text-green-700 dark:text-green-400 font-medium mb-2">
-                    ✓ Verified Chadwick School Families Only
+                    ✓ Verified ​Car Pool Families Only
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Only parents with verified Chadwick School email addresses can access the platform and view other users.
+                    Only parents with verified ​Car Pool email addresses can access the platform and view other users.
                   </p>
                 </div>
                 
