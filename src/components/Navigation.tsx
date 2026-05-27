@@ -188,12 +188,12 @@ const Navigation = () => {
                 <span className={`font-bold text-lg tracking-tight transition-colors ${
                   isScrolled || !isHomePage ? "text-gray-900" : "text-gray-900"
                 }`}>
-                  SchoolPool
+                  ​Dolphin
                 </span>
                 <span className={`text-[10px] -mt-1 font-medium tracking-wider uppercase ${
                   isScrolled || !isHomePage ? "text-gray-500" : "text-gray-500"
                 }`}>
-                  Chadwick
+                  ​Car Pool
                 </span>
               </div>
             </motion.div>

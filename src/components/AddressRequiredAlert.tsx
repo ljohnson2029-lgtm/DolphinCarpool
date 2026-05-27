@@ -97,7 +97,7 @@ export const AddressRequiredAlert = ({
             <DialogTitle>Home Address Required</DialogTitle>
           </div>
           <DialogDescription>
-            Your home address helps SchoolPool match you with nearby carpool families and show your location on the map.
+            Your home address helps ​Dolphin match you with nearby carpool families and show your location on the map.
           </DialogDescription>
         </DialogHeader>
 

@@ -10,9 +10,9 @@ const Footer = () => {
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-10 mb-10">
           {/* Brand */}
           <div className="sm:col-span-2 md:col-span-1">
-            <h3 className="text-xl font-bold mb-3">SchoolPool</h3>
+            <h3 className="text-xl font-bold mb-3">​Dolphin</h3>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
-              Safe carpooling for Chadwick School families.
+              Safe carpooling for Families in our Community{"\n"}
             </p>
           </div>
 
@@ -55,7 +55,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 border-t border-primary-foreground/15">
           <p className="text-primary-foreground/50 text-xs text-center">
-            © {currentYear} Chadwick SchoolPool. All rights reserved.
+            © {currentYear} ​Car Pool ​Dolphin. All rights reserved.
           </p>
         </div>
       </div>

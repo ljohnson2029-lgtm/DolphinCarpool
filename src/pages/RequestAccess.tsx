@@ -112,7 +112,7 @@ const RequestAccess = () => {
       <main className="flex-1 flex items-center justify-center p-4 py-12">
         <Card className="max-w-lg w-full">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Request Access to SchoolPool</CardTitle>
+            <CardTitle className="text-2xl">Request Access to ​Dolphin</CardTitle>
             <CardDescription>
               Submit your information below and an administrator will review your request.
             </CardDescription>
@@ -162,11 +162,11 @@ const RequestAccess = () => {
                         >
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="parent" id="parent" />
-                            <Label htmlFor="parent">Chadwick Parent</Label>
+                            <Label htmlFor="parent">​Car Pool Parent</Label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="student" id="student" />
-                            <Label htmlFor="student">Chadwick Student</Label>
+                            <Label htmlFor="student">​Car Pool Student</Label>
                           </div>
                         </RadioGroup>
                       </FormControl>
@@ -180,7 +180,7 @@ const RequestAccess = () => {
                   name="attends_chadwick"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Do you or your child attend Chadwick School? *</FormLabel>
+                      <FormLabel>Do you or your child attend ​Car Pool? *</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
