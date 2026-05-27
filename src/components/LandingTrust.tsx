@@ -6,10 +6,10 @@ const LandingTrust = () => {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <Shield className="w-10 h-10 text-secondary mx-auto mb-6" />
         <h2 className="text-2xl sm:text-3xl font-bold text-primary-foreground mb-4">
-          Built Exclusively for Chadwick Families
+          Built Exclusively for Families in our Community
         </h2>
         <p className="text-primary-foreground/80 text-lg leading-relaxed mb-6">
-          Only verified Chadwick School parents and students can join. Your data stays private and is never shared outside our community.
+          Only verified parents and students from our community can join. Your data stays private and is never shared outside.
         </p>
         <div className="flex items-center justify-center gap-2 text-primary-foreground/60">
           <Lock className="w-4 h-4" />
