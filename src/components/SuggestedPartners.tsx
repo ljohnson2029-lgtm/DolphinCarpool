@@ -64,7 +64,7 @@ const SuggestedPartners = () => {
             reasons.push(`${s.distance_from_route_miles} mi from your home`);
           }
           if (s.their_grades?.length > 0) reasons.push(`Kids in ${[...new Set(s.their_grades)].join(", ")}`);
-          if (s.their_kids?.length > 0) reasons.push(`${s.their_kids.length} kid${s.their_kids.length > 1 ? "s" : ""} at Chadwick`);
+          if (s.their_kids?.length > 0) reasons.push(`${s.their_kids.length} kid${s.their_kids.length > 1 ? "s" : ""} in our community`);
 
           unified.push({
             id: s.parent_id,
@@ -134,7 +134,7 @@ const SuggestedPartners = () => {
     if (r.includes("route") || r.includes("commute")) return <Navigation className="h-3 w-3" />;
     if (r.includes("mile") || r.includes("away") || r.includes("nearby") || r.includes("close") || r.includes("home")) return <MapPin className="h-3 w-3" />;
     if (r.includes("schedule") || r.includes("day") || r.includes("mon") || r.includes("tue") || r.includes("wed") || r.includes("thu") || r.includes("fri")) return <Calendar className="h-3 w-3" />;
-    if (r.includes("grade") || r.includes("kid") || r.includes("child") || r.includes("th ") || r.includes("nd ") || r.includes("rd ") || r.includes("st ") || r.includes("chadwick")) return <GraduationCap className="h-3 w-3" />;
+    if (r.includes("grade") || r.includes("kid") || r.includes("child") || r.includes("th ") || r.includes("nd ") || r.includes("rd ") || r.includes("st ") || r.includes("community")) return <GraduationCap className="h-3 w-3" />;
     return <Sparkles className="h-3 w-3" />;
   };
 
