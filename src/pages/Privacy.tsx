@@ -147,7 +147,7 @@ const Privacy = () => {
                   <li className="flex items-start gap-3">
                     <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                     <div>
-                      <strong>Email Verification:</strong> Two-factor authentication via email for all accounts.
+                      <strong>Email Verification:</strong> All accounts protected with verification links only distributed through the CPA.
                     </div>
                   </li>
                   <li className="flex items-start gap-3">

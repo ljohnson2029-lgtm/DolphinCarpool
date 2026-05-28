@@ -305,7 +305,7 @@ const PublicProfile = () => {
                 <CardContent className="space-y-3">
                   {profile.share_email && profile.email ? (
                     <a 
-                      href={`mailto:${profile.email}?subject=SchoolPool Carpool`}
+                      href={`mailto:${profile.email}?subject=Dolphin CarPool`}
                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
                     >
                       <Mail className="h-5 w-5" />

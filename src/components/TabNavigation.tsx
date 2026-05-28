@@ -69,7 +69,7 @@ const TabNavigation = () => {
               <Car className="w-6 h-6 sm:w-7 sm:h-7" />
               <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-primary rounded-full animate-glow" />
             </div>
-            <span className="hidden xs:inline">SchoolPool</span>
+            <span className="hidden xs:inline">Dolphin CarPool</span>
           </button>
 
           {/* Main Tabs - Desktop */}

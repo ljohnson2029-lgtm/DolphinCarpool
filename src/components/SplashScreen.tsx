@@ -4,7 +4,7 @@ interface SplashScreenProps {
   message?: string;
 }
 
-const SplashScreen = ({ message = "Loading SchoolPool..." }: SplashScreenProps) => {
+const SplashScreen = ({ message = "Loading Dolphin CarPool..." }: SplashScreenProps) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background animate-fade-in">
       <div className="flex flex-col items-center gap-6">
@@ -15,7 +15,7 @@ const SplashScreen = ({ message = "Loading SchoolPool..." }: SplashScreenProps) 
               <Car className="w-12 h-12" />
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full animate-pulse" />
             </div>
-            <span>SchoolPool</span>
+            <span>Dolphin CarPool</span>
           </div>
         </div>
 
