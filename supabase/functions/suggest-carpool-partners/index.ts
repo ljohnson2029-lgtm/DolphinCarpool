@@ -377,7 +377,7 @@ function buildVerifiedReasons(c: { distance_miles: number; grade_matches: string
   
   // Grade matches — from children table
   if (c.grade_matches.length > 0) {
-    const uniqueGrades = [...new Set(c.grade_matches)];
+    const uniqueGrades = [...new Set(c.grade_matches.map(g => g === "Chadwick" ? "our community" : g))];
     reasons.push(`Kids in ${uniqueGrades.join(", ")}`);
   }
   

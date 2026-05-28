@@ -63,7 +63,10 @@ const SuggestedPartners = () => {
           } else {
             reasons.push(`${s.distance_from_route_miles} mi from your home`);
           }
-          if (s.their_grades?.length > 0) reasons.push(`Kids in ${[...new Set(s.their_grades)].join(", ")}`);
+          if (s.their_grades?.length > 0) {
+            const cleaned = [...new Set(s.their_grades.map((g: string) => g === "Chadwick" ? "our community" : g))];
+            reasons.push(`Kids in ${cleaned.join(", ")}`);
+          }
           if (s.their_kids?.length > 0) reasons.push(`${s.their_kids.length} kid${s.their_kids.length > 1 ? "s" : ""} in our community`);
 
           unified.push({
