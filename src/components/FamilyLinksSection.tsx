@@ -350,7 +350,7 @@ const FamilyLinksSection = () => {
           <CardDescription>
             {isStudent
               ? "Enter the email your parent used to register (not @chadwickschool.org)"
-              : "If you want your child to be able to see the rides you've scheduled for them from their own account, enter their @chadwickschool.org email address here. They will need to accept your request."
+              : "If you want your child to be able to see the rides you've scheduled for them from their own account, enter their email address here. They will need to accept your request."
             }
           </CardDescription>
         </CardHeader>
