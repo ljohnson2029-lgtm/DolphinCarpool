@@ -52,15 +52,15 @@ const Terms = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
-                  <p>SchoolPool provides a platform for:</p>
+                  <p>Dolphin CarPool provides a platform for:</p>
                   <ul>
-                    <li>Connecting Chadwick School families for carpooling purposes</li>
+                    <li>Connecting community families for carpooling purposes</li>
                     <li>Posting and responding to ride requests and offers</li>
                     <li>Communicating with other verified parents/guardians</li>
                     <li>Managing carpool schedules and arrangements</li>
                   </ul>
                   <p className="font-semibold text-destructive">
-                    Important: SchoolPool is NOT a transportation company. We do not employ drivers, own vehicles, 
+                    Important: Dolphin CarPool is NOT a transportation company. We do not employ drivers, own vehicles, 
                     or provide transportation services. All carpool arrangements are made directly between families.
                   </p>
                 </CardContent>
@@ -77,12 +77,12 @@ const Terms = () => {
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
                   <div className="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/20 mb-4">
                     <p className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                      BY USING SCHOOLPOOL, YOU ACKNOWLEDGE AND AGREE:
+                      BY USING DOLPHIN CARPOOL, YOU ACKNOWLEDGE AND AGREE:
                     </p>
                   </div>
                   <ul>
                     <li>
-                      <strong>No Insurance Coverage:</strong> SchoolPool does NOT provide any insurance coverage for 
+                      <strong>No Insurance Coverage:</strong> Dolphin CarPool does NOT provide any insurance coverage for 
                       carpool activities. You are solely responsible for ensuring your personal auto insurance covers 
                       carpooling with non-family members.
                     </li>
@@ -90,12 +90,12 @@ const Terms = () => {
                       <strong>Assumption of Risk:</strong> By using Dolphin Carpool, you acknowledge that carpooling involves inherent risks and you assume all responsibility for your participation in carpool arrangements.
                     </li>
                     <li>
-                      <strong>Release of Liability:</strong> You release SchoolPool, its officers, directors, employees, 
+                      <strong>Release of Liability:</strong> You release Dolphin CarPool, its officers, directors, employees, 
                       and affiliates from any and all claims, damages, losses, or injuries arising from carpool activities 
                       arranged through our platform.
                     </li>
                     <li>
-                      <strong>No Warranty:</strong> SchoolPool makes no representations or warranties about the safety, 
+                      <strong>No Warranty:</strong> Dolphin CarPool makes no representations or warranties about the safety, 
                       reliability, or suitability of any driver or parent using our platform.
                     </li>
                     <li>
@@ -115,7 +115,7 @@ const Terms = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
-                  <p>As a user of SchoolPool, you agree to:</p>
+                  <p>As a user of Dolphin CarPool, you agree to:</p>
                   <ul>
                     <li>Provide accurate and truthful information during registration</li>
                     <li>Maintain a valid driver's license (minimum 1 year with licence), vehicle registration, and auto insurance (for drivers)</li>
@@ -129,7 +129,7 @@ const Terms = () => {
                       </Link>
                     </li>
                     <li>Not engage in any illegal, harmful, or inappropriate behavior</li>
-                    <li>Report any safety concerns to SchoolPool immediately</li>
+                    <li>Report any safety concerns to Dolphin CarPool immediately</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -169,7 +169,7 @@ const Terms = () => {
                 </CardHeader>
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
                   <p>
-                    You agree to indemnify, defend, and hold harmless SchoolPool and its officers, directors, 
+                    You agree to indemnify, defend, and hold harmless Dolphin CarPool and its officers, directors, 
                     employees, agents, and affiliates from and against any and all claims, damages, obligations, 
                     losses, liabilities, costs, or debt arising from:
                   </p>
@@ -190,7 +190,7 @@ const Terms = () => {
                 </CardHeader>
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
                   <p>
-                    SchoolPool reserves the right to suspend or terminate your account at any time, with or 
+                    Dolphin CarPool reserves the right to suspend or terminate your account at any time, with or 
                     without cause, including but not limited to:
                   </p>
                   <ul>
@@ -210,7 +210,7 @@ const Terms = () => {
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
                   <p>
                     We reserve the right to modify these Terms at any time. We will notify users of any material 
-                    changes by posting the updated Terms on the platform. Your continued use of SchoolPool after 
+                    changes by posting the updated Terms on the platform. Your continued use of Dolphin CarPool after 
                     such modifications constitutes your acceptance of the revised Terms.
                   </p>
                 </CardContent>
@@ -236,7 +236,7 @@ const Terms = () => {
               {/* Final Acknowledgment */}
               <div className="bg-muted/50 rounded-lg p-6 border text-center">
                 <p className="text-sm text-muted-foreground">
-                  By using SchoolPool, you acknowledge that you have read, understood, and agree to be bound 
+                  By using Dolphin CarPool, you acknowledge that you have read, understood, and agree to be bound 
                   by these Terms of Service and our{" "}
                   <Link to="/privacy" className="text-primary hover:underline">
                     Privacy Policy

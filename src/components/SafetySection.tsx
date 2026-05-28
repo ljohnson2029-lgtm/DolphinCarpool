@@ -68,7 +68,7 @@ const SafetySection = () => {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    <strong>Important:</strong> SchoolPool does not provide insurance coverage. 
+                    <strong>Important:</strong> Dolphin CarPool does not provide insurance coverage. 
                     You are responsible for ensuring your personal auto insurance covers carpooling activities.
                   </p>
                 </div>
