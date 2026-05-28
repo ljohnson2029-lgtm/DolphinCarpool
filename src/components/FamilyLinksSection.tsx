@@ -363,7 +363,7 @@ const FamilyLinksSection = () => {
               <Input
                 id="link-email"
                 type="email"
-                placeholder={isStudent ? "parent@example.com" : "student@chadwickschool.org"}
+                placeholder={isStudent ? "parent@example.com" : "child@example.com"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
