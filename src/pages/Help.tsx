@@ -57,7 +57,7 @@ const helpSections = [
     items: [
       {
         question: "How do I find parents near my route?",
-        answer: "Navigate to 'Find Parents' in your dashboard. The map will show your home location and other parents who have opted to be visible. Use the radius slider to adjust how far from your route you want to search."
+        answer: "Click on the map view in family carpools. Parents who are offering ride offers or requests will appear on the map. You can select a mile radius to see their distance to you."
       },
       {
         question: "How do I send a ride request to another parent?",
