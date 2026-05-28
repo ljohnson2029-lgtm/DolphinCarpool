@@ -228,7 +228,7 @@ serve(async (req) => {
       `base score: ${c.score}`
     ).join("\n");
 
-    const prompt = `You are a carpool matching assistant for Chadwick School families. Analyze these pre-scored candidates and re-rank them.
+    const prompt = `You are a carpool matching assistant for Dolphin Community families. Analyze these pre-scored candidates and re-rank them.
 
 ABOUT THE USER:
 - Name: ${myName}
@@ -390,7 +390,7 @@ function buildVerifiedReasons(c: { distance_miles: number; grade_matches: string
   // Activity — from ride count
   if (c.ride_count >= 5) reasons.push("Active carpooler");
   
-  if (reasons.length === 0) reasons.push("Nearby Chadwick family");
+  if (reasons.length === 0) reasons.push("Nearby Dolphin Community family");
   return reasons;
 }
 
