@@ -107,7 +107,7 @@ const PrivacySettings = () => {
           Privacy Settings
         </CardTitle>
         <CardDescription>
-          Control what information is visible to other Chadwick families
+          Control what information is visible to other Dolphin Carpool families
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

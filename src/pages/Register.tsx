@@ -656,7 +656,7 @@ const Register = () => {
                           🎓 Student Email Detected!
                         </p>
                         <p className="text-sm text-muted-foreground mb-2">
-                          Check your Chadwick email for the verification code.
+                          Check your email for the verification code.
                         </p>
                         <p className="text-xs text-muted-foreground">
                           <strong>Next steps after verification:</strong>

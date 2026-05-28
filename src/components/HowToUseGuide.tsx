@@ -25,9 +25,9 @@ interface GuidePage {
 
 const parentPages: GuidePage[] = [
   {
-    title: "Welcome to School Pool",
+    title: "Welcome to Dolphin Carpool",
     content:
-      "School Pool is a private carpool platform exclusively for Chadwick School families. Here's a quick guide to help you get started.",
+      "Dolphin Carpool is a private carpool platform exclusively for families in our Dolphin Community. Here's a quick guide to help you get started.",
     icon: <BookOpen className="h-10 w-10" />,
   },
   {
@@ -39,7 +39,7 @@ const parentPages: GuidePage[] = [
   {
     title: "Family Carpools",
     content:
-      "Browse all available ride offers and requests from other Chadwick parents. Switch between Map View to see rides on a map and List View to scroll through them. Post your own ride offer if you can drive or a ride request if you need help.",
+      "Browse all available ride offers and requests from other parents in our Dolphin Community. Switch between Map View to see rides on a map and List View to scroll through them. Post your own ride offer if you can drive or a ride request if you need help.",
     icon: <Map className="h-10 w-10" />,
   },
   {
@@ -69,16 +69,16 @@ const parentPages: GuidePage[] = [
   {
     title: "Linking Your Child's Account",
     content:
-      "Want your child to see their rides from their own account? Go to your Profile and link their Chadwick School email. They will be able to view all rides you schedule for them in their own My Rides tab.",
+      "Want your child to see their rides from their own account? Go to your Profile and link their email. They will be able to view all rides you schedule for them in their own My Rides tab.",
     icon: <Link2 className="h-10 w-10" />,
   },
 ];
 
 const studentPages: GuidePage[] = [
   {
-    title: "Welcome to School Pool",
+    title: "Welcome to Dolphin Carpool",
     content:
-      "School Pool is a private carpool platform for Chadwick School families. Your parent manages your rides — here's what you can do from your account.",
+      "Dolphin Carpool is a private carpool platform for families in our Dolphin Community. Your parent manages your rides — here's what you can do from your account.",
     icon: <BookOpen className="h-10 w-10" />,
   },
   {
@@ -154,7 +154,7 @@ const HowToUseGuide = ({ isStudent }: HowToUseGuideProps) => {
         <div className="flex items-center justify-between px-4 pt-4 pb-2 sm:px-6 sm:pt-5">
           <div>
             <h2 className="text-lg font-bold text-foreground">
-              How to Use School Pool
+              How to Use Dolphin Carpool
             </h2>
             <p className="text-xs text-muted-foreground">
               A quick guide to get you started

@@ -22,7 +22,7 @@ const VerifiedBadge = ({ size = "md", showText = true, className = "" }: Verifie
 
   if (!showText) {
     return (
-      <div className={`inline-flex items-center justify-center ${className}`} title="Verified Chadwick School Account">
+      <div className={`inline-flex items-center justify-center ${className}`} title="Verified Dolphin Carpool Account">
         <CheckCircle className={`${iconSizes[size]} text-green-500`} />
       </div>
     );
@@ -34,7 +34,7 @@ const VerifiedBadge = ({ size = "md", showText = true, className = "" }: Verifie
       className={`bg-green-500/10 text-green-600 border-green-500/20 gap-1.5 ${className}`}
     >
       <CheckCircle className={iconSizes[size]} />
-      <span className={textSizes[size]}>Verified Chadwick School Account</span>
+      <span className={textSizes[size]}>Verified Dolphin Carpool Account</span>
     </Badge>
   );
 };
