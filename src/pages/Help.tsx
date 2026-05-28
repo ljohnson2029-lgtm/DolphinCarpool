@@ -107,10 +107,6 @@ const faqs = [
     answer: "Only parent accounts can create and manage carpools. Student accounts can view their linked parent's carpools but cannot create their own. This is for safety and to ensure all carpools are managed by verified adults."
   },
   {
-    question: "How do I link my child's account?",
-    answer: "Your child (student) needs to send a link request from their account using your email address. You'll receive a notification to approve the request. Once approved, they can view your carpools and you can manage rides on their behalf."
-  },
-  {
     question: "How do I report a problem?",
     answer: "You can use the contact form below or email us directly at chadwickschoolpool@gmail.com. Please include as much detail as possible about the issue you're experiencing."
   },
