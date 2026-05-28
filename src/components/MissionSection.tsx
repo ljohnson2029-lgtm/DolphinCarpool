@@ -4,7 +4,7 @@ import { Users, Heart, CheckCircle, Clock, Leaf, Shield } from "lucide-react";
 const MissionSection = () => {
   const parentBenefits = [
     { icon: Clock, text: "Reduce daily driving time and stress" },
-    { icon: Users, text: "Connect with other families in your school community" },
+    { icon: Users, text: "Connect with other families in your dolphin community" },
     { icon: Leaf, text: "Save money on gas and vehicle wear" },
     { icon: Leaf, text: "Contribute to a greener environment" },
     { icon: Heart, text: "Build lasting friendships for your children" },
@@ -23,7 +23,7 @@ const MissionSection = () => {
           </div>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 animate-fade-up">Our Mission</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Building a stronger, more connected Chadwick community through collaborative transportation
+            Building a stronger, more connected community through collaborative transportation
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-secondary via-primary to-accent mx-auto rounded-full mt-6" />
         </div>
@@ -43,7 +43,7 @@ const MissionSection = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed text-lg">
-                  We understand the challenges of CUP requirements firsthand. SchoolPool was designed to make getting to school easier, more sustainable, and more enjoyable by connecting students and families who share the same journey.
+                  We understand the challenges of CUP requirements firsthand. Dolphin CarPool was designed to make getting rides easier, more sustainable, and more enjoyable by connecting students and families who share the same journey.
                 </p>
               </CardContent>
             </Card>
@@ -60,7 +60,7 @@ const MissionSection = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed text-lg">
-                  Give back to your community while freeing up valuable personal time. SchoolPool helps you coordinate with other families, reduce your driving responsibilities, and contribute to a more sustainable future for our children.
+                  Give back to your community while freeing up valuable personal time. Dolphin CarPool helps you coordinate with other families, reduce your driving responsibilities, and contribute to a more sustainable future for our children.
                 </p>
               </CardContent>
             </Card>
@@ -73,7 +73,7 @@ const MissionSection = () => {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-lg">
                   <CheckCircle className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl">Why Parents Love SchoolPool</CardTitle>
+                <CardTitle className="text-2xl">Why Parents Love Dolphin CarPool</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
