@@ -15,10 +15,10 @@ const Feedback = () => {
           </div>
           <h1 className="text-4xl font-bold mb-2">Send Us Feedback</h1>
           <p className="text-xl text-primary font-medium mb-3">
-            Help us improve ​Car Pool ​Dolphin
+            Help us improve Dolphin Carpool
           </p>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Found a bug? Have a suggestion? We'd love to hear from you! Your feedback helps make carpooling easier for all ​Car Pool families.
+            Found a bug? Have a suggestion? We'd love to hear from you! Your feedback helps make carpooling easier for all our community families.
           </p>
         </div>
 

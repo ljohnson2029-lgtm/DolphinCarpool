@@ -77,7 +77,7 @@ const Settings = () => {
                     Feedback
                   </CardTitle>
                   <CardDescription>
-                    Help us improve ​Car Pool ​Dolphin
+                    Help us improve Dolphin Carpool
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
