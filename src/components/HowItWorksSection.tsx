@@ -45,9 +45,9 @@ const steps: Step[] = [
     number: 1,
     icon: UserPlus,
     title: "Create Account",
-    description: "Register with your email and set up two-factor authentication for enhanced security.",
+    description: "Register with your email and set up CPA Verification Codes for enhanced security.",
     estimatedTime: "2 minutes",
-    tips: ["Use your Chadwick School email for faster approval", "Enable 2FA for extra security"],
+    tips: ["Use your community email for faster approval", "Enable CPA Verification Codes for extra security"],
   },
   {
     number: 2,
@@ -396,7 +396,7 @@ const HowItWorksSection = ({
             Getting Started is Simple
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Join Chadwick School's carpooling community in four easy steps
+            Join our community's carpooling platform in four easy steps
           </p>
           <div
             className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mt-6"
@@ -456,7 +456,7 @@ const HowItWorksSection = ({
 
           {/* Additional context for screen readers */}
           <p className="sr-only">
-            Complete these {steps.length} steps to start carpooling with other Chadwick School families
+            Complete these {steps.length} steps to start carpooling with other families in our community
           </p>
         </div>
       </div>
