@@ -16,7 +16,7 @@ const PrivacyInfoBox = ({ className = "" }: PrivacyInfoBoxProps) => {
       <ul className="space-y-2 text-sm text-muted-foreground">
         <li className="flex items-start gap-2">
           <Shield className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-          <span>Only verified Chadwick School parents can see you</span>
+          <span>Only verified Dolphin Carpool parents can see you</span>
         </li>
         <li className="flex items-start gap-2">
           <Eye className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />

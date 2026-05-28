@@ -42,7 +42,7 @@ const helpSections = [
       },
       {
         question: "What's the difference between Student and Parent accounts?",
-        answer: "Student accounts are designed for Chadwick students to link with their parents and view family carpools. Parent accounts have full access to create carpools, find other parents on the map, and manage ride requests."
+        answer: "Student accounts are designed for Dolphin Carpool students to link with their parents and view family carpools. Parent accounts have full access to create carpools, find other parents on the map, and manage ride requests."
       },
       {
         question: "How do I link my student account to my parent?",

@@ -53,7 +53,7 @@ const steps: Step[] = [
     number: 2,
     icon: CheckCircle,
     title: "Get Approved",
-    description: "Quick verification process ensures all members are legitimate Chadwick families.",
+    description: "Quick verification process ensures all members are legitimate Dolphin Carpool families.",
     estimatedTime: "1-2 hours",
     tips: ["Verification usually completes within a few hours", "Check your email for approval notification"],
   },
