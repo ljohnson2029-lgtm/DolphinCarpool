@@ -76,7 +76,7 @@ const helpSections = [
       },
       {
         question: "How do I respond to ride requests?",
-        answer: "Check your 'Conversations' page for incoming requests. You can accept or decline each request. Accepted requests will be added to your 'My Rides' page."
+        answer: "Check your Notifications page for incoming requests. You can accept or decline each request. Accepted requests will be added to your 'My Rides' page."
       },
       {
         question: "How do I cancel a ride?",
