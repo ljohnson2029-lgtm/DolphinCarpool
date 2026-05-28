@@ -135,7 +135,7 @@ const SafetySection = () => {
               </p>
               <div className="grid md:grid-cols-2 gap-4">
                 {[
-                  { text: "Valid driver's license", required: true },
+                  { text: "Valid driver's license (minimum 1 year with licence)", required: true },
                   { text: "Current vehicle registration", required: true },
                   { text: "Active auto insurance policy", required: true },
                   { text: "Vehicle in safe operating condition", required: true },
@@ -174,7 +174,7 @@ const SafetySection = () => {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {[
-                  { icon: UserCheck, title: "Two-Factor Authentication", desc: "All accounts protected with 2FA" },
+                  { icon: UserCheck, title: "CPA Verification Codes", desc: "All accounts protected with verification links only distributed through the CPA" },
                   { icon: Shield, title: "Admin Verification", desc: "Every account reviewed before activation" },
                   { icon: Lock, title: "Encrypted Communications", desc: "All messages are encrypted end-to-end" },
                   { icon: Shield, title: "Active Monitoring", desc: "Platform activity monitored for safety" }
@@ -202,8 +202,8 @@ const SafetySection = () => {
           </h3>
           <div className="space-y-4 text-sm text-muted-foreground">
             <p>
-              <strong>Liability Waiver:</strong> SchoolPool is a platform that connects families for carpooling purposes only. 
-              SchoolPool does not provide transportation services, vehicle inspections, driver screenings, or insurance coverage.
+              <strong>Liability Waiver:</strong> Dolphin CarPool is a platform that connects families for carpooling purposes only. 
+              Dolphin CarPool does not provide transportation services, vehicle inspections, driver screenings, or insurance coverage.
             </p>
             <p>
               <strong>Insurance Responsibility:</strong> All participants are responsible for maintaining adequate auto insurance 
@@ -211,7 +211,7 @@ const SafetySection = () => {
               regular carpooling arrangements.
             </p>
             <p>
-              <strong>Assumption of Risk:</strong> By using SchoolPool, you acknowledge that carpooling involves inherent risks 
+              <strong>Assumption of Risk:</strong> By using Dolphin Carpool, you acknowledge that carpooling involves inherent risks 
               and you assume all responsibility for your participation in carpool arrangements.
             </p>
             <p>

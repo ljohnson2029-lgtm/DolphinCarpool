@@ -30,8 +30,8 @@ const features: Feature[] = [
   },
   {
     icon: Lock,
-    title: "Two-Factor Authentication",
-    description: "Secure your account with robust 2FA protection for safer logins.",
+    title: "CPA Verification Codes",
+    description: "All accounts protected with verification links only distributed through the CPA",
     iconClass: "bg-slate-900 text-white",
   },
   {

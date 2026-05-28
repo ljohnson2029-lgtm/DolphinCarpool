@@ -87,8 +87,7 @@ const Terms = () => {
                       carpooling with non-family members.
                     </li>
                     <li>
-                      <strong>Assumption of Risk:</strong> Carpooling involves inherent risks. By participating in any 
-                      carpool arrangement, you voluntarily assume all risks associated with such activity.
+                      <strong>Assumption of Risk:</strong> By using Dolphin Carpool, you acknowledge that carpooling involves inherent risks and you assume all responsibility for your participation in carpool arrangements.
                     </li>
                     <li>
                       <strong>Release of Liability:</strong> You release SchoolPool, its officers, directors, employees, 
