@@ -38,7 +38,7 @@ const helpSections = [
     items: [
       {
         question: "How do I create an account?",
-        answer: "Visit the registration page and choose your account type. Students should use their @chadwickschool.org email, while parents should use their personal email. Complete the verification process by entering the code sent to your email."
+        answer: "Only families in our Dolphin Community can create an account. To create an account as a parent use the verification link and code sent through the PTA WhatsApp Group Chat. To obtain an account as a student, have your parent add your email to their family profile after creating their account."
       },
       {
         question: "What's the difference between Student and Parent accounts?",
