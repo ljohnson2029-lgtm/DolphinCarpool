@@ -825,7 +825,7 @@ const ProfileSetup = () => {
                 </CardTitle>
                 <CardDescription>
                   {isParent
-                    ? "Enter your child's school email (@chadwickschool.org) to connect accounts."
+                    ? "Enter your child's email address to connect accounts."
                     : "Enter your parent's email address to connect accounts."}
                 </CardDescription>
               </CardHeader>
@@ -848,7 +848,7 @@ const ProfileSetup = () => {
                         type="email"
                         value={linkEmail}
                         onChange={e => setLinkEmail(e.target.value)}
-                        placeholder={isParent ? "child@chadwickschool.org" : "parent@email.com"}
+                        placeholder={isParent ? "child@email.com" : "parent@email.com"}
                       />
                     </div>
                     <Button
