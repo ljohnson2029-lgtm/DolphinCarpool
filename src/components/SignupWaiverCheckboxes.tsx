@@ -61,7 +61,7 @@ const SignupWaiverCheckboxes = ({
           >
             <Shield className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
             <span>
-              I understand SchoolPool does not provide insurance coverage. I am responsible 
+              I understand Dolphin CarPool does not provide insurance coverage. I am responsible 
                for ensuring my personal auto insurance covers carpooling activities. <span className="text-destructive">*</span>
             </span>
           </Label>
@@ -116,7 +116,7 @@ const SignupWaiverCheckboxes = ({
           >
             <Scale className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
             <span>
-              I release SchoolPool from any liability related to carpool activities and 
+              I release Dolphin CarPool from any liability related to carpool activities and 
                understand that I assume all risks associated with carpooling. <span className="text-destructive">*</span>
             </span>
           </Label>
