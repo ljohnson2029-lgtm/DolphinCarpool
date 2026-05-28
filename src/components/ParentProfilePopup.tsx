@@ -205,7 +205,7 @@ const ParentProfilePopup = ({
           <>
             <div className="border-t my-3" />
             <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Community Children</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Chadwick Children</p>
               {linkedStudents.map((child, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-sm">
                   <GraduationCap className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
