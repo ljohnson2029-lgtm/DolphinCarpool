@@ -848,7 +848,7 @@ const ProfileSetup = () => {
                         type="email"
                         value={linkEmail}
                         onChange={e => setLinkEmail(e.target.value)}
-                        placeholder={isParent ? "child@chadwickschool.org" : "parent@email.com"}
+                        placeholder={isParent ? "child@email.com" : "parent@email.com"}
                       />
                     </div>
                     <Button
