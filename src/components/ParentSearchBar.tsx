@@ -84,11 +84,11 @@ const ParentSearchBar = () => {
         {loading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
       </div>
       <p className="text-xs text-muted-foreground">
-        Note: Only parents who have created a Chadwick School Pool account will appear in search results
+        Note: Only parents who have created a Dolphin CarPool account will appear in search results
       </p>
 
       {hasSearched && !loading && results.length === 0 && (
-        <p className="text-sm text-muted-foreground text-center py-4">No parents found. They may not have created a Chadwick School Pool account yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-4">No parents found. They may not have created a Dolphin CarPool account yet.</p>
       )}
 
       {results.length > 0 && (
