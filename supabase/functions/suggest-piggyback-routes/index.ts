@@ -221,7 +221,7 @@ serve(async (req) => {
       `${m.already_connected ? "already connected" : "not yet connected"}`
     ).join("\n");
 
-    const prompt = `You are a carpool matching assistant for Chadwick School families.
+    const prompt = `You are a carpool matching assistant for Dolphin Community families.
 
 CONTEXT: ${contextDesc}
 
