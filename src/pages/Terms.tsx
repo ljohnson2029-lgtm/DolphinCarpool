@@ -33,12 +33,11 @@ const Terms = () => {
                 </CardHeader>
                 <CardContent className="prose prose-sm dark:prose-invert max-w-none">
                   <p>
-                    Welcome to ​Dolphin ("Service," "Platform," "we," "our," or "us"). By creating an account or using 
+                    Welcome to ​Dolphin Carpool. By creating an account or using 
                     our platform, you agree to be bound by these Terms of Service ("Terms"). Please read them carefully.
                   </p>
                   <p>
-                    ​Dolphin is a community platform that connects families for the purpose of arranging carpools to 
-                    ​Car Pool. We do not provide transportation services ourselves.
+                    ​DolphinCarpool is a community platform that connects families for the purpose of arranging carpools. We do not provide transportation services ourselves.
                   </p>
                 </CardContent>
               </Card>
