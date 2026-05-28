@@ -118,7 +118,7 @@ const Terms = () => {
                   <p>As a user of SchoolPool, you agree to:</p>
                   <ul>
                     <li>Provide accurate and truthful information during registration</li>
-                    <li>Maintain a valid driver's license, vehicle registration, and auto insurance (for drivers)</li>
+                    <li>Maintain a valid driver's license (minimum 1 year with licence), vehicle registration, and auto insurance (for drivers)</li>
                     <li>Comply with all applicable traffic laws and regulations</li>
                     <li>Ensure your vehicle is in safe operating condition</li>
                     <li>Use appropriate child safety seats and seatbelts for all passengers</li>
