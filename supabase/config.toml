@@ -1,54 +1,39 @@
 project_id = "dchwbbvpsgxwqezqhbfw"
 
-# ── Public / Auth entry points (no JWT required) ──
-[functions.send-email]
-verify_jwt = false
-
-[functions.send-link-verification]
-verify_jwt = false
-
-[functions.auth-login]
-verify_jwt = false
-
-[functions.auth-check-username]
-verify_jwt = false
-
-[functions.auth-create-account]
-verify_jwt = false
-
-[functions.verify-signup-code]
-verify_jwt = false
-
-# ── Authenticated endpoints (JWT required) ──
-[functions.get-mapbox-token]
-verify_jwt = true
-
-[functions.geocode-address]
-verify_jwt = true
-
-[functions.calculate-route]
-verify_jwt = true
-
-[functions.get-parent-locations]
-verify_jwt = true
-
-[functions.get-parent-profile]
-verify_jwt = true
-
-[functions.lookup-parent]
-verify_jwt = true
-
-[functions.create-notification]
-verify_jwt = true
-
-[functions.cleanup-expired-rides]
-verify_jwt = true
-
-[functions.generate-test-parent]
-verify_jwt = true
-
-[functions.delete-test-parents]
-verify_jwt = true
-
-[functions.process-email-queue]
-verify_jwt = true
+[functions]
+  [functions.auth-check-username]
+    verify_jwt = false
+  [functions.auth-create-account]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.auth-login]
+    verify_jwt = false
+  [functions.calculate-route]
+    verify_jwt = true
+  [functions.cleanup-expired-rides]
+    verify_jwt = true
+  [functions.create-notification]
+    verify_jwt = true
+  [functions.delete-test-parents]
+    verify_jwt = true
+  [functions.generate-test-parent]
+    verify_jwt = true
+  [functions.geocode-address]
+    verify_jwt = true
+  [functions.get-mapbox-token]
+    verify_jwt = true
+  [functions.get-parent-locations]
+    verify_jwt = true
+  [functions.get-parent-profile]
+    verify_jwt = true
+  [functions.lookup-parent]
+    verify_jwt = true
+  [functions.process-email-queue]
+    verify_jwt = true
+  [functions.send-email]
+    verify_jwt = false
+  [functions.send-link-verification]
+    verify_jwt = false
+  [functions.verify-signup-code]
+    verify_jwt = false
