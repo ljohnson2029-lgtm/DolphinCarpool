@@ -85,22 +85,7 @@ const Navigation = () => {
         }
       }
 
-      // Check admin status
-      try {
-        const { data: adminData, error } = await supabase.functions.invoke("manage-access-requests", {
-          method: "GET",
-        });
-        if (!error && adminData?.requests) {
-          setIsAdmin(true);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const pending = (adminData.requests as any[]).filter((r: any) => r.status === 'pending').length;
-          setPendingAccessRequests(pending);
-        } else {
-          setIsAdmin(false);
-        }
-      } catch {
-        setIsAdmin(false);
-      }
+      setIsAdmin(false);
     };
     
     checkUserRole();
@@ -263,16 +248,6 @@ const Navigation = () => {
                       <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2">
                         <Settings className="w-4 h-4" /> Settings
                       </DropdownMenuItem>
-                      {isAdmin && (
-                        <DropdownMenuItem onClick={() => navigate("/admin/approvals")} className="gap-2">
-                          <Shield className="w-4 h-4" /> Admin
-                          {pendingAccessRequests > 0 && (
-                            <Badge variant="destructive" className="ml-auto h-5 w-5 flex items-center justify-center p-0 text-xs">
-                              {pendingAccessRequests}
-                            </Badge>
-                          )}
-                        </DropdownMenuItem>
-                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="gap-2 text-red-600">
                         <LogOut className="w-4 h-4" /> Log out

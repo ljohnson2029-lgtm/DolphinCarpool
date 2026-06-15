@@ -14,45 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      access_requests: {
-        Row: {
-          approved_by: string | null
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          reason: string | null
-          reviewed_at: string | null
-          status: string
-          updated_at: string
-          user_type: string
-        }
-        Insert: {
-          approved_by?: string | null
-          created_at?: string
-          email: string
-          full_name: string
-          id?: string
-          reason?: string | null
-          reviewed_at?: string | null
-          status?: string
-          updated_at?: string
-          user_type: string
-        }
-        Update: {
-          approved_by?: string | null
-          created_at?: string
-          email?: string
-          full_name?: string
-          id?: string
-          reason?: string | null
-          reviewed_at?: string | null
-          status?: string
-          updated_at?: string
-          user_type?: string
-        }
-        Relationships: []
-      }
       account_links: {
         Row: {
           created_at: string
@@ -111,51 +72,6 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
-      }
-      approved_emails: {
-        Row: {
-          approved_by: string | null
-          created_at: string
-          email: string
-          id: string
-        }
-        Insert: {
-          approved_by?: string | null
-          created_at?: string
-          email: string
-          id?: string
-        }
-        Update: {
-          approved_by?: string | null
-          created_at?: string
-          email?: string
-          id?: string
-        }
-        Relationships: []
-      }
-      banned_emails: {
-        Row: {
-          banned_by: string | null
-          created_at: string
-          email: string
-          id: string
-          reason: string | null
-        }
-        Insert: {
-          banned_by?: string | null
-          created_at?: string
-          email: string
-          id?: string
-          reason?: string | null
-        }
-        Update: {
-          banned_by?: string | null
-          created_at?: string
-          email?: string
-          id?: string
-          reason?: string | null
-        }
-        Relationships: []
       }
       children: {
         Row: {
@@ -286,24 +202,6 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
-      }
-      parent_email_whitelist: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-        }
-        Relationships: []
       }
       private_ride_requests: {
         Row: {
@@ -1046,6 +944,30 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_verification_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       student_parent_links: {
         Row: {
           approved_at: string | null
@@ -1193,57 +1115,6 @@ export type Database = {
         }
         Relationships: []
       }
-      verification_codes: {
-        Row: {
-          attempts: number
-          code: string
-          created_at: string
-          email: string
-          expires_at: string
-          id: string
-          is_used: boolean
-        }
-        Insert: {
-          attempts?: number
-          code: string
-          created_at?: string
-          email: string
-          expires_at: string
-          id?: string
-          is_used?: boolean
-        }
-        Update: {
-          attempts?: number
-          code?: string
-          created_at?: string
-          email?: string
-          expires_at?: string
-          id?: string
-          is_used?: boolean
-        }
-        Relationships: []
-      }
-      verified_emails: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          verified_at: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          verified_at?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          verified_at?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       student_parent_links_safe: {
@@ -1335,7 +1206,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      cleanup_expired_codes: { Args: never; Returns: undefined }
       cleanup_old_ride_data: { Args: never; Returns: undefined }
       cleanup_past_rides: { Args: never; Returns: undefined }
       get_family_schedule: {
@@ -1444,10 +1314,6 @@ export type Database = {
         Args: { parent_user_id: string; student_user_id: string }
         Returns: boolean
       }
-      is_student_email: { Args: { user_email: string }; Returns: boolean }
-      is_valid_parent_email: { Args: { email: string }; Returns: boolean }
-      is_valid_student_email: { Args: { email: string }; Returns: boolean }
-      is_whitelisted_parent: { Args: { check_email: string }; Returns: boolean }
       notify_expiring_rides: { Args: never; Returns: undefined }
       reset_ride_fulfillment: {
         Args: { p_ride_id: string }

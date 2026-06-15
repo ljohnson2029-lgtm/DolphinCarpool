@@ -1,10 +1,6 @@
 /**
- * Permission utilities for carpool operations
- * Validates user permissions based on account type (parent vs student)
- * 
- * IMPORTANT: These functions use profile.account_type as the source of truth,
- * NOT the email domain. This is because some @chadwickschool.org emails are
- * whitelisted parents (via parent_email_whitelist table).
+ * Permission utilities for carpool operations.
+ * All new accounts are 'parent'. Legacy 'student' accounts remain read-only.
  */
 
 /**
