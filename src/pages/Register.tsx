@@ -140,11 +140,26 @@ const Register = () => {
 
       if (error || (data && !data.success)) {
         let msg = "Registration failed";
+        // supabase-js returns error.context as a Response on non-2xx — parse it
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ctx = (error as any)?.context;
-        if (ctx?.error) msg = ctx.error;
-        else if (data?.error) msg = data.error;
-        else if (error instanceof Error) msg = error.message;
+        const ctx: any = (error as any)?.context;
+        if (ctx && typeof ctx.json === "function") {
+          try {
+            const body = await ctx.clone().json();
+            if (body?.error) msg = body.error;
+          } catch {
+            try {
+              const text = await ctx.clone().text();
+              if (text) msg = text;
+            } catch { /* ignore */ }
+          }
+        } else if (ctx?.error) {
+          msg = ctx.error;
+        } else if (data?.error) {
+          msg = data.error;
+        } else if (error instanceof Error) {
+          msg = error.message;
+        }
         toast({ title: "Registration failed", description: msg, variant: "destructive" });
         setLoading(false);
         return;
