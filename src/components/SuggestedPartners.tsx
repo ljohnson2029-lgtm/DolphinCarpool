@@ -25,6 +25,8 @@ interface UnifiedSuggestion {
   source: "route" | "proximity" | "smart";
   already_connected?: boolean;
   neighborhood?: string;
+  distance_miles?: number;
+  grades?: string[];
 }
 
 const SuggestedPartners = () => {
@@ -81,6 +83,8 @@ const SuggestedPartners = () => {
             source: pbData.match_mode === "route" ? "route" : "proximity",
             already_connected: s.already_connected,
             neighborhood: s.ride_pickup ? shortenAddress(s.ride_pickup) : "",
+            distance_miles: s.distance_from_route_miles,
+            grades: s.their_grades || [],
           });
         }
         if (pbData.ai_powered) setAiPowered(true);
@@ -107,6 +111,8 @@ const SuggestedPartners = () => {
             ai_summary: s.ai_summary,
             source: "smart",
             neighborhood: s.neighborhood || "",
+            distance_miles: s.distance_miles,
+            grades: s.grade_matches || [],
           });
         }
         if (spData.ai_powered) setAiPowered(true);
@@ -243,14 +249,20 @@ const SuggestedPartners = () => {
                 </p>
               )}
 
-              {/* Reasons */}
+              {/* Exactly 2 bullets: distance from home + grades */}
               <div className="space-y-1">
-                {s.reasons.slice(0, 3).map((reason, i) => (
-                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <span className="text-primary/70">{getReasonIcon(reason)}</span>
-                    <span>{reason}</span>
+                {typeof s.distance_miles === "number" && (
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="text-primary/70"><MapPin className="h-3 w-3" /></span>
+                    <span>{s.distance_miles} mi from your home</span>
                   </div>
-                ))}
+                )}
+                {s.grades && s.grades.length > 0 && (
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="text-primary/70"><GraduationCap className="h-3 w-3" /></span>
+                    <span>Kids in {[...new Set(s.grades.map(g => g === "Chadwick" ? "our community" : g))].join(", ")}</span>
+                  </div>
+                )}
               </div>
 
               {/* Action */}
