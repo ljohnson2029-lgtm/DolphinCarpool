@@ -1,12 +1,6 @@
 project_id = "dchwbbvpsgxwqezqhbfw"
 
 # ── Public / Auth entry points (no JWT required) ──
-[functions.auth-send-2fa]
-verify_jwt = false
-
-[functions.auth-verify-2fa]
-verify_jwt = false
-
 [functions.send-email]
 verify_jwt = false
 
@@ -16,16 +10,13 @@ verify_jwt = false
 [functions.auth-login]
 verify_jwt = false
 
-[functions.auth-check-email]
-verify_jwt = false
-
 [functions.auth-check-username]
 verify_jwt = false
 
 [functions.auth-create-account]
 verify_jwt = false
 
-[functions.submit-access-request]
+[functions.verify-signup-code]
 verify_jwt = false
 
 # ── Authenticated endpoints (JWT required) ──
@@ -57,7 +48,4 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.delete-test-parents]
-verify_jwt = true
-
-[functions.manage-access-requests]
 verify_jwt = true
