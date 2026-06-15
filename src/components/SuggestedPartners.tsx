@@ -111,6 +111,8 @@ const SuggestedPartners = () => {
             ai_summary: s.ai_summary,
             source: "smart",
             neighborhood: s.neighborhood || "",
+            distance_miles: s.distance_miles,
+            grades: s.grade_matches || [],
           });
         }
         if (spData.ai_powered) setAiPowered(true);
