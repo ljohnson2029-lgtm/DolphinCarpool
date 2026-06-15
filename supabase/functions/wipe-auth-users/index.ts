@@ -1,16 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 import { getCorsHeaders, handleCorsPreflightIfNeeded } from "../_shared/cors.ts";
 
-const TARGET_EMAILS = [
-  'sdesai2029@chadwickschool.org',
-  'hlupo2029@chadwickschool.org',
-  'jsamulski2029@chadwickschool.org',
-  'lshope@chadwickschool.org',
-  'gfoy2029@chadwickschool.org',
-  'nabraham2029@chadwickschool.org',
-  'jlagnese2029@chadwickschool.org',
-];
-
 Deno.serve(async (req) => {
   const pre = handleCorsPreflightIfNeeded(req);
   if (pre) return pre;
@@ -22,37 +12,69 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    const results: Array<{ email: string; status: string; error?: string }> = [];
+    // Wipe all user-related public data first
+    const tables = [
+      'ride_messages',
+      'ride_conversations',
+      'private_ride_requests',
+      'schedule_cancellations',
+      'recurring_ride_cancellations',
+      'series_child_selections',
+      'series_messages',
+      'recurring_schedules',
+      'series_spaces',
+      'recurring_rides',
+      'rides',
+      'notifications',
+      'vehicles',
+      'children',
+      'co_parent_links',
+      'account_links',
+      'student_parent_links',
+      'user_roles',
+      'profiles',
+      'users',
+    ];
+    const tableResults: Record<string, string> = {};
+    for (const t of tables) {
+      const { error } = await supabase.from(t).delete().not('id', 'is', null).gte('created_at', '1900-01-01').or('id.not.is.null');
+      // simpler: just delete all rows via a broad filter that always matches
+      const { error: e2 } = await supabase.rpc('noop_does_not_exist').then(() => ({ error: null })).catch(() => ({ error: null }));
+      // Re-do reliably:
+      const { error: delErr } = await supabase.from(t).delete().gte('created_at', '1900-01-01');
+      if (delErr && delErr.code !== '42703') {
+        // fall back if no created_at column
+        const { error: delErr2 } = await supabase.from(t).delete().not('user_id', 'is', null);
+        tableResults[t] = delErr2 ? `error: ${delErr2.message}` : 'cleared';
+      } else {
+        tableResults[t] = delErr ? `error: ${delErr.message}` : 'cleared';
+      }
+    }
 
-    // Paginate through auth users to find target IDs
-    const targetSet = new Set(TARGET_EMAILS.map((e) => e.toLowerCase()));
+    // Delete all auth users
+    const deleted: string[] = [];
+    const errors: Array<{ id: string; email: string | null; error: string }> = [];
     let page = 1;
     const perPage = 1000;
-    const found: Array<{ id: string; email: string }> = [];
     while (true) {
       const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
       if (error) throw error;
+      if (!data.users.length) break;
       for (const u of data.users) {
-        if (u.email && targetSet.has(u.email.toLowerCase())) {
-          found.push({ id: u.id, email: u.email });
-        }
+        const { error: dErr } = await supabase.auth.admin.deleteUser(u.id);
+        if (dErr) errors.push({ id: u.id, email: u.email ?? null, error: dErr.message });
+        else deleted.push(u.email ?? u.id);
       }
       if (data.users.length < perPage) break;
-      page++;
+      // don't increment page — we just deleted, so re-query page 1
     }
 
-    for (const u of found) {
-      const { error } = await supabase.auth.admin.deleteUser(u.id);
-      if (error) results.push({ email: u.email, status: 'error', error: error.message });
-      else results.push({ email: u.email, status: 'deleted' });
-    }
-
-    const notFound = TARGET_EMAILS.filter(
-      (e) => !found.some((f) => f.email.toLowerCase() === e.toLowerCase()),
-    );
-    for (const e of notFound) results.push({ email: e, status: 'not_found' });
-
-    return new Response(JSON.stringify({ success: true, results }), {
+    return new Response(JSON.stringify({
+      success: true,
+      auth_users_deleted: deleted.length,
+      auth_users_errors: errors,
+      tables: tableResults,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
