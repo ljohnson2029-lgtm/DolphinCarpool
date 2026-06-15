@@ -83,6 +83,8 @@ const SuggestedPartners = () => {
             source: pbData.match_mode === "route" ? "route" : "proximity",
             already_connected: s.already_connected,
             neighborhood: s.ride_pickup ? shortenAddress(s.ride_pickup) : "",
+            distance_miles: s.distance_from_route_miles,
+            grades: s.their_grades || [],
           });
         }
         if (pbData.ai_powered) setAiPowered(true);
