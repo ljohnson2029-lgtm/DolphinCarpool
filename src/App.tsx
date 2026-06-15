@@ -98,6 +98,8 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/verify" element={<AuthCallback />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/carpools" element={<FamilyCarpools />} />
           <Route path="/carpools/create" element={<FamilyCarpools />} />
