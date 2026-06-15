@@ -29,6 +29,7 @@ const FamilyCarpools = lazy(() => import("./pages/FamilyCarpools"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FamilyLinks = lazy(() => import("./pages/FamilyLinks"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 
 const MyPrivateRequests = lazy(() => import("./pages/MyPrivateRequests"));
 const Settings = lazy(() => import("./pages/Settings"));
