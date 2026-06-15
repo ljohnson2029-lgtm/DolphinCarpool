@@ -26,10 +26,9 @@ const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const Profile = lazy(() => import("./pages/Profile"));
 const ProfileSetup = lazy(() => import("./pages/ProfileSetup"));
 const FamilyCarpools = lazy(() => import("./pages/FamilyCarpools"));
-const EmailVerification = lazy(() => import("./pages/EmailVerification"));
-const AdminVerifiedEmails = lazy(() => import("./pages/AdminVerifiedEmails"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FamilyLinks = lazy(() => import("./pages/FamilyLinks"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 const MyPrivateRequests = lazy(() => import("./pages/MyPrivateRequests"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -42,9 +41,7 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Help = lazy(() => import("./pages/Help"));
 const Feedback = lazy(() => import("./pages/Feedback"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
-const RequestAccess = lazy(() => import("./pages/RequestAccess"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
-const AdminApprovals = lazy(() => import("./pages/AdminApprovals"));
 const Series = lazy(() => import("./pages/Series"));
 
 // Loading component for lazy loaded pages
@@ -99,14 +96,13 @@ const AppRoutes = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/carpools" element={<FamilyCarpools />} />
           <Route path="/carpools/create" element={<FamilyCarpools />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/setup" element={<ProfileSetup />} />
           <Route path="/family-carpools" element={<FamilyCarpools />} />
-          <Route path="/verify-email" element={<EmailVerification />} />
-          <Route path="/admin/verified-emails" element={<AdminVerifiedEmails />} />
           <Route path="/family-links" element={<FamilyLinks />} />
           {/* Redirects from old routes */}
           <Route path="/linked-accounts" element={<FamilyLinks />} />
@@ -137,9 +133,6 @@ const AppRoutes = () => {
           
           {/* Public profile view */}
           <Route path="/profile/:userId" element={<PublicProfile />} />
-          
-          <Route path="/request-access" element={<RequestAccess />} />
-          <Route path="/admin/approvals" element={<AdminApprovals />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         </PageTransition>
