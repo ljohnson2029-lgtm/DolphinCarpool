@@ -29,6 +29,7 @@ const FamilyCarpools = lazy(() => import("./pages/FamilyCarpools"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FamilyLinks = lazy(() => import("./pages/FamilyLinks"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 
 const MyPrivateRequests = lazy(() => import("./pages/MyPrivateRequests"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -97,6 +98,8 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/verify" element={<AuthCallback />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/carpools" element={<FamilyCarpools />} />
           <Route path="/carpools/create" element={<FamilyCarpools />} />

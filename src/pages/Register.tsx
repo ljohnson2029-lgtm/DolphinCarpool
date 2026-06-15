@@ -150,11 +150,14 @@ const Register = () => {
         return;
       }
 
-      // Trigger built-in Supabase confirmation email
+      // Trigger built-in Supabase confirmation email.
+      // Always send users to the production domain's callback so links
+      // from any environment (preview/dev) still land in the live app.
+      const PROD_CALLBACK = "https://chadwickschoolpool.org/auth/callback";
       await supabase.auth.resend({
         type: "signup",
         email: normalizedEmail,
-        options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+        options: { emailRedirectTo: PROD_CALLBACK },
       });
 
       setStep("checkEmail");
@@ -177,7 +180,7 @@ const Register = () => {
       const { error } = await supabase.auth.resend({
         type: "signup",
         email: email.toLowerCase().trim(),
-        options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+        options: { emailRedirectTo: "https://chadwickschoolpool.org/auth/callback" },
       });
       if (error) throw error;
       toast({ title: "Email sent", description: "Check your inbox for the confirmation link." });
