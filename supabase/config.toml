@@ -49,3 +49,6 @@ verify_jwt = true
 
 [functions.delete-test-parents]
 verify_jwt = true
+
+[functions.process-email-queue]
+verify_jwt = true
