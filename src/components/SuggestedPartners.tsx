@@ -25,6 +25,8 @@ interface UnifiedSuggestion {
   source: "route" | "proximity" | "smart";
   already_connected?: boolean;
   neighborhood?: string;
+  distance_miles?: number;
+  grades?: string[];
 }
 
 const SuggestedPartners = () => {
