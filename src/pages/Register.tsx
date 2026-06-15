@@ -359,7 +359,6 @@ const Register = () => {
                       <PhoneNumberInput
                         value={phoneNumber}
                         onChange={(v) => { setPhoneNumber(v); clearError("phone"); }}
-                        error={fieldErrors.phone}
                       />
                     </div>
                   </div>
