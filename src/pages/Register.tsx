@@ -10,31 +10,28 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { logger } from "@/lib/logger";
-import { ArrowLeft, ArrowRight, Mail, ShieldCheck, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Mail, ShieldCheck, Eye, EyeOff, CheckCircle2, Users, GraduationCap, Info } from "lucide-react";
 import PhoneNumberInput from "@/components/PhoneNumberInput";
 import { isValidPhoneNumber } from "@/lib/phone-validation";
 import Navigation from "@/components/Navigation";
-import CreatorFooter from "@/components/CreatorFooter";
 import SignupWaiverCheckboxes from "@/components/SignupWaiverCheckboxes";
 import { cn } from "@/lib/utils";
 
-type Step = "code" | "form" | "checkEmail";
-
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+type Step = "choose" | "code" | "form" | "checkEmail" | "student";
 
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const [step, setStep] = useState<Step>("code");
+  const [step, setStep] = useState<Step>("choose");
   const [loading, setLoading] = useState(false);
 
-  // Step 1
+  // Parent step 1
   const [signupCode, setSignupCode] = useState("");
   const [codeError, setCodeError] = useState("");
 
-  // Step 2
+  // Parent step 2
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -50,6 +47,13 @@ const Register = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  // Student form
+  const [studentEmail, setStudentEmail] = useState("");
+  const [studentPassword, setStudentPassword] = useState("");
+  const [studentConfirm, setStudentConfirm] = useState("");
+  const [studentShowPw, setStudentShowPw] = useState(false);
+  const [studentError, setStudentError] = useState("");
+
   useEffect(() => {
     if (user) navigate("/dashboard");
   }, [user, navigate]);
@@ -62,7 +66,7 @@ const Register = () => {
       return next;
     });
 
-  // ────────────── Step 1: verify community code
+  // ────────────── Parent step 1: verify community code
   const submitCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setCodeError("");
@@ -90,7 +94,7 @@ const Register = () => {
     }
   };
 
-  // ────────────── Step 2: create account
+  // ────────────── Parent step 2: create account
   const submitForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -102,8 +106,7 @@ const Register = () => {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = "Enter a valid email";
     if (!password) errs.password = "Required";
     if (!confirmPassword) errs.confirmPassword = "Required";
-    else if (password && password !== confirmPassword)
-      errs.confirmPassword = "Passwords do not match";
+    else if (password && password !== confirmPassword) errs.confirmPassword = "Passwords do not match";
     if (!phoneNumber.trim()) errs.phone = "Required";
     else if (!isValidPhoneNumber(phoneNumber)) errs.phone = "Enter a complete phone number";
     if (!insuranceAgreed) errs.insurance = "Required";
@@ -138,7 +141,6 @@ const Register = () => {
 
       if (error || (data && !data.success)) {
         let msg = "Registration failed";
-        // supabase-js returns error.context as a Response on non-2xx — parse it
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const ctx: any = (error as any)?.context;
         if (ctx && typeof ctx.json === "function") {
@@ -163,16 +165,12 @@ const Register = () => {
         return;
       }
 
-      // Email verification disabled — sign in directly and go to dashboard
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
       });
       if (signInError) {
-        toast({
-          title: "Account created",
-          description: "Please log in with your new credentials.",
-        });
+        toast({ title: "Account created", description: "Please log in with your new credentials." });
         navigate("/login");
         return;
       }
@@ -190,23 +188,65 @@ const Register = () => {
     }
   };
 
-  // ────────────── Step 3: resend email
-  const handleResend = async () => {
+  // ────────────── Student signup
+  const submitStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStudentError("");
+
+    const normalizedEmail = studentEmail.toLowerCase().trim();
+    if (!normalizedEmail) {
+      setStudentError("Please enter your email.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      setStudentError("Please enter a valid email.");
+      return;
+    }
+    if (!studentPassword || studentPassword.length < 6) {
+      setStudentError("Password must be at least 6 characters.");
+      return;
+    }
+    if (studentPassword !== studentConfirm) {
+      setStudentError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email: email.toLowerCase().trim(),
-        options: { emailRedirectTo: "https://dolphincarpool.org/auth/callback" },
+      const { data, error } = await supabase.functions.invoke("auth-create-student-account", {
+        body: { email: normalizedEmail, password: studentPassword },
       });
-      if (error) throw error;
-      toast({ title: "Email sent", description: "Check your inbox for the confirmation link." });
+
+      if (error || (data && !data.success)) {
+        let msg = "We couldn't create your account.";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ctx: any = (error as any)?.context;
+        if (ctx && typeof ctx.json === "function") {
+          try {
+            const body = await ctx.clone().json();
+            if (body?.error) msg = body.error;
+          } catch { /* ignore */ }
+        } else if (data?.error) {
+          msg = data.error;
+        }
+        setStudentError(msg);
+        setLoading(false);
+        return;
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: studentPassword,
+      });
+      if (signInError) {
+        toast({ title: "Account created", description: "Please log in with your new credentials." });
+        navigate("/login");
+        return;
+      }
+      toast({ title: "Welcome!", description: "Your student account is ready." });
+      navigate("/dashboard");
     } catch (err) {
-      toast({
-        title: "Couldn't resend",
-        description: err instanceof Error ? err.message : "Try again later.",
-        variant: "destructive",
-      });
+      setStudentError(err instanceof Error ? err.message : "Unexpected error");
     } finally {
       setLoading(false);
     }
@@ -222,19 +262,25 @@ const Register = () => {
         <Card className="w-full max-w-xl shadow-xl">
           <CardHeader className="text-center space-y-2">
             <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/30">
+              {step === "choose" && <Users className="w-7 h-7 text-white" />}
               {step === "code" && <ShieldCheck className="w-7 h-7 text-white" />}
               {step === "form" && <ArrowRight className="w-7 h-7 text-white" />}
+              {step === "student" && <GraduationCap className="w-7 h-7 text-white" />}
               {step === "checkEmail" && <Mail className="w-7 h-7 text-white" />}
             </div>
             <CardTitle className="text-2xl">
+              {step === "choose" && "Join Dolphin Carpool"}
               {step === "code" && "Enter Your Verification Code"}
-              {step === "form" && "Create Your Account"}
+              {step === "form" && "Create Your Parent Account"}
+              {step === "student" && "Create Your Student Account"}
               {step === "checkEmail" && "Check your email!"}
             </CardTitle>
             <CardDescription>
+              {step === "choose" && "Choose how you're signing up."}
               {step === "code" &&
                 "Your verification code was provided by the Dolphin Carpool community. Contact us at dolphincarpool@gmail.com if you need help."}
               {step === "form" && "All fields are required to create your parent account."}
+              {step === "student" && "Just your email and password — your parent has already added you."}
               {step === "checkEmail" && (
                 <>We sent a verification link to <span className="font-semibold text-foreground">{email}</span>. Click the link to confirm your account.</>
               )}
@@ -243,6 +289,146 @@ const Register = () => {
 
           <CardContent>
             <AnimatePresence mode="wait">
+              {/* CHOOSE */}
+              {step === "choose" && (
+                <motion.div
+                  key="choose"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="space-y-4"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setStep("code")}
+                    className="w-full text-left p-5 rounded-xl border-2 border-primary/20 bg-primary/5 hover:border-primary hover:bg-primary/10 transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow">
+                        <Users className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-lg flex items-center gap-2">
+                          Sign Up as a Parent
+                          <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Manage carpools, schedule rides, and add your kids.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStep("student")}
+                    className="w-full text-left p-5 rounded-xl border-2 border-amber-300/40 bg-amber-50 hover:border-amber-500 hover:bg-amber-100 transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow">
+                        <GraduationCap className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-lg flex items-center gap-2 text-amber-900">
+                          Sign Up as a Student
+                          <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <p className="text-sm text-amber-800/80">
+                          View the rides your parent has scheduled for you.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <div className="flex items-start gap-2 p-3 rounded-md bg-blue-50 border border-blue-200 text-sm text-blue-900">
+                    <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <p>
+                      Your parent must have added your email to their Dolphin Carpool account before you can sign up. Contact your parent if you are having trouble.
+                    </p>
+                  </div>
+
+                  <p className="text-sm text-center text-muted-foreground pt-1">
+                    Already have an account?{" "}
+                    <button type="button" onClick={() => navigate("/login")} className="text-primary font-medium hover:underline">
+                      Sign in
+                    </button>
+                  </p>
+                </motion.div>
+              )}
+
+              {/* STUDENT */}
+              {step === "student" && (
+                <motion.form
+                  key="student"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  onSubmit={submitStudent}
+                  className="space-y-4"
+                >
+                  {studentError && (
+                    <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                      {studentError}
+                    </div>
+                  )}
+
+                  <div>
+                    <Label htmlFor="student-email">Email <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="student-email"
+                      type="email"
+                      autoFocus
+                      value={studentEmail}
+                      onChange={(e) => setStudentEmail(e.target.value)}
+                      className="mt-1 h-11"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="student-pw">Password <span className="text-destructive">*</span></Label>
+                    <div className="relative mt-1">
+                      <Input
+                        id="student-pw"
+                        type={studentShowPw ? "text" : "password"}
+                        value={studentPassword}
+                        onChange={(e) => setStudentPassword(e.target.value)}
+                        className="h-11 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setStudentShowPw((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        tabIndex={-1}
+                      >
+                        {studentShowPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="student-pw2">Confirm password <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="student-pw2"
+                      type={studentShowPw ? "text" : "password"}
+                      value={studentConfirm}
+                      onChange={(e) => setStudentConfirm(e.target.value)}
+                      className="mt-1 h-11"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <Button type="button" variant="outline" onClick={() => setStep("choose")} className="flex-1">
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                    </Button>
+                    <LoadingButton type="submit" loading={loading} className="flex-1">
+                      Create account <ArrowRight className="w-4 h-4 ml-2" />
+                    </LoadingButton>
+                  </div>
+                </motion.form>
+              )}
+
+              {/* PARENT: code */}
               {step === "code" && (
                 <motion.form
                   key="code"
@@ -270,19 +456,18 @@ const Register = () => {
                     {codeError && <p className="text-sm text-destructive mt-1">{codeError}</p>}
                   </div>
 
-                  <LoadingButton type="submit" loading={loading} className="w-full h-12">
-                    Continue <ArrowRight className="w-4 h-4 ml-2" />
-                  </LoadingButton>
-
-                  <p className="text-sm text-center text-muted-foreground">
-                    Already have an account?{" "}
-                    <button type="button" onClick={() => navigate("/login")} className="text-primary font-medium hover:underline">
-                      Sign in
-                    </button>
-                  </p>
+                  <div className="flex gap-3">
+                    <Button type="button" variant="outline" onClick={() => setStep("choose")} className="flex-1">
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                    </Button>
+                    <LoadingButton type="submit" loading={loading} className="flex-1 h-12">
+                      Continue <ArrowRight className="w-4 h-4 ml-2" />
+                    </LoadingButton>
+                  </div>
                 </motion.form>
               )}
 
+              {/* PARENT: form */}
               {step === "form" && (
                 <motion.form
                   key="form"
@@ -420,21 +605,12 @@ const Register = () => {
                   <p className="text-muted-foreground">
                     You'll be able to sign in once your email is confirmed.
                   </p>
-
-                  <LoadingButton onClick={handleResend} loading={loading} variant="outline" className="w-full">
-                    Resend verification email
-                  </LoadingButton>
-
-                  <Button variant="ghost" onClick={() => navigate("/login")} className="w-full">
-                    Go to sign in
-                  </Button>
                 </motion.div>
               )}
             </AnimatePresence>
           </CardContent>
         </Card>
       </div>
-      <CreatorFooter />
     </>
   );
 };
