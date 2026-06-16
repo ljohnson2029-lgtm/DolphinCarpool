@@ -60,18 +60,8 @@ export default SignupEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif' }
 const container = { padding: '32px 28px', maxWidth: '560px' }
-const h1 = {
-  fontSize: '24px',
-  fontWeight: 'bold' as const,
-  color: '#0a2540',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '15px',
-  color: '#3c4858',
-  lineHeight: '1.6',
-  margin: '0 0 24px',
-}
+const h1 = { fontSize: '24px', fontWeight: 'bold' as const, color: '#0a2540', margin: '0 0 20px' }
+const text = { fontSize: '15px', color: '#3c4858', lineHeight: '1.6', margin: '0 0 24px' }
 const link = { color: '#0073e6', textDecoration: 'underline' }
 const button = {
   backgroundColor: '#0073e6',
@@ -83,4 +73,3 @@ const button = {
   textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#8898aa', margin: '32px 0 0', lineHeight: '1.5' }
-
