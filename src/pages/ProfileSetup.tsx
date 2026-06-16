@@ -269,8 +269,13 @@ const ProfileSetup = () => {
     }, 50);
   };
 
-  const handleAttemptContinue = () => {
+  const handleAttemptContinue = async () => {
     setAttemptedSubmit(true);
+
+    // Auto-save the inline vehicle draft before validating (no "Add Vehicle" click needed)
+    if (isParent && vehicles.length === 0 && vehicleManagerRef.current) {
+      await vehicleManagerRef.current.commitDraftIfNeeded();
+    }
 
     if (!isStep2Valid()) {
       toast({
