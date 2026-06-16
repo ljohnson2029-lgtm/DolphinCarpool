@@ -163,7 +163,21 @@ const Register = () => {
         return;
       }
 
-      setStep("checkEmail");
+      // Email verification disabled — sign in directly and go to dashboard
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+      if (signInError) {
+        toast({
+          title: "Account created",
+          description: "Please log in with your new credentials.",
+        });
+        navigate("/login");
+        return;
+      }
+      toast({ title: "Welcome!", description: "Your account is ready." });
+      navigate("/dashboard");
     } catch (err) {
       logger.error("auth-create-account exception:", err);
       toast({
