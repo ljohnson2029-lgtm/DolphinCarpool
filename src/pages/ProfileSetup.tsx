@@ -682,7 +682,7 @@ const ProfileSetup = () => {
             {/* Parent-only: Vehicle Information */}
             {isParent && (
               <div className="space-y-2">
-                <VehicleManager />
+                <VehicleManager ref={vehicleManagerRef} />
                 {attemptedSubmit && !hasValidVehicle && !vehiclesLoading && (
                   <p className="text-sm text-destructive flex items-center gap-1">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
