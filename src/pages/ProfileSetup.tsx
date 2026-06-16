@@ -76,6 +76,7 @@ const ProfileSetup = () => {
   }, [isEditMode, step]);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [vehicleDraftValid, setVehicleDraftValid] = useState(false);
 
   // Profile fields
   const [firstName, setFirstName] = useState("");
@@ -245,6 +246,7 @@ const ProfileSetup = () => {
     v.car_make.trim().length > 0 && v.car_model.trim().length > 0 && v.car_color.trim().length > 0 && v.license_plate.trim().length > 0;
 
   const hasValidVehicle = vehicles.length > 0 && vehicles.some(isVehicleComplete);
+  const vehicleRequirementMet = hasValidVehicle || vehicleDraftValid;
 
   /* ── Step 2 validation ─────────────────────────── */
   const isStep2Valid = () => {
@@ -253,8 +255,8 @@ const ProfileSetup = () => {
     if (!isParent && phoneNumber.trim() && !isValidPhone(phoneNumber)) return false;
     if (isParent && !hasSelectedAddress) return false;
     if (!isParent && !gradeLevel) return false;
-    // Parents must have at least 1 complete vehicle
-    if (isParent && !hasValidVehicle) return false;
+    // Parents must have at least 1 complete vehicle (saved or currently drafted)
+    if (isParent && !vehicleRequirementMet) return false;
 
     // First child must be fully complete; additional children must not be partial
     if (isParent && (!children.length || !isChildComplete(children[0]))) return false;
@@ -273,8 +275,9 @@ const ProfileSetup = () => {
     setAttemptedSubmit(true);
 
     // Auto-save the inline vehicle draft before validating (no "Add Vehicle" click needed)
+    let vehicleCommitted = true;
     if (isParent && vehicles.length === 0 && vehicleManagerRef.current) {
-      await vehicleManagerRef.current.commitDraftIfNeeded();
+      vehicleCommitted = await vehicleManagerRef.current.commitDraftIfNeeded();
     }
 
     if (!isStep2Valid()) {
@@ -286,6 +289,9 @@ const ProfileSetup = () => {
       scrollToFirstError();
       return;
     }
+
+    // If the draft looked valid but the auto-save failed (e.g., network error), don't proceed.
+    if (isParent && vehicles.length === 0 && !vehicleCommitted) return;
 
     handleSaveProfile();
   };
@@ -682,8 +688,8 @@ const ProfileSetup = () => {
             {/* Parent-only: Vehicle Information */}
             {isParent && (
               <div className="space-y-2">
-                <VehicleManager ref={vehicleManagerRef} />
-                {attemptedSubmit && !hasValidVehicle && !vehiclesLoading && (
+                <VehicleManager ref={vehicleManagerRef} onValidityChange={setVehicleDraftValid} />
+                {attemptedSubmit && !vehicleRequirementMet && !vehiclesLoading && (
                   <p className="text-sm text-destructive flex items-center gap-1">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                     At least one vehicle is required. Please add a vehicle with all 4 fields filled out.

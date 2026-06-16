@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,10 @@ export interface VehicleManagerHandle {
   commitDraftIfNeeded: () => Promise<boolean>;
   hasDraftStarted: () => boolean;
   isDraftValid: () => boolean;
+}
+
+interface VehicleManagerProps {
+  onValidityChange?: (isValid: boolean) => void;
 }
 
 // Moved OUTSIDE VehicleManager to prevent focus loss on re-render
@@ -52,20 +56,24 @@ const isValid = (v: NewVehicle) =>
 const isStarted = (v: NewVehicle) =>
   !!(v.car_make.trim() || v.car_model.trim() || v.car_color.trim() || v.license_plate.trim());
 
-const VehicleManager = forwardRef<VehicleManagerHandle>((_, ref) => {
+const VehicleManager = forwardRef<VehicleManagerHandle, VehicleManagerProps>(({ onValidityChange }, ref) => {
   const { vehicles, loading, addVehicle, updateVehicle, removeVehicle, setPrimary } = useVehicles();
   const { toast } = useToast();
-  // When there are no vehicles, the draft fields are always visible (no button required).
-  const [showAdd, setShowAdd] = useState(false);
+  // First vehicle fields are always visible — no button required to reveal them.
   const [newVehicle, setNewVehicle] = useState<NewVehicle>(emptyVehicle);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<NewVehicle>(emptyVehicle);
   const [saving, setSaving] = useState(false);
+  const lastValidRef = useRef(isValid(newVehicle));
 
-  // Auto-show the draft form when there are no vehicles yet (mandatory field UX)
+  // Notify parent about draft validity changes only when validity flips, to avoid re-rendering on every keystroke.
   useEffect(() => {
-    if (!loading && vehicles.length === 0) setShowAdd(true);
-  }, [loading, vehicles.length]);
+    const nowValid = isValid(newVehicle);
+    if (nowValid !== lastValidRef.current) {
+      lastValidRef.current = nowValid;
+      onValidityChange?.(nowValid);
+    }
+  }, [newVehicle, onValidityChange]);
 
   useImperativeHandle(ref, () => ({
     hasDraftStarted: () => isStarted(newVehicle),
@@ -97,7 +105,7 @@ const VehicleManager = forwardRef<VehicleManagerHandle>((_, ref) => {
     } else {
       toast({ title: "Vehicle added" });
       setNewVehicle(emptyVehicle);
-      setShowAdd(false);
+      // Keep the draft form visible so users can keep adding more vehicles.
     }
     setSaving(false);
   };
@@ -144,12 +152,6 @@ const VehicleManager = forwardRef<VehicleManagerHandle>((_, ref) => {
             <Car className="h-5 w-5" />
             My Vehicles
           </span>
-          {vehicles.length > 0 && !showAdd && (
-            <Button type="button" size="sm" variant="outline" onClick={() => setShowAdd(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Another Vehicle
-            </Button>
-          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -204,24 +206,21 @@ const VehicleManager = forwardRef<VehicleManagerHandle>((_, ref) => {
           </div>
         ))}
 
-        {showAdd && (
-          <div className="border rounded-lg p-4 space-y-3 border-dashed border-primary/40">
-            {isFirstVehicle ? (
-              <p className="text-xs text-muted-foreground">
-                Fill in your vehicle details — it'll be saved automatically when you continue.
-              </p>
-            ) : (
-              <p className="text-sm font-medium">New Vehicle</p>
-            )}
-            <VehicleFields data={newVehicle} onChange={setNewVehicle} />
-            {!isFirstVehicle && (
-              <div className="flex gap-2">
-                <Button type="button" size="sm" onClick={handleAdd} disabled={saving}>Add Vehicle</Button>
-                <Button type="button" size="sm" variant="outline" onClick={() => { setShowAdd(false); setNewVehicle(emptyVehicle); }}>Cancel</Button>
-              </div>
-            )}
-          </div>
-        )}
+        {/* First vehicle fields are always visible; Add Vehicle button below is only for adding more vehicles. */}
+        <div className="border rounded-lg p-4 space-y-3 border-dashed border-primary/40">
+          {isFirstVehicle ? (
+            <p className="text-xs text-muted-foreground">
+              Fill in your vehicle details — they'll be saved automatically when you continue.
+            </p>
+          ) : (
+            <p className="text-sm font-medium">Add Another Vehicle</p>
+          )}
+          <VehicleFields data={newVehicle} onChange={setNewVehicle} />
+          <Button type="button" size="sm" onClick={handleAdd} disabled={saving}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Vehicle
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
