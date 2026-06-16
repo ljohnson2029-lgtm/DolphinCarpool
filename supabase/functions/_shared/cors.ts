@@ -2,10 +2,10 @@
 // Only allows requests from approved origins
 
 const ALLOWED_ORIGINS = [
-  'https://chadwickschoolpool.lovable.app',
+  'https://dolphincarpool.lovable.app',
   'https://id-preview--0448966d-bdd1-486b-a1ee-cd456b9f1300.lovable.app',
-  'https://chadwickschoolpool.org',
-  'https://www.chadwickschoolpool.org',
+  'https://dolphincarpool.org',
+  'https://www.dolphincarpool.org',
   // Local development (Vite default port)
   'http://localhost:5173',
   'http://127.0.0.1:5173',
@@ -26,7 +26,7 @@ export function getCorsHeaders(req: Request): Record<string, string> {
     origin === allowed || 
     origin.endsWith('.lovable.app') || 
     origin.endsWith('.lovableproject.com') || 
-    origin.endsWith('chadwickschoolpool.org')
+    origin.endsWith('dolphincarpool.org')
   );
   
   // Allow if it's localhost OR in the allowed list

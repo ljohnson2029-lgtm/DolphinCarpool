@@ -108,7 +108,7 @@ const faqs = [
   },
   {
     question: "How do I report a problem?",
-    answer: "You can use the contact form below or email us directly at chadwickschoolpool@gmail.com. Please include as much detail as possible about the issue you're experiencing."
+    answer: "You can use the contact form below or email us directly at dolphincarpool@gmail.com. Please include as much detail as possible about the issue you're experiencing."
   },
 ];
 
@@ -259,10 +259,10 @@ export default function Help() {
                 You can also reach us directly at:
               </p>
               <a 
-                href="mailto:chadwickschoolpool@gmail.com"
+                href="mailto:dolphincarpool@gmail.com"
                 className="text-primary hover:underline font-medium"
               >
-                chadwickschoolpool@gmail.com
+                dolphincarpool@gmail.com
               </a>
             </div>
 
