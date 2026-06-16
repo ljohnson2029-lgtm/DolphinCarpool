@@ -101,19 +101,18 @@ serve(async (req) => {
 
     const passwordHash = bcrypt.hashSync(password);
 
-    // Create the auth user through the public signup flow so the confirmation
-    // email is sent immediately by the auth email system.
-    const { data: authData, error: authError } = await authClient.auth.signUp({
+    // Create the auth user via admin API with email pre-confirmed.
+    // This avoids Supabase's built-in confirmation email (and its rate limit)
+    // so testing the signup flow doesn't get blocked.
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: normalizedEmail,
       password,
-      options: {
-        emailRedirectTo: "https://dolphincarpool.org/auth/callback",
-        data: { username, first_name: firstName, last_name: lastName },
-      },
+      email_confirm: true,
+      user_metadata: { username, first_name: firstName, last_name: lastName },
     });
 
     if (authError || !authData?.user) {
-      console.error("auth.signUp error:", authError);
+      console.error("auth.admin.createUser error:", authError);
       return new Response(JSON.stringify({ error: `Failed to create account: ${authError?.message ?? "Unknown error"}` }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
