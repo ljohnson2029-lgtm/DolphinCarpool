@@ -18,6 +18,7 @@ interface Child {
   last_name: string;
   age: string;
   grade_level: string;
+  email?: string;
   special_notes?: string;
   emergency_contact?: string;
 }
@@ -171,6 +172,25 @@ const ChildCard = ({ child, index, onUpdate }: ChildCardProps) => {
             placeholder="Age"
           />
         </div>
+      </div>
+
+      {/* Child's email — for student account access */}
+      <div>
+        <Label htmlFor={`${prefix}-email`}>
+          Child's Email <span className="text-muted-foreground font-normal">(required for student account access)</span>
+        </Label>
+        <Input
+          id={`${prefix}-email`}
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          value={child.email ?? ""}
+          onChange={(e) => onUpdate(index, "email", e.target.value)}
+          placeholder="child@example.com"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Your child will use this email to create their student account
+        </p>
       </div>
 
       {/* Emergency contact & notes row */}
