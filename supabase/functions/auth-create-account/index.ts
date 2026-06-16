@@ -24,11 +24,7 @@ serve(async (req) => {
       });
     }
 
-    if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-      return new Response(JSON.stringify({ error: "Password must be at least 8 characters with uppercase, lowercase, and a number" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // Password restrictions removed - allow any non-empty password
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
