@@ -1,61 +1,51 @@
-## Goal
+# Student Signup + Read-Only Student Experience
 
-Replace the current whitelist + Chadwick-domain + custom 6-digit email 2FA registration with a 3-step flow:
-1. Enter a community verification code
-2. Fill account form (always a parent)
-3. Click email confirmation link (Supabase built-in)
+A big change across signup, profile, and rides. Splitting into 4 phases to match your prompt.
 
-Then continue to existing profile completion.
+## Phase 1 — Database
 
-Existing users are kept and all converted to `parent`. Student-only code remains (dormant) — no new students will be created.
+1. Add `email citext` column to `public.children` (nullable, indexed). RLS already restricts who can read children; we'll add a narrow `SECURITY DEFINER` function `find_parent_by_child_email(email)` so the student-signup edge function can look up the parent without exposing the children table.
+2. Add column to `profiles`: nothing new — `account_type='student'` already exists.
+3. On successful student signup, write an `account_links` row (`student_id`, `parent_id`, status='approved') so existing "linked parent" queries (My Rides, family schedule, Profile) work unchanged.
 
-## Database changes (one migration)
+## Phase 2 — Signup UI + Edge Function
 
-1. Drop unused tables from the old system:
-   - `parent_email_whitelist`
-   - `approved_emails`
-   - `banned_emails`
-   - `access_requests`
-   - `verified_emails`
-   - `verification_codes` (old 6-digit email 2FA codes)
-2. Drop now-unused DB functions: `is_whitelisted_parent`, `is_student_email`, `is_valid_student_email`, `is_valid_parent_email`, `cleanup_expired_codes`.
-3. `UPDATE public.profiles SET account_type = 'parent' WHERE account_type <> 'parent';`
-4. Create new table `public.signup_verification_codes`:
-   - `id uuid pk`, `code citext unique not null`, `active boolean not null default true`, `created_at`, `updated_at`
-   - GRANTs to `service_role` only (codes validated server-side via edge function); RLS enabled with no policies (locked).
-5. Seed: `INSERT ('DOLPHIN2026', true)`.
+- `src/pages/Register.tsx`: turn the landing step into two big buttons — **Sign Up as a Parent** (existing flow) and **Sign Up as a Student** (new flow). Add the note about contacting the parent.
+- New `StudentRegister` step (inline in Register.tsx): email + password only, no code, no waivers.
+- New edge function `auth-create-student-account`:
+  1. Call `find_parent_by_child_email(email)`. If none → 404 with the prompt's exact error message.
+  2. Create auth user (auto-confirm), create `profiles` row with `account_type='student'`, `profile_complete=true`, copy `first_name`/`last_name`/`grade_level` from the matching child record.
+  3. Insert `account_links` row linking student → parent (status approved).
+- Parent flow and verification code stay completely untouched.
 
-## Auth configuration
+## Phase 3 — Parent profile: child email field
 
-- Call `supabase--configure_auth` with `auto_confirm_email: false`, `disable_signup: false`, `external_anonymous_users_enabled: false`, `password_hibp_enabled: true` so the email confirmation link is required.
+- `src/components/profile/ParentProfileForm.tsx` (and wherever children are edited): add `email` input per child with label **"Child's Email (required for student account access)"** and the helper note. Required only if parent wants student access — i.e., optional in the form but validated as email format when filled.
+- Persist to new `children.email` column.
 
-## Edge functions
+## Phase 4 — Student app experience (read-only)
 
-- **New** `verify-signup-code` (verify_jwt = false): accepts `{ code }`, case-insensitive lookup in `signup_verification_codes` where `active = true`, returns `{ valid: boolean }`. Rate-limited per IP (same pattern as existing functions).
-- **Modify** `auth-create-account`: remove whitelist/Chadwick checks; require valid `signup_code` in body and re-validate it server-side; always set `account_type = 'parent'`; rely on Supabase to send the confirmation email (use admin createUser with `email_confirm: false`, or standard `signUp` server-side — keep current approach but drop role inference).
-- **Delete** `auth-send-2fa`, `auth-verify-2fa`, `auth-check-email`, `submit-access-request`, `manage-access-requests` (old whitelist/2FA flow). Also delete their `config.toml` entries.
+- **Navigation**: students already get the 5 tabs; verify Dashboard / Family Carpools / My Rides / Profile / menu all show. No changes expected beyond hiding action buttons.
+- **Family Carpools (`FindRides.tsx` + `RidesList`/map components)**: use `isStudent(accountType)` from `src/lib/permissions.ts` to:
+  - Hide all action buttons (Request to Join, Offer to Help, Send Direct Request/Offer, parent search bar).
+  - Wrap the now-empty action area with a tooltip **"Ask your parent to manage rides"** (subtle, only on hover where a button would be).
+  - Keep map, list, filters, radius, click-into-detail fully functional.
+- **My Rides (`MyRides.tsx`)**: for students, use existing `useLinkedParentRides` hook (or `get_family_schedule` RPC) instead of own rides. Pending / Active sub-tabs, same card design. Hide every action button. Header note: *"These rides were scheduled by your parent…"*. Empty state copy updated.
+- **Dashboard (`StudentDashboard.tsx`)**: refresh to show upcoming schedule list + two quick-action cards as specified.
+- **Profile (`Profile.tsx` / `StudentProfileForm.tsx`)**: show Name (editable), Email, Grade Level. New "Linked Parent" card pulling from `account_links` + parent's `profiles` row (name, email, phone). Remove address, vehicle, children sections for students.
+- **Hamburger menu**: ensure About / Safety / How It Works / Settings show for students (most likely already there; will trim any parent-only entries).
 
-## Frontend changes
+## Technical details
 
-- **`src/pages/Register.tsx`** — rewrite as 3-step wizard:
-  1. `code` step: single input + helper text + Continue button → calls `verify-signup-code`.
-  2. `form` step: First/Last/Username/Email/Password/Confirm/Phone + 3 liability checkboxes (all required, red `*`, red error highlights). On submit, calls `auth-create-account` with `signup_code` included; on success goes to step 3.
-  3. `check-email` step: "Check your email!" message with the entered email, plus a **Resend verification email** button that calls `supabase.auth.resend({ type: 'signup', email })`. No account-type selector anywhere.
-- **`src/pages/Login.tsx`** — remove approval/whitelist pre-checks; rely on Supabase's "Email not confirmed" error and surface it with a "Resend confirmation" affordance.
-- **`src/pages/EmailVerification.tsx`** + **`src/pages/AdminVerifiedEmails.tsx`** + **`src/pages/AdminApprovals.tsx`** + **`src/pages/RequestAccess.tsx`** — remove from routes in `src/App.tsx`; delete the files.
-- Any nav links pointing to the deleted admin/request pages get removed.
+- New migration: `ALTER TABLE public.children ADD COLUMN email citext;` + unique partial index `WHERE email IS NOT NULL` + `find_parent_by_child_email` security-definer function returning `(parent_id uuid, child_id uuid, first_name text, last_name text, grade_level text)`.
+- New edge function `supabase/functions/auth-create-student-account/index.ts` (CORS, zod validation, service-role admin createUser).
+- Reuse `account_links` table — no new linking table.
+- All student gating uses the existing `isStudent()` helper so we don't sprinkle string checks.
+- No changes to parent verification code (`DOLPHIN2026` stays active).
 
-## Memory updates
+## Out of scope
 
-- Update `mem://index.md` Core: change "Registration gated by whitelist/@chadwickschool.org" → "Registration gated by a community verification code; all new accounts are parents."
-- Drop now-obsolete memory references (whitelist, approval workflow, pre-verification, account-type assignment).
+- I'm not changing the existing student profile-setup flow beyond making it skip for students created via this new route (they're marked `profile_complete=true` immediately).
+- No bulk migration of existing students — this is for new signups.
 
-## Initial verification code
-
-Using **`DOLPHIN2026`** as the default seed (user can change via direct DB update or by deactivating and adding a new row).
-
-## Out of scope (left intact)
-
-- Student dashboard, account links, family schedule, series student RPCs — no new students will be created, but existing data still works.
-- Profile completion flow after email verification — unchanged.
-- Password reset flow — unchanged.
+Want me to proceed with all four phases in one go?
