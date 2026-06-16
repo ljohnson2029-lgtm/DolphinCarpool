@@ -77,6 +77,7 @@ export type Database = {
         Row: {
           age: number
           created_at: string | null
+          email: string | null
           first_name: string
           grade_level: string | null
           id: string
@@ -88,6 +89,7 @@ export type Database = {
         Insert: {
           age: number
           created_at?: string | null
+          email?: string | null
           first_name?: string
           grade_level?: string | null
           id?: string
@@ -99,6 +101,7 @@ export type Database = {
         Update: {
           age?: number
           created_at?: string | null
+          email?: string | null
           first_name?: string
           grade_level?: string | null
           id?: string
@@ -1326,6 +1329,16 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      find_parent_by_child_email: {
+        Args: { _email: string }
+        Returns: {
+          child_id: string
+          first_name: string
+          grade_level: string
+          last_name: string
+          parent_id: string
+        }[]
       }
       get_family_schedule: {
         Args: { student_user_id: string }
