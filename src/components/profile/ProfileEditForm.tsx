@@ -361,6 +361,18 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
                         </Select>
                       </div>
                     </div>
+                    <div>
+                      <Label>Child's Email <span className="text-muted-foreground font-normal">(required for student account access)</span></Label>
+                      <Input
+                        type="email"
+                        value={child.email}
+                        onChange={e => { const u = [...children]; u[i] = { ...u[i], email: e.target.value }; setChildren(u); }}
+                        placeholder="child@example.com"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Your child will use this email to create their student account
+                      </p>
+                    </div>
                   </div>
                 );
               })
