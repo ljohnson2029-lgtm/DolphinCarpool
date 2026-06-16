@@ -63,6 +63,7 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const formRef = useRef<HTMLDivElement>(null);
+  const vehicleManagerRef = useRef<VehicleManagerHandle>(null);
   const { vehicles, loading: vehiclesLoading } = useVehicles();
 
   const isEditMode = !!profile?.profile_complete;
