@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Car, Plus, Trash2, Star } from "lucide-react";
-import { type Vehicle, useVehicles } from "@/hooks/useVehicles";
+import { useVehicles } from "@/hooks/useVehicles";
 import { useToast } from "@/hooks/use-toast";
 
 interface NewVehicle {
@@ -16,6 +16,13 @@ interface NewVehicle {
 }
 
 const emptyVehicle: NewVehicle = { car_make: "", car_model: "", car_color: "", license_plate: "" };
+
+export interface VehicleManagerHandle {
+  /** If no vehicles exist yet, save the in-progress draft. Returns true if a valid vehicle exists (saved or already present). */
+  commitDraftIfNeeded: () => Promise<boolean>;
+  hasDraftStarted: () => boolean;
+  isDraftValid: () => boolean;
+}
 
 // Moved OUTSIDE VehicleManager to prevent focus loss on re-render
 const VehicleFields = ({ data, onChange }: { data: NewVehicle; onChange: (d: NewVehicle) => void }) => (
@@ -39,22 +46,44 @@ const VehicleFields = ({ data, onChange }: { data: NewVehicle; onChange: (d: New
   </div>
 );
 
-const VehicleManager = () => {
+const isValid = (v: NewVehicle) =>
+  !!(v.car_make.trim() && v.car_model.trim() && v.car_color.trim() && v.license_plate.trim());
+
+const isStarted = (v: NewVehicle) =>
+  !!(v.car_make.trim() || v.car_model.trim() || v.car_color.trim() || v.license_plate.trim());
+
+const VehicleManager = forwardRef<VehicleManagerHandle>((_, ref) => {
   const { vehicles, loading, addVehicle, updateVehicle, removeVehicle, setPrimary } = useVehicles();
   const { toast } = useToast();
+  // When there are no vehicles, the draft fields are always visible (no button required).
   const [showAdd, setShowAdd] = useState(false);
   const [newVehicle, setNewVehicle] = useState<NewVehicle>(emptyVehicle);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<NewVehicle>(emptyVehicle);
   const [saving, setSaving] = useState(false);
 
-  // Auto-open the add form when there are no vehicles yet (mandatory field UX)
+  // Auto-show the draft form when there are no vehicles yet (mandatory field UX)
   useEffect(() => {
     if (!loading && vehicles.length === 0) setShowAdd(true);
   }, [loading, vehicles.length]);
 
-  const isValid = (v: NewVehicle) =>
-    v.car_make.trim() && v.car_model.trim() && v.car_color.trim() && v.license_plate.trim();
+  useImperativeHandle(ref, () => ({
+    hasDraftStarted: () => isStarted(newVehicle),
+    isDraftValid: () => isValid(newVehicle),
+    commitDraftIfNeeded: async () => {
+      if (vehicles.length > 0) return true;
+      if (!isValid(newVehicle)) return false;
+      const error = await addVehicle(newVehicle);
+      if (error) {
+        toast({ title: "Error adding vehicle", description: error.message, variant: "destructive" });
+        return false;
+      }
+      setNewVehicle(emptyVehicle);
+      return true;
+    },
+  }), [vehicles.length, newVehicle, addVehicle, toast]);
+
+  const isFirstVehicle = vehicles.length === 0;
 
   const handleAdd = async () => {
     if (!isValid(newVehicle)) {
@@ -115,7 +144,7 @@ const VehicleManager = () => {
             <Car className="h-5 w-5" />
             My Vehicles
           </span>
-          {!showAdd && (
+          {vehicles.length > 0 && !showAdd && (
             <Button type="button" size="sm" variant="outline" onClick={() => setShowAdd(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Add Another Vehicle
@@ -124,16 +153,6 @@ const VehicleManager = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {vehicles.length === 0 && !showAdd && (
-          <div className="text-center py-6 space-y-2">
-            <Car className="h-8 w-8 mx-auto text-muted-foreground/50" />
-            <p className="text-sm text-muted-foreground">No vehicles added yet.</p>
-            <Button size="sm" onClick={() => setShowAdd(true)}>
-              <Plus className="w-4 h-4 mr-2" /> Add Vehicle
-            </Button>
-          </div>
-        )}
-
         {vehicles.map((v) => (
           <div key={v.id} className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
@@ -187,17 +206,27 @@ const VehicleManager = () => {
 
         {showAdd && (
           <div className="border rounded-lg p-4 space-y-3 border-dashed border-primary/40">
-            <p className="text-sm font-medium">New Vehicle</p>
+            {isFirstVehicle ? (
+              <p className="text-xs text-muted-foreground">
+                Fill in your vehicle details — it'll be saved automatically when you continue.
+              </p>
+            ) : (
+              <p className="text-sm font-medium">New Vehicle</p>
+            )}
             <VehicleFields data={newVehicle} onChange={setNewVehicle} />
-            <div className="flex gap-2">
-              <Button size="sm" onClick={handleAdd} disabled={saving}>Add Vehicle</Button>
-              <Button size="sm" variant="outline" onClick={() => { setShowAdd(false); setNewVehicle(emptyVehicle); }}>Cancel</Button>
-            </div>
+            {!isFirstVehicle && (
+              <div className="flex gap-2">
+                <Button type="button" size="sm" onClick={handleAdd} disabled={saving}>Add Vehicle</Button>
+                <Button type="button" size="sm" variant="outline" onClick={() => { setShowAdd(false); setNewVehicle(emptyVehicle); }}>Cancel</Button>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
     </Card>
   );
-};
+});
+
+VehicleManager.displayName = "VehicleManager";
 
 export default VehicleManager;

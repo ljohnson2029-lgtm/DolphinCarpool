@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GRADE_LEVELS, PARENT_GRADE_LEVEL } from "@/constants/gradeLevels";
 import AddressAutocompleteInput from "@/components/AddressAutocompleteInput";
 import { User, GraduationCap, Home, Phone, Mail, Link2, ArrowRight, ArrowLeft, CheckCircle2, Plus, Trash2, Users, AlertCircle, Sparkles } from "lucide-react";
-import VehicleManager from "@/components/VehicleManager";
+import VehicleManager, { type VehicleManagerHandle } from "@/components/VehicleManager";
 import PhoneNumberInput from "@/components/PhoneNumberInput";
 import { isValidPhoneNumber } from "@/lib/phone-validation";
 import { useScrollReveal } from "@/lib/animations";
@@ -63,6 +63,7 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const formRef = useRef<HTMLDivElement>(null);
+  const vehicleManagerRef = useRef<VehicleManagerHandle>(null);
   const { vehicles, loading: vehiclesLoading } = useVehicles();
 
   const isEditMode = !!profile?.profile_complete;
@@ -268,8 +269,13 @@ const ProfileSetup = () => {
     }, 50);
   };
 
-  const handleAttemptContinue = () => {
+  const handleAttemptContinue = async () => {
     setAttemptedSubmit(true);
+
+    // Auto-save the inline vehicle draft before validating (no "Add Vehicle" click needed)
+    if (isParent && vehicles.length === 0 && vehicleManagerRef.current) {
+      await vehicleManagerRef.current.commitDraftIfNeeded();
+    }
 
     if (!isStep2Valid()) {
       toast({
@@ -676,7 +682,7 @@ const ProfileSetup = () => {
             {/* Parent-only: Vehicle Information */}
             {isParent && (
               <div className="space-y-2">
-                <VehicleManager />
+                <VehicleManager ref={vehicleManagerRef} />
                 {attemptedSubmit && !hasValidVehicle && !vehiclesLoading && (
                   <p className="text-sm text-destructive flex items-center gap-1">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
