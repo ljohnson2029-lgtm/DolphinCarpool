@@ -42,7 +42,7 @@ const Footer = () => {
               <Link to="/help" className="block text-primary-foreground/70 hover:text-primary-foreground transition-colors">FAQ / Help</Link>
               <Link to="/feedback" className="block text-primary-foreground/70 hover:text-primary-foreground transition-colors">Feedback</Link>
               <a
-                href="mailto:chadwickschoolpool@gmail.com"
+                href="mailto:dolphincarpool@gmail.com"
                 className="flex items-center gap-1.5 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
               >
                 <Mail className="w-3.5 h-3.5" />

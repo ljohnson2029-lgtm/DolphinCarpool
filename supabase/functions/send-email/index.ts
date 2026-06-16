@@ -125,7 +125,7 @@ serve(async (req) => {
       throw new Error('Resend API key not configured');
     }
 
-    const SUPPORT_EMAIL = 'chadwickschoolpool@gmail.com';
+    const SUPPORT_EMAIL = 'dolphincarpool@gmail.com';
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',

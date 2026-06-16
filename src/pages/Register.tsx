@@ -195,7 +195,7 @@ const Register = () => {
       const { error } = await supabase.auth.resend({
         type: "signup",
         email: email.toLowerCase().trim(),
-        options: { emailRedirectTo: "https://chadwickschoolpool.org/auth/callback" },
+        options: { emailRedirectTo: "https://dolphincarpool.org/auth/callback" },
       });
       if (error) throw error;
       toast({ title: "Email sent", description: "Check your inbox for the confirmation link." });

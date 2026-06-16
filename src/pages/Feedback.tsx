@@ -45,10 +45,10 @@ const Feedback = () => {
               <Mail className="w-4 h-4" />
               Prefer email? Contact us at:{" "}
               <a 
-                href="mailto:chadwickschoolpool@gmail.com" 
+                href="mailto:dolphincarpool@gmail.com" 
                 className="text-primary hover:underline font-medium"
               >
-                chadwickschoolpool@gmail.com
+                dolphincarpool@gmail.com
               </a>
             </p>
           </div>

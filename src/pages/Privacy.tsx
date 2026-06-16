@@ -232,11 +232,11 @@ const Privacy = () => {
                   If you have any questions about this privacy policy or our data practices, please contact us:
                 </p>
                 <a 
-                  href="mailto:chadwickschoolpool@gmail.com"
+                  href="mailto:dolphincarpool@gmail.com"
                   className="inline-flex items-center gap-2 text-primary hover:underline"
                 >
                   <Mail className="w-4 h-4" />
-                  chadwickschoolpool@gmail.com
+                  dolphincarpool@gmail.com
                 </a>
               </CardContent>
             </Card>
