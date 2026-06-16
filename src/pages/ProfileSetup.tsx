@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GRADE_LEVELS, PARENT_GRADE_LEVEL } from "@/constants/gradeLevels";
 import AddressAutocompleteInput from "@/components/AddressAutocompleteInput";
 import { User, GraduationCap, Home, Phone, Mail, Link2, ArrowRight, ArrowLeft, CheckCircle2, Plus, Trash2, Users, AlertCircle, Sparkles } from "lucide-react";
-import VehicleManager from "@/components/VehicleManager";
+import VehicleManager, { type VehicleManagerHandle } from "@/components/VehicleManager";
 import PhoneNumberInput from "@/components/PhoneNumberInput";
 import { isValidPhoneNumber } from "@/lib/phone-validation";
 import { useScrollReveal } from "@/lib/animations";
