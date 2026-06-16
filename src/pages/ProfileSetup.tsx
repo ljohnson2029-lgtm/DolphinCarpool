@@ -24,6 +24,7 @@ interface Child {
   last_name: string;
   age: string;
   grade_level: string;
+  email: string;
 }
 
 /* ── Validation helpers ──────────────────────────── */
@@ -89,7 +90,7 @@ const ProfileSetup = () => {
 
   // Vehicle fields are now managed via VehicleManager component
   
-  const [children, setChildren] = useState<Child[]>([{ first_name: "", last_name: "", age: "", grade_level: "" }]);
+  const [children, setChildren] = useState<Child[]>([{ first_name: "", last_name: "", age: "", grade_level: "", email: "" }]);
   const [childTouched, setChildTouched] = useState<Record<string, boolean>>({});
 
   // Student fields
@@ -148,6 +149,8 @@ const ProfileSetup = () => {
           last_name: c.last_name || "",
           age: String(c.age),
           grade_level: c.grade_level || "",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          email: (c as any).email || "",
         })));
       }
     };
@@ -360,7 +363,9 @@ const ProfileSetup = () => {
               age: parseInt(c.age),
               school: c.grade_level || "",
               grade_level: c.grade_level || null,
-            }))
+              email: c.email && c.email.trim() ? c.email.trim().toLowerCase() : null,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            })) as any
           );
         }
       }
@@ -791,10 +796,24 @@ const ProfileSetup = () => {
                             <FieldErrorMessage error={getChildFieldError(i, "grade_level")} />
                           </div>
                         </div>
+                        <div>
+                          <Label className="flex items-center gap-1">
+                            Child's Email <span className="text-muted-foreground font-normal text-xs">(required for student account access)</span>
+                          </Label>
+                          <Input
+                            type="email"
+                            value={child.email}
+                            onChange={e => { const u = [...children]; u[i] = { ...u[i], email: e.target.value }; setChildren(u); }}
+                            placeholder="child@example.com"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Your child will use this email to create their student account
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
-                  <Button type="button" variant="outline" onClick={() => setChildren([...children, { first_name: "", last_name: "", age: "", grade_level: "" }])} className="gap-2">
+                  <Button type="button" variant="outline" onClick={() => setChildren([...children, { first_name: "", last_name: "", age: "", grade_level: "", email: "" }])} className="gap-2">
                     <Plus className="h-4 w-4" /> Add Child
                   </Button>
                 </CardContent>

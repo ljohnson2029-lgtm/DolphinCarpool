@@ -57,20 +57,12 @@ import {
           {/* Quick Actions */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/my-rides')}>
                 <CardContent className="py-6 text-center">
                   <Calendar className="h-8 w-8 mx-auto mb-3 text-primary" />
                   <p className="font-medium">View Scheduled Rides</p>
-                  <p className="text-sm text-muted-foreground">All linked parent rides</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/family-links')}>
-                <CardContent className="py-6 text-center">
-                  <Users className="h-8 w-8 mx-auto mb-3 text-primary" />
-                  <p className="font-medium">Manage Linked Parents</p>
-                  <p className="text-sm text-muted-foreground">Link or remove parents to your account</p>
+                  <p className="text-sm text-muted-foreground">All rides your parent has scheduled for you</p>
                 </CardContent>
               </Card>
 
@@ -78,11 +70,11 @@ import {
                 <CardContent className="py-6 text-center">
                   <User className="h-8 w-8 mx-auto mb-3 text-primary" />
                   <p className="font-medium">View Profile</p>
-                  <p className="text-sm text-muted-foreground">Edit your profile information</p>
+                  <p className="text-sm text-muted-foreground">View your profile information</p>
                 </CardContent>
               </Card>
            </div>
-           
+
            {/* How to Use Guide */}
            <div className="mt-6">
              <HowToUseGuide isStudent={true} />
