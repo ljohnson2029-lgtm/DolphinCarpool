@@ -25,6 +25,7 @@ interface EditChild {
   last_name: string;
   age: string;
   grade_level: string;
+  email: string;
 }
 
 interface ProfileEditFormProps {
@@ -72,6 +73,8 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
           last_name: c.last_name || "",
           age: String(c.age),
           grade_level: c.grade_level || "",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          email: (c as any).email || "",
         })));
       }
     };
@@ -164,7 +167,9 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
               age: parseInt(c.age),
               school: c.grade_level || "",
               grade_level: c.grade_level || null,
-            }))
+              email: c.email.trim() ? c.email.trim().toLowerCase() : null,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            })) as any
           );
         }
       }
@@ -268,7 +273,7 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
               <Button
                 type="button"
                 size="sm"
-                onClick={() => setChildren([...children, { first_name: "", last_name: "", age: "", grade_level: "" }])}
+                onClick={() => setChildren([...children, { first_name: "", last_name: "", age: "", grade_level: "", email: "" }])}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Child
@@ -355,6 +360,18 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
                           </SelectContent>
                         </Select>
                       </div>
+                    </div>
+                    <div>
+                      <Label>Child's Email <span className="text-muted-foreground font-normal">(required for student account access)</span></Label>
+                      <Input
+                        type="email"
+                        value={child.email}
+                        onChange={e => { const u = [...children]; u[i] = { ...u[i], email: e.target.value }; setChildren(u); }}
+                        placeholder="child@example.com"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Your child will use this email to create their student account
+                      </p>
                     </div>
                   </div>
                 );
