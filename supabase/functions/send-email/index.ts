@@ -134,7 +134,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Chadwick SchoolPool <noreply@chadwickschoolpool.org>',
+        from: 'Dolphin Carpool <noreply@dolphincarpool.org>',
         to: [SUPPORT_EMAIL],
         subject: `[SchoolPool Support] ${escapeHtml(subject)}`,
         html: `
