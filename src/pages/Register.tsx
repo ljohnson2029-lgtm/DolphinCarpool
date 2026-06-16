@@ -231,7 +231,7 @@ const Register = () => {
             </CardTitle>
             <CardDescription>
               {step === "code" &&
-                "Your verification code was provided by the Dolphin Carpool community. Contact us at efang508@gmail.com if you need help."}
+                "Your verification code was provided by the Dolphin Carpool community. Contact us at dolphincarpool@gmail.com if you need help."}
               {step === "form" && "All fields are required to create your parent account."}
               {step === "checkEmail" && (
                 <>We sent a verification link to <span className="font-semibold text-foreground">{email}</span>. Click the link to confirm your account.</>
