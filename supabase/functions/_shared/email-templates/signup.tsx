@@ -49,7 +49,7 @@ export const SignupEmail = ({
         </Button>
         <Text style={footer}>
           If you didn't create an account, you can safely ignore this email.
-          Questions? Reach us at efang508@gmail.com.
+          Questions? Reach us at dolphincarpool@gmail.com.
         </Text>
       </Container>
     </Body>
