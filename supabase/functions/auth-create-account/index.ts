@@ -34,6 +34,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+    const authClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    );
 
     // Re-validate community signup code server-side (case-insensitive via citext)
     const trimmedCode = String(signupCode).trim();
@@ -101,16 +105,19 @@ serve(async (req) => {
 
     const passwordHash = bcrypt.hashSync(password);
 
-    // Create the auth user UNCONFIRMED so Supabase requires email link verification.
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+    // Create the auth user through the public signup flow so the confirmation
+    // email is sent immediately by the auth email system.
+    const { data: authData, error: authError } = await authClient.auth.signUp({
       email: normalizedEmail,
       password,
-      email_confirm: false,
-      user_metadata: { username, first_name: firstName, last_name: lastName },
+      options: {
+        emailRedirectTo: "https://dolphincarpool.org/auth/callback",
+        data: { username, first_name: firstName, last_name: lastName },
+      },
     });
 
     if (authError || !authData?.user) {
-      console.error("auth.admin.createUser error:", authError);
+      console.error("auth.signUp error:", authError);
       return new Response(JSON.stringify({ error: `Failed to create account: ${authError?.message ?? "Unknown error"}` }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
