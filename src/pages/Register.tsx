@@ -101,8 +101,6 @@ const Register = () => {
     if (!email.trim()) errs.email = "Required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = "Enter a valid email";
     if (!password) errs.password = "Required";
-    else if (!passwordRegex.test(password))
-      errs.password = "8+ chars with uppercase, lowercase, and number";
     if (!confirmPassword) errs.confirmPassword = "Required";
     else if (password && password !== confirmPassword)
       errs.confirmPassword = "Passwords do not match";
