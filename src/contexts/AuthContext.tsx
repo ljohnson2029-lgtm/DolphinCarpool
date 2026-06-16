@@ -89,9 +89,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (error) {
       console.error('Error fetching profile:', error);
-    } else {
-      setProfile(data as unknown as Profile);
+      return;
     }
+
+    if (!data) {
+      // Orphaned session — auth user has no profile row (e.g. account was deleted).
+      // Sign out so the app doesn't hang on a forever-loading spinner ("blank white screen").
+      console.warn('No profile found for user; clearing orphaned session.');
+      try {
+        await supabase.auth.signOut({ scope: 'local' });
+      } catch (e) { /* best effort */ }
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+            localStorage.removeItem(key);
+          }
+        }
+      } catch (e) { /* noop */ }
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      return;
+    }
+
+    setProfile(data as unknown as Profile);
   };
 
   const logout = async () => {
