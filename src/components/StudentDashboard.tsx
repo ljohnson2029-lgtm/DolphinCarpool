@@ -9,7 +9,6 @@ import HowToUseGuide from "@/components/HowToUseGuide";
 import { 
   GraduationCap,
   Calendar,
-  Users,
   User,
 } from "lucide-react";
  
