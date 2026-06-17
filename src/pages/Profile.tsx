@@ -578,16 +578,17 @@ const Profile = () => {
                       <Users className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Family Links</h2>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        {isChild ? 'Family Links' : "Your Children's Account Access"}
+                      </h2>
                       <p className="text-gray-500">
                         {isChild
                           ? "Connect with your parent's account"
-                          : "Manage students linked to your account"
-                        }
+                          : "Attach an email to each child so they can create a student account"}
                       </p>
                     </div>
                   </div>
-                  <FamilyLinksSection />
+                  {isChild ? <FamilyLinksSection /> : <ChildEmailManager />}
                 </motion.div>
               </>
             )}
