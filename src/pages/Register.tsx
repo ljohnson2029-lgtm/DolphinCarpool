@@ -257,6 +257,7 @@ const Register = () => {
           <CardHeader className="text-center space-y-2">
             <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/30">
               {step === "choose" && <Users className="w-7 h-7 text-white" />}
+              {(step === "termsParent" || step === "termsStudent") && <ShieldCheck className="w-7 h-7 text-white" />}
               {step === "code" && <ShieldCheck className="w-7 h-7 text-white" />}
               {step === "form" && <ArrowRight className="w-7 h-7 text-white" />}
               {step === "student" && <GraduationCap className="w-7 h-7 text-white" />}
@@ -264,6 +265,7 @@ const Register = () => {
             </div>
             <CardTitle className="text-2xl">
               {step === "choose" && "Join Dolphin Carpool"}
+              {(step === "termsParent" || step === "termsStudent") && "Terms and Conditions"}
               {step === "code" && "Enter Your Verification Code"}
               {step === "form" && "Create Your Parent Account"}
               {step === "student" && "Create Your Student Account"}
@@ -271,6 +273,7 @@ const Register = () => {
             </CardTitle>
             <CardDescription>
               {step === "choose" && "Choose how you're signing up."}
+              {(step === "termsParent" || step === "termsStudent") && "Review and accept our Terms and Conditions to continue."}
               {step === "code" &&
                 "Your verification code was provided by the Dolphin Carpool community. Contact us at dolphincarpool@gmail.com if you need help."}
               {step === "form" && "All fields are required to create your parent account."}
