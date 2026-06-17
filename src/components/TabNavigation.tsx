@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Settings,
   Repeat,
+  FileText,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationDropdown } from "./NotificationDropdown";
@@ -50,6 +51,7 @@ const TabNavigation = () => {
     { label: "Give Feedback", path: "/feedback", icon: MessageSquarePlus },
     { label: "About", path: "/about", icon: Info },
     { label: "Safety", path: "/safety", icon: Shield },
+    { label: "Terms and Conditions", path: "/terms", icon: FileText },
     { label: "Settings", path: "/settings", icon: Settings },
   ];
 
