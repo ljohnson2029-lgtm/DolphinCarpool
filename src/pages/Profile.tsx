@@ -19,6 +19,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import { SignOutDialog } from '@/components/ConfirmDialogs';
 import FamilyLinksSection from '@/components/FamilyLinksSection';
+import ChildEmailManager from '@/components/profile/ChildEmailManager';
 import ProfileEditForm from '@/components/profile/ProfileEditForm';
 
 interface LinkedParentInfo {
