@@ -152,7 +152,8 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'Dolphin Carpool <noreply@dolphincarpool.org>',
         to: [SUPPORT_EMAIL],
-        subject: `[SchoolPool Support] ${escapeHtml(subject)}`,
+        reply_to: senderEmail,
+        subject: `[Dolphin Carpool Support] ${escapeHtml(subject)}`,
         html: `
           <h2>New Support Message</h2>
           <p><strong>From:</strong> ${escapeHtml(senderFullName)} (${escapeHtml(senderEmail)})</p>
