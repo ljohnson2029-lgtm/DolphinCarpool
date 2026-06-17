@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { GRADE_LEVELS, PARENT_GRADE_LEVEL } from "@/constants/gradeLevels";
 import AddressAutocompleteInput from "@/components/AddressAutocompleteInput";
-import { User, GraduationCap, Home, Phone, Mail, Link2, ArrowRight, ArrowLeft, CheckCircle2, Plus, Trash2, Users, AlertCircle, Sparkles } from "lucide-react";
+import { User, GraduationCap, Home, Phone, Mail, ArrowRight, ArrowLeft, CheckCircle2, Plus, Trash2, Users, AlertCircle, Sparkles } from "lucide-react";
 import VehicleManager, { type VehicleManagerHandle } from "@/components/VehicleManager";
 import PhoneNumberInput from "@/components/PhoneNumberInput";
 import { isValidPhoneNumber } from "@/lib/phone-validation";
@@ -69,7 +69,7 @@ const ProfileSetup = () => {
 
   const isEditMode = !!profile?.profile_complete;
   const [step, setStep] = useState(1);
-  const totalSteps = isEditMode ? 2 : 3;
+  const totalSteps = 2;
 
   // Start at step 2 for edit mode
   useEffect(() => {
@@ -99,11 +99,6 @@ const ProfileSetup = () => {
   const [parentGuardianEmail, setParentGuardianEmail] = useState("");
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
-
-  // Linking
-  const [linkEmail, setLinkEmail] = useState("");
-  const [linkSending, setLinkSending] = useState(false);
-  const [linkSent, setLinkSent] = useState(false);
 
   const [saving, setSaving] = useState(false);
 
@@ -299,7 +294,7 @@ const ProfileSetup = () => {
     handleSaveProfile();
   };
 
-  /* ── Save profile (Step 2 → 3) ─────────────────── */
+  /* ── Save profile (Step 2 completion) ──────────── */
   const handleSaveProfile = async () => {
     if (!isStep2Valid()) {
       setAttemptedSubmit(true);
@@ -322,6 +317,7 @@ const ProfileSetup = () => {
         last_name: lastName.trim(),
         phone_number: phoneNumber.trim(),
         updated_at: new Date().toISOString(),
+        profile_complete: true,
       };
 
       if (isParent) {
@@ -374,7 +370,8 @@ const ProfileSetup = () => {
         toast({ title: "Profile updated!", description: "Your changes have been saved." });
         navigate("/profile");
       } else {
-        setStep(3);
+        toast({ title: "Welcome!", description: "Your profile is complete. Enjoy the app!" });
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
@@ -383,101 +380,6 @@ const ProfileSetup = () => {
     }
   };
 
-  /* ── Send link request (Step 3) ────────────────── */
-  const handleSendLink = async () => {
-    if (!user || !linkEmail.trim()) return;
-    setLinkSending(true);
-
-    try {
-      const normalizedEmail = linkEmail.toLowerCase().trim();
-      const expectedRole = isParent ? 'student' : 'parent';
-      const { data: targetData, error: lookupError } = await supabase.functions.invoke("lookup-parent", {
-        body: { email: normalizedEmail, expected_role: expectedRole },
-      });
-
-      if (lookupError || !targetData?.found || !targetData?.user_id) {
-        toast({ title: "User not found", description: targetData?.message || "No account found with that email address.", variant: "destructive" });
-        setLinkSending(false);
-        return;
-      }
-
-      const studentId = isParent ? targetData.user_id : user.id;
-      const parentId = isParent ? user.id : targetData.user_id;
-
-      // Check for existing link
-      const { data: existingLink } = await supabase
-        .from("account_links")
-        .select("id, status")
-        .eq("student_id", studentId)
-        .eq("parent_id", parentId)
-        .maybeSingle();
-
-      if (existingLink) {
-        if (existingLink.status === "pending") {
-          setLinkSent(true);
-          toast({ title: "Request Already Sent", description: "A pending link request already exists. Waiting for approval.", variant: "destructive" });
-          setLinkSending(false);
-          return;
-        }
-        if (existingLink.status === "approved") {
-          toast({ title: "Already Linked", description: "You're already linked to this account.", variant: "destructive" });
-          setLinkSending(false);
-          return;
-        }
-        // If denied, delete old and re-create
-        await supabase.from("account_links").delete().eq("id", existingLink.id);
-      }
-
-      const { error } = await supabase.from("account_links").insert({
-        student_id: studentId,
-        parent_id: parentId,
-        status: "pending",
-        requested_by: user.id,
-      });
-      if (error) throw error;
-
-      setLinkSent(true);
-      toast({ title: "Link request sent!", description: "They will receive a notification to approve." });
-    } catch (error) {
-      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
-    } finally {
-      setLinkSending(false);
-    }
-  };
-
-  /* ── Complete onboarding ───────────────────────── */
-  const handleFinish = async () => {
-    if (!isStep2Valid()) {
-      setStep(2);
-      setAttemptedSubmit(true);
-      toast({
-        title: "Please complete all required fields",
-        description: "Fill every required field before finishing signup.",
-        variant: "destructive",
-      });
-      scrollToFirstError();
-      return;
-    }
-
-    if (!user) return;
-    setSaving(true);
-
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ profile_complete: true, updated_at: new Date().toISOString() })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      toast({ title: "Welcome!", description: "Your profile is complete. Enjoy the app!" });
-      window.location.href = "/dashboard";
-    } catch (error) {
-      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   if (loading || !user || !profile) {
     return (
@@ -524,7 +426,6 @@ const ProfileSetup = () => {
             Step {step} of {totalSteps}:{" "}
             {step === 1 && "Welcome"}
             {step === 2 && "Your Information"}
-            {step === 3 && "Link Accounts"}
           </p>
           <div className="mt-4 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-sm">
             <Progress value={progressPercent} className="h-2" />
@@ -833,84 +734,12 @@ const ProfileSetup = () => {
                 disabled={saving || !step2Valid}
                 onClick={handleAttemptContinue}
               >
-                {saving ? "Saving..." : step2Valid ? "Save & Continue" : "Complete required fields"} <ArrowRight className="h-4 w-4" />
+                {saving ? "Saving..." : step2Valid ? (isEditMode ? "Save Changes" : "Complete Profile") : "Complete required fields"} <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </motion.div>
         )}
 
-        {/* Step 3: Account Linking */}
-        {step === 3 && (
-          <motion.div
-            key="step3"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-6"
-          >
-            <Card>
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Link2 className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle>
-                  {isParent ? "Link to Your Child's Account" : "Link to Your Parent's Account"}
-                </CardTitle>
-                <CardDescription>
-                  {isParent
-                    ? "Enter your child's email address to connect accounts."
-                    : "Enter your parent's email address to connect accounts."}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground text-center">
-                  You can skip this step and link accounts later in your Profile settings.
-                </p>
-                {linkSent ? (
-                  <div className="text-center space-y-3">
-                    <CheckCircle2 className="h-12 w-12 text-emerald-500 mx-auto" />
-                    <p className="text-sm text-muted-foreground">
-                      Link request sent! They'll need to approve it.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div>
-                      <Label>{isParent ? "Child's Email" : "Parent's Email"}</Label>
-                      <Input
-                        type="email"
-                        value={linkEmail}
-                        onChange={e => setLinkEmail(e.target.value)}
-                        placeholder={isParent ? "child@email.com" : "parent@email.com"}
-                      />
-                    </div>
-                    <Button
-                      onClick={handleSendLink}
-                      disabled={!linkEmail.trim() || linkSending}
-                      className="w-full gap-2"
-                    >
-                      {linkSending ? "Sending..." : "Send Link Request"}
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={() => setStep(2)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button
-                className="flex-1 gap-2"
-                onClick={handleFinish}
-                disabled={saving}
-              >
-                {saving ? "Finishing..." : linkSent ? "Continue to App" : "Skip for Now"} <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
         </AnimatePresence>
       </div>
     </motion.div>
