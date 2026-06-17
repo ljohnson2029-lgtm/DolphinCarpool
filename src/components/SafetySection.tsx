@@ -1,6 +1,5 @@
 import { Shield, Lock, UserCheck, AlertTriangle, Car, Phone, Heart, FileCheck, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 const SafetySection = () => {
   return (
@@ -18,7 +17,7 @@ const SafetySection = () => {
             Your Family's Safety Comes First
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive safety guidelines and protocols to protect your children during carpools
+            Protocol suggestions and best practices to keep your family safe during carpool arrangements
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-secondary to-primary mx-auto rounded-full mt-6" />
         </div>
@@ -190,35 +189,6 @@ const SafetySection = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        <Separator className="my-12" />
-
-        {/* Legal Disclaimer */}
-        <div className="bg-muted/50 rounded-2xl p-8 border">
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-600" />
-            Important Legal Notice
-          </h3>
-          <div className="space-y-4 text-sm text-muted-foreground">
-            <p>
-              <strong>Liability Waiver:</strong> Dolphin CarPool is a platform that connects families for carpooling purposes only. 
-              Dolphin CarPool does not provide transportation services, vehicle inspections, driver screenings, or insurance coverage.
-            </p>
-            <p>
-              <strong>Insurance Responsibility:</strong> All participants are responsible for maintaining adequate auto insurance 
-              that covers carpooling activities with non-family members. Some insurance policies may have exclusions for 
-              regular carpooling arrangements.
-            </p>
-            <p>
-              <strong>Assumption of Risk:</strong> By using Dolphin Carpool, you acknowledge that carpooling involves inherent risks 
-              and you assume all responsibility for your participation in carpool arrangements.
-            </p>
-            <p>
-              <strong>Parental Responsibility:</strong> Parents and guardians are solely responsible for the safety and 
-              supervision of their children during carpool activities.
-            </p>
-          </div>
         </div>
 
         {/* Security Badge */}

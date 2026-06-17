@@ -22,7 +22,7 @@ import Dashboard from "./pages/Dashboard";
 const About = lazy(() => import("./pages/About"));
 const Features = lazy(() => import("./pages/Features"));
 const Safety = lazy(() => import("./pages/Safety"));
-const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+
 const Profile = lazy(() => import("./pages/Profile"));
 const ProfileSetup = lazy(() => import("./pages/ProfileSetup"));
 const FamilyCarpools = lazy(() => import("./pages/FamilyCarpools"));
@@ -93,7 +93,7 @@ const AppRoutes = () => {
           <Route path="/about" element={<About />} />
           <Route path="/features" element={<Features />} />
           <Route path="/safety" element={<Safety />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
+          
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

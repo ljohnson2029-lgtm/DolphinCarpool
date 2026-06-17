@@ -37,7 +37,6 @@ const MobileBottomNav = () => {
     { label: "Give Feedback", path: "/feedback", icon: MessageSquarePlus },
     { label: "About", path: "/about", icon: Info },
     { label: "Safety", path: "/safety", icon: Shield },
-    { label: "How It Works", path: "/how-it-works", icon: HelpCircle },
     { label: "Settings", path: "/settings", icon: Settings },
   ];
 
