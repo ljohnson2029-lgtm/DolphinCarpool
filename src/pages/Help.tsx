@@ -242,15 +242,46 @@ export default function Help() {
           </Card>
         )}
 
+        {/* Quick Links */}
+        <div className="grid sm:grid-cols-3 gap-4 mb-12">
+          <Link to="/privacy" className="block">
+            <Card className="h-full hover:bg-muted/50 transition-colors">
+              <CardContent className="pt-6 flex flex-col items-center text-center">
+                <Shield className="h-8 w-8 text-primary mb-2" />
+                <h3 className="font-semibold">Privacy Policy</h3>
+                <p className="text-sm text-muted-foreground">Learn how we protect your data</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link to="/settings" className="block">
+            <Card className="h-full hover:bg-muted/50 transition-colors">
+              <CardContent className="pt-6 flex flex-col items-center text-center">
+                <Settings className="h-8 w-8 text-primary mb-2" />
+                <h3 className="font-semibold">Settings</h3>
+                <p className="text-sm text-muted-foreground">Manage your preferences</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link to="/family-links" className="block">
+            <Card className="h-full hover:bg-muted/50 transition-colors">
+              <CardContent className="pt-6 flex flex-col items-center text-center">
+                <Users className="h-8 w-8 text-primary mb-2" />
+                <h3 className="font-semibold">Family Links</h3>
+                <p className="text-sm text-muted-foreground">Connect with family members</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
         {/* Contact Support */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Mail className="h-5 w-5 text-primary" />
-              Contact Support
+              Still have questions? We're here to help.
             </CardTitle>
             <CardDescription>
-              Can't find what you're looking for? Send us a message and we'll get back to you within 24-48 hours.
+              Send us a message and we'll get back to you within 24-48 hours.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -306,36 +337,6 @@ export default function Help() {
           </CardContent>
         </Card>
 
-        {/* Quick Links */}
-        <div className="mt-8 grid sm:grid-cols-3 gap-4">
-          <Link to="/privacy" className="block">
-            <Card className="h-full hover:bg-muted/50 transition-colors">
-              <CardContent className="pt-6 flex flex-col items-center text-center">
-                <Shield className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold">Privacy Policy</h3>
-                <p className="text-sm text-muted-foreground">Learn how we protect your data</p>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link to="/settings" className="block">
-            <Card className="h-full hover:bg-muted/50 transition-colors">
-              <CardContent className="pt-6 flex flex-col items-center text-center">
-                <Settings className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold">Settings</h3>
-                <p className="text-sm text-muted-foreground">Manage your preferences</p>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link to="/family-links" className="block">
-            <Card className="h-full hover:bg-muted/50 transition-colors">
-              <CardContent className="pt-6 flex flex-col items-center text-center">
-                <Users className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold">Family Links</h3>
-                <p className="text-sm text-muted-foreground">Connect with family members</p>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
       </div>
     </DashboardLayout>
   );
