@@ -14,10 +14,10 @@ import { ArrowLeft, ArrowRight, Mail, ShieldCheck, Eye, EyeOff, CheckCircle2, Us
 import PhoneNumberInput from "@/components/PhoneNumberInput";
 import { isValidPhoneNumber } from "@/lib/phone-validation";
 import Navigation from "@/components/Navigation";
-import SignupWaiverCheckboxes from "@/components/SignupWaiverCheckboxes";
+import TermsAgreementStep from "@/components/TermsAgreementStep";
 import { cn } from "@/lib/utils";
 
-type Step = "choose" | "code" | "form" | "checkEmail" | "student";
+type Step = "choose" | "termsParent" | "termsStudent" | "code" | "form" | "checkEmail" | "student";
 
 const Register = () => {
   const navigate = useNavigate();
