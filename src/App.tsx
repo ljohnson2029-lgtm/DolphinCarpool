@@ -22,7 +22,7 @@ import Dashboard from "./pages/Dashboard";
 const About = lazy(() => import("./pages/About"));
 const Features = lazy(() => import("./pages/Features"));
 const Safety = lazy(() => import("./pages/Safety"));
-const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+
 const Profile = lazy(() => import("./pages/Profile"));
 const ProfileSetup = lazy(() => import("./pages/ProfileSetup"));
 const FamilyCarpools = lazy(() => import("./pages/FamilyCarpools"));
