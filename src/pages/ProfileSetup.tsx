@@ -100,11 +100,6 @@ const ProfileSetup = () => {
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
 
-  // Linking
-  const [linkEmail, setLinkEmail] = useState("");
-  const [linkSending, setLinkSending] = useState(false);
-  const [linkSent, setLinkSent] = useState(false);
-
   const [saving, setSaving] = useState(false);
 
   const isParent = profile?.account_type === "parent";
