@@ -80,7 +80,7 @@ serve(async (req) => {
       );
     }
 
-    const { subject, message, senderName, senderEmail } = await req.json();
+    const { subject, message, senderName, senderEmail: providedEmail } = await req.json();
 
     // Use provided senderName if available (for unauthenticated users)
     if (senderName) {
@@ -88,12 +88,23 @@ serve(async (req) => {
     }
 
     // Use provided senderEmail if available, otherwise keep authenticated/default
-    if (senderEmail) {
-      senderEmail = senderEmail;
+    if (providedEmail) {
+      senderEmail = providedEmail;
+    }
+
+    // Validate email format if provided
+    if (senderEmail && senderEmail !== 'anonymous' && senderEmail !== 'unknown') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(senderEmail)) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Invalid email format' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Validate inputs
-    if (!subject || !message) {
+    if (!subject || !message || !senderEmail || senderEmail === 'anonymous' || senderEmail === 'unknown') {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
