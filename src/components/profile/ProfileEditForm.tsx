@@ -370,10 +370,10 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
                         placeholder="child@example.com"
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        Attach your child's email so they can create a student account and view the rides you schedule for them.
+                        Attach your child's email so they can create a student account and view the rides you schedule for them. Once saved, your child just needs to go to the signup page, click "Sign Up as a Student" and use this email to create their account.
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        You can skip this for now and fill it out later in your profile settings.
+                        You can add this later in your profile settings.
                       </p>
                     </div>
                   </div>
