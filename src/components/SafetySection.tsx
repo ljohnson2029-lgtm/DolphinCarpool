@@ -18,7 +18,7 @@ const SafetySection = () => {
             Your Family's Safety Comes First
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive safety guidelines and protocols to protect your children during carpools
+            Protocol suggestions and best practices to keep your family safe during carpool arrangements
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-secondary to-primary mx-auto rounded-full mt-6" />
         </div>
