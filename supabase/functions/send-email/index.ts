@@ -80,11 +80,16 @@ serve(async (req) => {
       );
     }
 
-    const { subject, message, senderName } = await req.json();
+    const { subject, message, senderName, senderEmail } = await req.json();
 
     // Use provided senderName if available (for unauthenticated users)
     if (senderName) {
       senderFullName = senderName;
+    }
+
+    // Use provided senderEmail if available, otherwise keep authenticated/default
+    if (senderEmail) {
+      senderEmail = senderEmail;
     }
 
     // Validate inputs
