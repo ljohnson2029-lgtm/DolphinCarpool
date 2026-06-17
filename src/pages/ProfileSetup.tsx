@@ -294,7 +294,7 @@ const ProfileSetup = () => {
     handleSaveProfile();
   };
 
-  /* ── Save profile (Step 2 → 3) ─────────────────── */
+  /* ── Save profile (Step 2 completion) ──────────── */
   const handleSaveProfile = async () => {
     if (!isStep2Valid()) {
       setAttemptedSubmit(true);
