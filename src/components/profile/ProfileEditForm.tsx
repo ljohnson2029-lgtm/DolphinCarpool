@@ -99,15 +99,12 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
       // Vehicle validation is handled by VehicleManager separately
       // All children must be complete
       if (children.length > 0 && !children.every(isChildComplete)) return false;
-    } else {
-      if (!gradeLevel) return false;
     }
     return true;
   }, [firstName, lastName, phoneNumber, homeAddress, homeLatitude, homeLongitude, gradeLevel, isParent, children]);
 
   const fieldError = (value: string) => attempted && !value.trim();
   const addressError = attempted && isParent && (!homeAddress.trim() || !homeLatitude || !homeLongitude);
-  const gradeLevelError = attempted && !isParent && !gradeLevel;
 
   const errorBorder = "border-destructive focus-visible:ring-destructive";
 
@@ -124,18 +121,19 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
       const updateData: Record<string, any> = {
         first_name: firstName.trim(),
         last_name: lastName.trim(),
-        phone_number: phoneNumber.trim() || null,
         updated_at: new Date().toISOString(),
       };
+      if (isParent) {
+        updateData.phone_number = phoneNumber.trim() || null;
+      }
 
       if (isParent) {
         updateData.home_address = homeAddress;
         updateData.home_latitude = homeLatitude;
         updateData.home_longitude = homeLongitude;
         // Vehicle info is managed via VehicleManager, not profile fields
-      } else {
-        updateData.grade_level = gradeLevel || null;
       }
+      // Students cannot edit grade_level — managed by their parent
 
       const { error: profileError } = await supabase
         .from("profiles")
@@ -149,7 +147,7 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
         .update({
           first_name: firstName.trim(),
           last_name: lastName.trim(),
-          phone_number: phoneNumber.trim() || null,
+          ...(isParent ? { phone_number: phoneNumber.trim() || null } : {}),
         })
         .eq("user_id", user.id);
 
@@ -220,15 +218,16 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
               <FieldError show={fieldError(lastName)} />
             </div>
           </div>
-          <div>
-            <Label htmlFor="phone">
-              <Phone className="inline h-4 w-4 mr-1" />
-              Phone Number {isParent && <RequiredStar />}
-            </Label>
-            <PhoneNumberInput id="phone" value={phoneNumber} onChange={setPhoneNumber} className={isParent && fieldError(phoneNumber) ? errorBorder : ""} />
-            {isParent && <FieldError show={fieldError(phoneNumber)} />}
-            {!isParent && <p className="text-xs text-muted-foreground mt-1">Optional — not all students have a personal phone number</p>}
-          </div>
+          {isParent && (
+            <div>
+              <Label htmlFor="phone">
+                <Phone className="inline h-4 w-4 mr-1" />
+                Phone Number <RequiredStar />
+              </Label>
+              <PhoneNumberInput id="phone" value={phoneNumber} onChange={setPhoneNumber} className={fieldError(phoneNumber) ? errorBorder : ""} />
+              <FieldError show={fieldError(phoneNumber)} />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -384,7 +383,7 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
         </Card>
       )}
 
-      {/* Student-specific: Grade */}
+      {/* Student-specific: Grade (read-only) */}
       {!isParent && (
         <Card>
           <CardHeader>
@@ -394,18 +393,11 @@ const ProfileEditForm = ({ user, profile, isParent, onSave, onCancel }: ProfileE
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="gradeLevel">Grade Level <RequiredStar /></Label>
-            <Select value={gradeLevel} onValueChange={setGradeLevel}>
-              <SelectTrigger className={`mt-2 ${gradeLevelError ? errorBorder : ""}`}>
-                <SelectValue placeholder="Select your grade level" />
-              </SelectTrigger>
-              <SelectContent>
-                {GRADE_LEVELS.map(grade => (
-                  <SelectItem key={grade} value={grade}>{grade}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FieldError show={!!gradeLevelError} />
+            <Label>Grade Level</Label>
+            <p className="mt-2 font-semibold text-gray-900">{gradeLevel || "Not set"}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              To update your grade level, ask your parent to change it in their account settings.
+            </p>
           </CardContent>
         </Card>
       )}
