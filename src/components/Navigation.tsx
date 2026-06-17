@@ -249,6 +249,9 @@ const Navigation = () => {
                       <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2">
                         <Settings className="w-4 h-4" /> Settings
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/terms")} className="gap-2">
+                        <FileText className="w-4 h-4" /> Terms and Conditions
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="gap-2 text-red-600">
                         <LogOut className="w-4 h-4" /> Log out
