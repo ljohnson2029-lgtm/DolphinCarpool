@@ -69,7 +69,7 @@ const ProfileSetup = () => {
 
   const isEditMode = !!profile?.profile_complete;
   const [step, setStep] = useState(1);
-  const totalSteps = isEditMode ? 2 : 3;
+  const totalSteps = 2;
 
   // Start at step 2 for edit mode
   useEffect(() => {
