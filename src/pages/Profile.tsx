@@ -315,7 +315,7 @@ const Profile = () => {
                           </div>
                         </div>
 
-                        {profile.phone_number && (
+                        {profile.phone_number && !isChild && (
                           <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-colors">
                             <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
                               <Phone className="h-5 w-5 text-blue-600" />
@@ -491,105 +491,30 @@ const Profile = () => {
                   </motion.div>
                 )}
 
-                {/* Linked Parents */}
-                {isChild && (
+                {/* Children's Account Access — parents only */}
+                {isParent && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
                   >
-                    <Card className="rounded-2xl shadow-sm border border-gray-100 bg-white/80 backdrop-blur-sm overflow-hidden">
-                      <div className="h-1 w-full bg-gradient-to-r from-blue-500 to-cyan-400" />
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                          <Users className="h-5 w-5 text-blue-500" />
-                          Linked Parent Contact
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {loadingParents ? (
-                          <div className="space-y-3">
-                            <Skeleton className="h-32 rounded-xl" />
-                          </div>
-                        ) : linkedParents.length > 0 ? (
-                          <div className="space-y-4">
-                            {linkedParents.map((parent, index) => (
-                              <motion.div
-                                key={parent.parent_id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className="p-5 rounded-xl bg-blue-50/50 border border-blue-100"
-                              >
-                                <div className="flex items-center gap-4 mb-4">
-                                  <Avatar className="h-12 w-12">
-                                    <AvatarFallback className="bg-blue-200 text-blue-700">
-                                      {parent.parent_first_name[0]}{parent.parent_last_name[0]}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div>
-                                    <p className="font-semibold text-gray-900">
-                                      {parent.parent_first_name} {parent.parent_last_name}
-                                    </p>
-                                    <p className="text-sm text-gray-500">Parent/Guardian</p>
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Mail className="h-4 w-4 text-gray-400" />
-                                    <span className="text-gray-600">{parent.parent_email}</span>
-                                  </div>
-                                  {parent.parent_phone && (
-                                    <div className="flex items-center gap-2 text-sm">
-                                      <Phone className="h-4 w-4 text-gray-400" />
-                                      <span className="text-gray-600">{parent.parent_phone}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </motion.div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-center py-8">
-                            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                              <Users className="h-8 w-8 text-gray-400" />
-                            </div>
-                            <p className="text-gray-500 mb-3">No parent linked yet.</p>
-                            <Button variant="outline" onClick={() => navigate('/family-links')} className="gap-2">
-                              <UserPlus className="h-4 w-4" />
-                              Link to Parent Account
-                            </Button>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <Separator className="my-8" />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                        <Users className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">
+                          Your Children's Account Access
+                        </h2>
+                        <p className="text-gray-500">
+                          Attach an email to each child so they can create a student account
+                        </p>
+                      </div>
+                    </div>
+                    <ChildEmailManager />
                   </motion.div>
                 )}
-
-                {/* Family Links Section */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
-                >
-                  <Separator className="my-8" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        {isChild ? 'Family Links' : "Your Children's Account Access"}
-                      </h2>
-                      <p className="text-gray-500">
-                        {isChild
-                          ? "Connect with your parent's account"
-                          : "Attach an email to each child so they can create a student account"}
-                      </p>
-                    </div>
-                  </div>
-                  {isChild ? <FamilyLinksSection /> : <ChildEmailManager />}
-                </motion.div>
               </>
             )}
           </div>

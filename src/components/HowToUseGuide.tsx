@@ -93,12 +93,6 @@ const studentPages: GuidePage[] = [
       "You can browse all available ride offers and requests in the Family Carpools tab. You can view details but your parent manages any joining or posting.",
     icon: <Eye className="h-10 w-10" />,
   },
-  {
-    title: "Linking to Your Parent",
-    content:
-      "Make sure your account is linked to your parent's account so your rides show up here. Go to your Profile and send a link request to your parent's email.",
-    icon: <UserPlus className="h-10 w-10" />,
-  },
 ];
 
 const iconColors = [
