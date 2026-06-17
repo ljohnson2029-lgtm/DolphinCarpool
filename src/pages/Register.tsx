@@ -41,9 +41,6 @@ const Register = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [insuranceAgreed, setInsuranceAgreed] = useState(false);
-  const [safetyAgreed, setSafetyAgreed] = useState(false);
-  const [liabilityAgreed, setLiabilityAgreed] = useState(false);
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
