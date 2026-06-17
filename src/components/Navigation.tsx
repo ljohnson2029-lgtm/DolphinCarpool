@@ -371,6 +371,7 @@ const Navigation = () => {
                     >
                       <FileText className="w-5 h-5" />
                       Terms and Conditions
+                    </motion.button>
                     <motion.button
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
