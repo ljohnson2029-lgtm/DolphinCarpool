@@ -310,7 +310,7 @@ export default function Help() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {isSent && (
-                <div className="p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
+                <div className="p-4 bg-primary/10 text-primary rounded-lg border border-primary/20">
                   Message sent! We'll get back to you within 24-48 hours.
                 </div>
               )}
