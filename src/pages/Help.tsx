@@ -45,8 +45,8 @@ const helpSections = [
         answer: "Student accounts are designed for Dolphin Carpool students to link with their parents and view family carpools. Parent accounts have full access to create carpools, find other parents on the map, and manage ride requests."
       },
       {
-        question: "How do I link my Parent account to my child?",
-        answer: "Go to 'Family Links' in your dashboard. Enter your childs email address and click 'Send Link Request'. "
+        question: "How do I give my child access to view their rides?",
+        answer: "Go to your Profile and find the Children section. For each child you have added, there is an 'Attach Child's Email' field. Enter your child's email address and save it. Once saved, your child simply needs to go to the Dolphin Carpool signup page, click 'Sign Up as a Student' and sign up using that same email address. They will automatically be linked to your account and can view all rides you schedule for them."
       }
     ]
   },
