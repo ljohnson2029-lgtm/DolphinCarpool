@@ -126,19 +126,28 @@ export default function Help() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.functions.invoke("send-email", {
-        body: { subject, message, senderName: name },
+        body: { subject, message, senderName: name, senderEmail: email },
       });
 
       if (error) throw new Error(error.message || "Failed to send");
 
-      toast({
-        title: "Message Sent",
-        description: "We'll get back to you within 24-48 hours.",
-      });
-
+      setIsSent(true);
       setName("");
+      setEmail("");
       setSubject("");
       setMessage("");
     } catch (error) {
