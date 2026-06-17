@@ -115,28 +115,39 @@ const faqs = [
 export default function Help() {
   const { toast } = useToast();
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSent, setIsSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.functions.invoke("send-email", {
-        body: { subject, message, senderName: name },
+        body: { subject, message, senderName: name, senderEmail: email },
       });
 
       if (error) throw new Error(error.message || "Failed to send");
 
-      toast({
-        title: "Message Sent",
-        description: "We'll get back to you within 24-48 hours.",
-      });
-
+      setIsSent(true);
       setName("");
+      setEmail("");
       setSubject("");
       setMessage("");
     } catch (error) {
@@ -298,6 +309,11 @@ export default function Help() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {isSent && (
+                <div className="p-4 bg-primary/10 text-primary rounded-lg border border-primary/20">
+                  Message sent! We'll get back to you within 24-48 hours.
+                </div>
+              )}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Your Name</Label>
@@ -305,19 +321,32 @@ export default function Help() {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    required
+                    placeholder="Your name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
+                  <Label htmlFor="email">
+                    Your Email <span className="text-red-500">*</span>
+                  </Label>
                   <Input
-                    id="subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    placeholder="What is this about?"
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
                     required
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input
+                  id="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="What is this about?"
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="message">Message</Label>

@@ -80,15 +80,31 @@ serve(async (req) => {
       );
     }
 
-    const { subject, message, senderName } = await req.json();
+    const { subject, message, senderName, senderEmail: providedEmail } = await req.json();
 
     // Use provided senderName if available (for unauthenticated users)
     if (senderName) {
       senderFullName = senderName;
     }
 
+    // Use provided senderEmail if available, otherwise keep authenticated/default
+    if (providedEmail) {
+      senderEmail = providedEmail;
+    }
+
+    // Validate email format if provided
+    if (senderEmail && senderEmail !== 'anonymous' && senderEmail !== 'unknown') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(senderEmail)) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Invalid email format' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     // Validate inputs
-    if (!subject || !message) {
+    if (!subject || !message || !senderEmail || senderEmail === 'anonymous' || senderEmail === 'unknown') {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -136,7 +152,8 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'Dolphin Carpool <noreply@dolphincarpool.org>',
         to: [SUPPORT_EMAIL],
-        subject: `[SchoolPool Support] ${escapeHtml(subject)}`,
+        reply_to: senderEmail,
+        subject: `[Dolphin Carpool Support] ${escapeHtml(subject)}`,
         html: `
           <h2>New Support Message</h2>
           <p><strong>From:</strong> ${escapeHtml(senderFullName)} (${escapeHtml(senderEmail)})</p>
