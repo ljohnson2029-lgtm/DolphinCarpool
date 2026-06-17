@@ -389,7 +389,81 @@ const Profile = () => {
                   </Card>
                 </motion.div>
 
+                {/* Linked Parent */}
+                {isChild && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15, duration: 0.5 }}
+                  >
+                    <Card className="rounded-2xl shadow-sm border border-gray-100 bg-white/80 backdrop-blur-sm overflow-hidden">
+                      <div className="h-1 w-full bg-gradient-to-r from-amber-500 to-amber-400" />
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                          <Users className="h-5 w-5 text-amber-500" />
+                          Linked Parent
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {loadingParents ? (
+                          <div className="space-y-3">
+                            <Skeleton className="h-16 rounded-xl" />
+                          </div>
+                        ) : linkedParents.length > 0 ? (
+                          <div className="space-y-3">
+                            {linkedParents.map((parent) => (
+                              <div
+                                key={parent.parent_id}
+                                className="p-4 rounded-xl bg-amber-50/50 border border-amber-100 space-y-3"
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                    <User className="h-5 w-5 text-amber-600" />
+                                  </div>
+                                  <div>
+                                    <p className="text-sm text-gray-500">Name</p>
+                                    <p className="font-semibold text-gray-900">
+                                      {parent.parent_first_name} {parent.parent_last_name}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                    <Mail className="h-5 w-5 text-amber-600" />
+                                  </div>
+                                  <div>
+                                    <p className="text-sm text-gray-500">Email</p>
+                                    <p className="font-semibold text-gray-900">{parent.parent_email}</p>
+                                  </div>
+                                </div>
+                                {parent.parent_phone && (
+                                  <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                      <Phone className="h-5 w-5 text-amber-600" />
+                                    </div>
+                                    <div>
+                                      <p className="text-sm text-gray-500">Phone</p>
+                                      <p className="font-semibold text-gray-900">{parent.parent_phone}</p>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                            <p className="text-gray-600">
+                              No parent linked yet. Ask your parent to attach your email to their Dolphin Carpool account.
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+
                 {/* Vehicle Information */}
+
                 {isParent && (profile.car_make || profile.car_model) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
