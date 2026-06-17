@@ -14,10 +14,10 @@ import { ArrowLeft, ArrowRight, Mail, ShieldCheck, Eye, EyeOff, CheckCircle2, Us
 import PhoneNumberInput from "@/components/PhoneNumberInput";
 import { isValidPhoneNumber } from "@/lib/phone-validation";
 import Navigation from "@/components/Navigation";
-import SignupWaiverCheckboxes from "@/components/SignupWaiverCheckboxes";
+import TermsAgreementStep from "@/components/TermsAgreementStep";
 import { cn } from "@/lib/utils";
 
-type Step = "choose" | "code" | "form" | "checkEmail" | "student";
+type Step = "choose" | "termsParent" | "termsStudent" | "code" | "form" | "checkEmail" | "student";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -41,9 +41,6 @@ const Register = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [insuranceAgreed, setInsuranceAgreed] = useState(false);
-  const [safetyAgreed, setSafetyAgreed] = useState(false);
-  const [liabilityAgreed, setLiabilityAgreed] = useState(false);
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -109,9 +106,6 @@ const Register = () => {
     else if (password && password !== confirmPassword) errs.confirmPassword = "Passwords do not match";
     if (!phoneNumber.trim()) errs.phone = "Required";
     else if (!isValidPhoneNumber(phoneNumber)) errs.phone = "Enter a complete phone number";
-    if (!insuranceAgreed) errs.insurance = "Required";
-    if (!safetyAgreed) errs.safety = "Required";
-    if (!liabilityAgreed) errs.liability = "Required";
 
     if (Object.keys(errs).length > 0) {
       setFieldErrors(errs);
@@ -263,6 +257,7 @@ const Register = () => {
           <CardHeader className="text-center space-y-2">
             <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/30">
               {step === "choose" && <Users className="w-7 h-7 text-white" />}
+              {(step === "termsParent" || step === "termsStudent") && <ShieldCheck className="w-7 h-7 text-white" />}
               {step === "code" && <ShieldCheck className="w-7 h-7 text-white" />}
               {step === "form" && <ArrowRight className="w-7 h-7 text-white" />}
               {step === "student" && <GraduationCap className="w-7 h-7 text-white" />}
@@ -270,6 +265,7 @@ const Register = () => {
             </div>
             <CardTitle className="text-2xl">
               {step === "choose" && "Join Dolphin Carpool"}
+              {(step === "termsParent" || step === "termsStudent") && "Terms and Conditions"}
               {step === "code" && "Enter Your Verification Code"}
               {step === "form" && "Create Your Parent Account"}
               {step === "student" && "Create Your Student Account"}
@@ -277,6 +273,7 @@ const Register = () => {
             </CardTitle>
             <CardDescription>
               {step === "choose" && "Choose how you're signing up."}
+              {(step === "termsParent" || step === "termsStudent") && "Review and accept our Terms and Conditions to continue."}
               {step === "code" &&
                 "Your verification code was provided by the Dolphin Carpool community. Contact us at dolphincarpool@gmail.com if you need help."}
               {step === "form" && "All fields are required to create your parent account."}
@@ -300,7 +297,7 @@ const Register = () => {
                 >
                   <button
                     type="button"
-                    onClick={() => setStep("code")}
+                    onClick={() => setStep("termsParent")}
                     className="w-full text-left p-5 rounded-xl border-2 border-primary/20 bg-primary/5 hover:border-primary hover:bg-primary/10 transition-all group"
                   >
                     <div className="flex items-center gap-4">
@@ -321,7 +318,7 @@ const Register = () => {
 
                   <button
                     type="button"
-                    onClick={() => setStep("student")}
+                    onClick={() => setStep("termsStudent")}
                     className="w-full text-left p-5 rounded-xl border-2 border-amber-300/40 bg-amber-50 hover:border-amber-500 hover:bg-amber-100 transition-all group"
                   >
                     <div className="flex items-center gap-4">
@@ -347,6 +344,21 @@ const Register = () => {
                       Sign in
                     </button>
                   </p>
+                </motion.div>
+              )}
+
+              {/* TERMS (parent or student) */}
+              {(step === "termsParent" || step === "termsStudent") && (
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                >
+                  <TermsAgreementStep
+                    onBack={() => setStep("choose")}
+                    onContinue={() => setStep(step === "termsParent" ? "code" : "student")}
+                  />
                 </motion.div>
               )}
 
@@ -424,7 +436,7 @@ const Register = () => {
                   </div>
 
                   <div className="flex gap-3 pt-2">
-                    <Button type="button" variant="outline" onClick={() => setStep("choose")} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => setStep("termsStudent")} className="flex-1">
                       <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>
                     <LoadingButton type="submit" loading={loading} className="flex-1">
@@ -463,7 +475,7 @@ const Register = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button type="button" variant="outline" onClick={() => setStep("choose")} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => setStep("termsParent")} className="flex-1">
                       <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>
                     <LoadingButton type="submit" loading={loading} className="flex-1 h-12">
@@ -574,17 +586,6 @@ const Register = () => {
                     </div>
                   </div>
 
-                  <SignupWaiverCheckboxes
-                    insuranceAgreed={insuranceAgreed}
-                    safetyAgreed={safetyAgreed}
-                    liabilityAgreed={liabilityAgreed}
-                    onInsuranceChange={(v) => { setInsuranceAgreed(v); clearError("insurance"); }}
-                    onSafetyChange={(v) => { setSafetyAgreed(v); clearError("safety"); }}
-                    onLiabilityChange={(v) => { setLiabilityAgreed(v); clearError("liability"); }}
-                    insuranceError={!!fieldErrors.insurance}
-                    safetyError={!!fieldErrors.safety}
-                    liabilityError={!!fieldErrors.liability}
-                  />
 
                   <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setStep("code")} className="flex-1">
