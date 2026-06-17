@@ -297,7 +297,7 @@ const Register = () => {
                 >
                   <button
                     type="button"
-                    onClick={() => setStep("code")}
+                    onClick={() => setStep("termsParent")}
                     className="w-full text-left p-5 rounded-xl border-2 border-primary/20 bg-primary/5 hover:border-primary hover:bg-primary/10 transition-all group"
                   >
                     <div className="flex items-center gap-4">
