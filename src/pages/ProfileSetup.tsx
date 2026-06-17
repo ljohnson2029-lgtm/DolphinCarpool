@@ -317,6 +317,7 @@ const ProfileSetup = () => {
         last_name: lastName.trim(),
         phone_number: phoneNumber.trim(),
         updated_at: new Date().toISOString(),
+        profile_complete: true,
       };
 
       if (isParent) {
@@ -369,7 +370,8 @@ const ProfileSetup = () => {
         toast({ title: "Profile updated!", description: "Your changes have been saved." });
         navigate("/profile");
       } else {
-        setStep(3);
+        toast({ title: "Welcome!", description: "Your profile is complete. Enjoy the app!" });
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
@@ -378,101 +380,6 @@ const ProfileSetup = () => {
     }
   };
 
-  /* ── Send link request (Step 3) ────────────────── */
-  const handleSendLink = async () => {
-    if (!user || !linkEmail.trim()) return;
-    setLinkSending(true);
-
-    try {
-      const normalizedEmail = linkEmail.toLowerCase().trim();
-      const expectedRole = isParent ? 'student' : 'parent';
-      const { data: targetData, error: lookupError } = await supabase.functions.invoke("lookup-parent", {
-        body: { email: normalizedEmail, expected_role: expectedRole },
-      });
-
-      if (lookupError || !targetData?.found || !targetData?.user_id) {
-        toast({ title: "User not found", description: targetData?.message || "No account found with that email address.", variant: "destructive" });
-        setLinkSending(false);
-        return;
-      }
-
-      const studentId = isParent ? targetData.user_id : user.id;
-      const parentId = isParent ? user.id : targetData.user_id;
-
-      // Check for existing link
-      const { data: existingLink } = await supabase
-        .from("account_links")
-        .select("id, status")
-        .eq("student_id", studentId)
-        .eq("parent_id", parentId)
-        .maybeSingle();
-
-      if (existingLink) {
-        if (existingLink.status === "pending") {
-          setLinkSent(true);
-          toast({ title: "Request Already Sent", description: "A pending link request already exists. Waiting for approval.", variant: "destructive" });
-          setLinkSending(false);
-          return;
-        }
-        if (existingLink.status === "approved") {
-          toast({ title: "Already Linked", description: "You're already linked to this account.", variant: "destructive" });
-          setLinkSending(false);
-          return;
-        }
-        // If denied, delete old and re-create
-        await supabase.from("account_links").delete().eq("id", existingLink.id);
-      }
-
-      const { error } = await supabase.from("account_links").insert({
-        student_id: studentId,
-        parent_id: parentId,
-        status: "pending",
-        requested_by: user.id,
-      });
-      if (error) throw error;
-
-      setLinkSent(true);
-      toast({ title: "Link request sent!", description: "They will receive a notification to approve." });
-    } catch (error) {
-      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
-    } finally {
-      setLinkSending(false);
-    }
-  };
-
-  /* ── Complete onboarding ───────────────────────── */
-  const handleFinish = async () => {
-    if (!isStep2Valid()) {
-      setStep(2);
-      setAttemptedSubmit(true);
-      toast({
-        title: "Please complete all required fields",
-        description: "Fill every required field before finishing signup.",
-        variant: "destructive",
-      });
-      scrollToFirstError();
-      return;
-    }
-
-    if (!user) return;
-    setSaving(true);
-
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ profile_complete: true, updated_at: new Date().toISOString() })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      toast({ title: "Welcome!", description: "Your profile is complete. Enjoy the app!" });
-      window.location.href = "/dashboard";
-    } catch (error) {
-      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   if (loading || !user || !profile) {
     return (
