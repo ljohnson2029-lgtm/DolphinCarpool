@@ -106,9 +106,6 @@ const Register = () => {
     else if (password && password !== confirmPassword) errs.confirmPassword = "Passwords do not match";
     if (!phoneNumber.trim()) errs.phone = "Required";
     else if (!isValidPhoneNumber(phoneNumber)) errs.phone = "Enter a complete phone number";
-    if (!insuranceAgreed) errs.insurance = "Required";
-    if (!safetyAgreed) errs.safety = "Required";
-    if (!liabilityAgreed) errs.liability = "Required";
 
     if (Object.keys(errs).length > 0) {
       setFieldErrors(errs);
