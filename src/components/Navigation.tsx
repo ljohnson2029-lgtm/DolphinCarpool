@@ -362,6 +362,18 @@ const Navigation = () => {
                     <motion.button
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.375 }}
+                      onClick={() => {
+                        navigate("/terms");
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100"
+                    >
+                      <FileText className="w-5 h-5" />
+                      Terms and Conditions
+                    <motion.button
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 }}
                       onClick={() => {
                         handleLogout();
