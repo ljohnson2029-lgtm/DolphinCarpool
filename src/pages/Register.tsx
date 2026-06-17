@@ -347,6 +347,21 @@ const Register = () => {
                 </motion.div>
               )}
 
+              {/* TERMS (parent or student) */}
+              {(step === "termsParent" || step === "termsStudent") && (
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                >
+                  <TermsAgreementStep
+                    onBack={() => setStep("choose")}
+                    onContinue={() => setStep(step === "termsParent" ? "code" : "student")}
+                  />
+                </motion.div>
+              )}
+
               {/* STUDENT */}
               {step === "student" && (
                 <motion.form
