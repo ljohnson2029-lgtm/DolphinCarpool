@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { 
   LogOut, User, Mail, Phone, Calendar, GraduationCap, Users, Home, 
-  Car as CarIcon, Pencil, UserPlus, Baby, MapPin, Shield, Edit3, Sparkles
+  Car as CarIcon, Pencil, Baby, MapPin, Shield, Edit3, Sparkles
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -18,7 +18,7 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import { SignOutDialog } from '@/components/ConfirmDialogs';
-import FamilyLinksSection from '@/components/FamilyLinksSection';
+import ChildEmailManager from '@/components/profile/ChildEmailManager';
 import ChildEmailManager from '@/components/profile/ChildEmailManager';
 import ProfileEditForm from '@/components/profile/ProfileEditForm';
 
