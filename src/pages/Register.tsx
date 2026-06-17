@@ -340,12 +340,6 @@ const Register = () => {
                     </div>
                   </button>
 
-                  <div className="flex items-start gap-2 p-3 rounded-md bg-blue-50 border border-blue-200 text-sm text-blue-900">
-                    <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <p>
-                      Your parent must have added your email to their Dolphin Carpool account before you can sign up. Contact your parent if you are having trouble.
-                    </p>
-                  </div>
 
                   <p className="text-sm text-center text-muted-foreground pt-1">
                     Already have an account?{" "}
