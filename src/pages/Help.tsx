@@ -309,6 +309,11 @@ export default function Help() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {isSent && (
+                <div className="p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
+                  Message sent! We'll get back to you within 24-48 hours.
+                </div>
+              )}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Your Name</Label>
@@ -316,19 +321,32 @@ export default function Help() {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    required
+                    placeholder="Your name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
+                  <Label htmlFor="email">
+                    Your Email <span className="text-red-500">*</span>
+                  </Label>
                   <Input
-                    id="subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    placeholder="What is this about?"
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
                     required
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input
+                  id="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="What is this about?"
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="message">Message</Label>
