@@ -340,12 +340,6 @@ const Register = () => {
                     </div>
                   </button>
 
-                  <div className="flex items-start gap-2 p-3 rounded-md bg-blue-50 border border-blue-200 text-sm text-blue-900">
-                    <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <p>
-                      Your parent must have added your email to their Dolphin Carpool account before you can sign up. Contact your parent if you are having trouble.
-                    </p>
-                  </div>
 
                   <p className="text-sm text-center text-muted-foreground pt-1">
                     Already have an account?{" "}
@@ -366,11 +360,23 @@ const Register = () => {
                   onSubmit={submitStudent}
                   className="space-y-4"
                 >
+                  <div className="flex items-start gap-2 p-3 rounded-md bg-blue-50 border border-blue-200 text-sm text-blue-900">
+                    <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <p>
+                      Your parent must have added your email to their Dolphin Carpool account before you can sign up. Contact your parent if you are having trouble accessing your account.
+                    </p>
+                  </div>
+
+                  <p className="text-sm text-muted-foreground">
+                    Enter the email your parent has attached to their account and create a password for this account.
+                  </p>
+
                   {studentError && (
                     <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm">
                       {studentError}
                     </div>
                   )}
+
 
                   <div>
                     <Label htmlFor="student-email">Email <span className="text-destructive">*</span></Label>
