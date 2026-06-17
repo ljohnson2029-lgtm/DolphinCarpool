@@ -568,17 +568,6 @@ const Register = () => {
                     </div>
                   </div>
 
-                  <SignupWaiverCheckboxes
-                    insuranceAgreed={insuranceAgreed}
-                    safetyAgreed={safetyAgreed}
-                    liabilityAgreed={liabilityAgreed}
-                    onInsuranceChange={(v) => { setInsuranceAgreed(v); clearError("insurance"); }}
-                    onSafetyChange={(v) => { setSafetyAgreed(v); clearError("safety"); }}
-                    onLiabilityChange={(v) => { setLiabilityAgreed(v); clearError("liability"); }}
-                    insuranceError={!!fieldErrors.insurance}
-                    safetyError={!!fieldErrors.safety}
-                    liabilityError={!!fieldErrors.liability}
-                  />
 
                   <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setStep("code")} className="flex-1">
