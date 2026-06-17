@@ -798,7 +798,7 @@ const ProfileSetup = () => {
                         </div>
                         <div>
                           <Label className="flex items-center gap-1">
-                            Child's Email <span className="text-muted-foreground font-normal text-xs">(required for student account access)</span>
+                            Attach Your Child's Email
                           </Label>
                           <Input
                             type="email"
@@ -807,7 +807,10 @@ const ProfileSetup = () => {
                             placeholder="child@example.com"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
-                            Your child will use this email to create their student account
+                            Attach your child's email so they can create a student account and view the rides you schedule for them.
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            You can skip this for now and fill it out later in your profile settings.
                           </p>
                         </div>
                       </div>

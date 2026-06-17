@@ -174,11 +174,9 @@ const ChildCard = ({ child, index, onUpdate }: ChildCardProps) => {
         </div>
       </div>
 
-      {/* Child's email — for student account access */}
+      {/* Attach child's email (optional) */}
       <div>
-        <Label htmlFor={`${prefix}-email`}>
-          Child's Email <span className="text-muted-foreground font-normal">(required for student account access)</span>
-        </Label>
+        <Label htmlFor={`${prefix}-email`}>Attach Your Child's Email</Label>
         <Input
           id={`${prefix}-email`}
           type="email"
@@ -189,7 +187,10 @@ const ChildCard = ({ child, index, onUpdate }: ChildCardProps) => {
           placeholder="child@example.com"
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Your child will use this email to create their student account
+          Attach your child's email so they can create a student account and view the rides you schedule for them.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          You can skip this for now and fill it out later in your profile settings.
         </p>
       </div>
 
