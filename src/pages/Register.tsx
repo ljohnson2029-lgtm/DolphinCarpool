@@ -475,7 +475,7 @@ const Register = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button type="button" variant="outline" onClick={() => setStep("choose")} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => setStep("termsParent")} className="flex-1">
                       <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>
                     <LoadingButton type="submit" loading={loading} className="flex-1 h-12">
