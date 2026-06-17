@@ -318,7 +318,7 @@ const Register = () => {
 
                   <button
                     type="button"
-                    onClick={() => setStep("student")}
+                    onClick={() => setStep("termsStudent")}
                     className="w-full text-left p-5 rounded-xl border-2 border-amber-300/40 bg-amber-50 hover:border-amber-500 hover:bg-amber-100 transition-all group"
                   >
                     <div className="flex items-center gap-4">
