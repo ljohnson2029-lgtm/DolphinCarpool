@@ -17,6 +17,7 @@ import {
   Calendar,
   Users,
   Shield,
+  FileText,
   Sparkles
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -248,6 +249,9 @@ const Navigation = () => {
                       <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2">
                         <Settings className="w-4 h-4" /> Settings
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/terms")} className="gap-2">
+                        <FileText className="w-4 h-4" /> Terms and Conditions
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="gap-2 text-red-600">
                         <LogOut className="w-4 h-4" /> Log out
@@ -354,6 +358,19 @@ const Navigation = () => {
                     >
                       <Settings className="w-5 h-5" />
                       Settings
+                    </motion.button>
+                    <motion.button
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.375 }}
+                      onClick={() => {
+                        navigate("/terms");
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100"
+                    >
+                      <FileText className="w-5 h-5" />
+                      Terms and Conditions
                     </motion.button>
                     <motion.button
                       initial={{ opacity: 0, x: -20 }}

@@ -47,6 +47,7 @@ const Footer = ({ showLegalAndContact = true }: FooterProps) => {
             <div className="space-y-2 text-sm">
               <Link to="/help" className="block text-primary-foreground/70 hover:text-primary-foreground transition-colors">FAQ / Help</Link>
               <Link to="/feedback" className="block text-primary-foreground/70 hover:text-primary-foreground transition-colors">Feedback</Link>
+              <Link to="/terms" className="block text-primary-foreground/70 hover:text-primary-foreground transition-colors">Terms and Conditions</Link>
               {showLegalAndContact && (
                 <a
                   href="mailto:dolphincarpool@gmail.com"
