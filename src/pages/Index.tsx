@@ -40,7 +40,7 @@ const Index = () => {
         <LandingHowItWorks />
         <LandingFeatures />
         <LandingTrust />
-        <Footer />
+        <Footer showLegalAndContact={false} />
         <CreatorFooter />
       </div>
     </PageTransition>
