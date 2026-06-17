@@ -1,0 +1,17 @@
+{
+  "name": "Dolphin Carpool",
+  "short_name": "Dolphin Carpool",
+  "description": "Dolphin Carpool - Carpooling for Your Community",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
