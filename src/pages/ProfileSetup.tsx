@@ -426,7 +426,6 @@ const ProfileSetup = () => {
             Step {step} of {totalSteps}:{" "}
             {step === 1 && "Welcome"}
             {step === 2 && "Your Information"}
-            {step === 3 && "Link Accounts"}
           </p>
           <div className="mt-4 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-sm">
             <Progress value={progressPercent} className="h-2" />
@@ -735,84 +734,12 @@ const ProfileSetup = () => {
                 disabled={saving || !step2Valid}
                 onClick={handleAttemptContinue}
               >
-                {saving ? "Saving..." : step2Valid ? "Save & Continue" : "Complete required fields"} <ArrowRight className="h-4 w-4" />
+                {saving ? "Saving..." : step2Valid ? (isEditMode ? "Save Changes" : "Complete Profile") : "Complete required fields"} <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </motion.div>
         )}
 
-        {/* Step 3: Account Linking */}
-        {step === 3 && (
-          <motion.div
-            key="step3"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-6"
-          >
-            <Card>
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Link2 className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle>
-                  {isParent ? "Link to Your Child's Account" : "Link to Your Parent's Account"}
-                </CardTitle>
-                <CardDescription>
-                  {isParent
-                    ? "Enter your child's email address to connect accounts."
-                    : "Enter your parent's email address to connect accounts."}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground text-center">
-                  You can skip this step and link accounts later in your Profile settings.
-                </p>
-                {linkSent ? (
-                  <div className="text-center space-y-3">
-                    <CheckCircle2 className="h-12 w-12 text-emerald-500 mx-auto" />
-                    <p className="text-sm text-muted-foreground">
-                      Link request sent! They'll need to approve it.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div>
-                      <Label>{isParent ? "Child's Email" : "Parent's Email"}</Label>
-                      <Input
-                        type="email"
-                        value={linkEmail}
-                        onChange={e => setLinkEmail(e.target.value)}
-                        placeholder={isParent ? "child@email.com" : "parent@email.com"}
-                      />
-                    </div>
-                    <Button
-                      onClick={handleSendLink}
-                      disabled={!linkEmail.trim() || linkSending}
-                      className="w-full gap-2"
-                    >
-                      {linkSending ? "Sending..." : "Send Link Request"}
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={() => setStep(2)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button
-                className="flex-1 gap-2"
-                onClick={handleFinish}
-                disabled={saving}
-              >
-                {saving ? "Finishing..." : linkSent ? "Continue to App" : "Skip for Now"} <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
         </AnimatePresence>
       </div>
     </motion.div>
