@@ -17,6 +17,7 @@ import {
   Calendar,
   Users,
   Shield,
+  FileText,
   Sparkles
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
