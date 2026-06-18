@@ -352,6 +352,7 @@ const Register = () => {
               {step === "form" && <ArrowRight className="w-7 h-7 text-white" />}
               {step === "student" && <GraduationCap className="w-7 h-7 text-white" />}
               {step === "checkEmail" && <Mail className="w-7 h-7 text-white" />}
+              {step === "verify2fa" && <Mail className="w-7 h-7 text-white" />}
             </div>
             <CardTitle className="text-2xl">
               {step === "choose" && "Join Dolphin Carpool"}
