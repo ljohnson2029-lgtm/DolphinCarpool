@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import SEO from "@/components/SEO";
@@ -84,7 +84,11 @@ const Dashboard = () => {
     return 'Good evening';
   };
 
-  if (!user || !profile) {
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!profile) {
     return (
       <DashboardLayout>
         <div className="container mx-auto px-4 py-8 max-w-6xl">
