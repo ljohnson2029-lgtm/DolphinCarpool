@@ -1,7 +1,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@4.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+
+
 
 import { getCorsHeaders, handleCorsPreflightIfNeeded } from "../_shared/cors.ts";
 
@@ -35,42 +38,72 @@ const handler = async (req: Request): Promise<Response> => {
 
   const corsHeaders = getCorsHeaders(req);
 
-  // Rate limiting check
-  const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-  if (isRateLimited(clientIP)) {
-    return new Response(
-      JSON.stringify({ error: 'Too many requests. Please try again later.' }),
-      {
-        status: 429,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
-  }
-
   try {
+    // Require authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
+        status: 401, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Per-user rate limiting
+    if (isRateLimited(user.id)) {
+      return new Response(
+        JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const { parentEmail, studentName, code }: VerificationEmailRequest = await req.json();
 
     // Input validation
-    if (!parentEmail || typeof parentEmail !== 'string' || !parentEmail.includes('@')) {
+    if (!parentEmail || typeof parentEmail !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail)) {
       return new Response(
         JSON.stringify({ error: 'Invalid email address' }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
-
     if (!studentName || typeof studentName !== 'string' || studentName.length > 100) {
       return new Response(
         JSON.stringify({ error: 'Invalid student name' }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
-
     if (!code || typeof code !== 'string' || code.length > 20) {
       return new Response(
         JSON.stringify({ error: 'Invalid verification code' }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
+
+    // Verify the code actually belongs to a student_parent_links row owned by the caller (the student)
+    const { data: linkRow, error: linkErr } = await supabase
+      .from("student_parent_links")
+      .select("id, verification_code")
+      .eq("student_id", user.id)
+      .eq("verification_code", code)
+      .maybeSingle();
+
+    if (linkErr || !linkRow) {
+      return new Response(
+        JSON.stringify({ error: "No matching link request found for this user/code" }),
+        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+
 
     // Escape HTML to prevent injection in email
     const escapeHtml = (str: string) => str

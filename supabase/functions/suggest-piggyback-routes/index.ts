@@ -137,10 +137,12 @@ serve(async (req) => {
             ride_dropoff: ride.dropoff_location,
             ride_date: ride.ride_date,
             ride_type: ride.type,
-            their_kids: kids.map(k => k.first_name).filter(Boolean),
+            // Don't leak child names for unconnected families
+            their_kids: [],
             their_grades: kids.map(k => k.grade_level).filter((g): g is string => !!g),
             already_connected: connectedPartners.has(parent.id),
           });
+
         }
       }
     }
@@ -166,10 +168,11 @@ serve(async (req) => {
           ride_dropoff: "Chadwick School",
           ride_date: "",
           ride_type: "nearby",
-          their_kids: kids.map(k => k.first_name).filter(Boolean),
+          their_kids: [],
           their_grades: kids.map(k => k.grade_level).filter((g): g is string => !!g),
           already_connected: connectedPartners.has(parent.id),
         });
+
       }
     }
 
