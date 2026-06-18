@@ -71,7 +71,8 @@ serve(async (req) => {
       });
     }
 
-    // Email uniqueness (clean orphans the same way as before)
+    // Email uniqueness — first reconcile any orphan public rows with this email
+    // (e.g. left over from a previous failed signup or partial wipe).
     const { data: existingEmail } = await supabase
       .from("users")
       .select("user_id, email")
@@ -81,21 +82,25 @@ serve(async (req) => {
     if (existingEmail) {
       const { data: authUsers } = await supabase.auth.admin.listUsers();
       const authUserExists = authUsers?.users?.some((u) => u.id === existingEmail.user_id);
-      if (!authUserExists) {
-        await supabase.from("users").delete().eq("user_id", existingEmail.user_id);
-        await supabase.from("profiles").delete().eq("id", existingEmail.user_id);
-        await supabase.from("user_roles").delete().eq("user_id", existingEmail.user_id);
-      } else {
-        return new Response(JSON.stringify({ error: "Email already registered. Please log in instead." }), {
+      if (authUserExists) {
+        return new Response(JSON.stringify({ error: "An account with this email already exists. Please log in instead." }), {
           status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      // Orphan public rows — remove them so the new signup can proceed.
+      await supabase.from("user_roles").delete().eq("user_id", existingEmail.user_id);
+      await supabase.from("profiles").delete().eq("id", existingEmail.user_id);
+      await supabase.from("users").delete().eq("user_id", existingEmail.user_id);
     }
 
     // Any leftover auth user with same email?
     const { data: allAuth } = await supabase.auth.admin.listUsers();
     const orphan = allAuth?.users?.find((u) => u.email?.toLowerCase() === normalizedEmail);
     if (orphan) {
+      // Also clean public rows tied to this orphan auth id (defensive).
+      await supabase.from("user_roles").delete().eq("user_id", orphan.id);
+      await supabase.from("profiles").delete().eq("id", orphan.id);
+      await supabase.from("users").delete().eq("user_id", orphan.id);
       await supabase.auth.admin.deleteUser(orphan.id);
     }
 
