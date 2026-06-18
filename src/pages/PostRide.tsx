@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { Hand, Car, School, ArrowRight, Sparkles } from "lucide-react";
@@ -54,6 +55,11 @@ const PostRide = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Post a Ride — Dolphin Carpool"
+        description="Offer or request a school carpool with your Dolphin community parents."
+        path="/post-ride"
+      />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

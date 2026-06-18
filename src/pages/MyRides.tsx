@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { EmptyState } from "@/components/EmptyState";
@@ -1186,6 +1187,11 @@ const MyRides = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="My Rides — Dolphin Carpool"
+        description="Track your upcoming, requested, and past school carpools in one place."
+        path="/my-rides"
+      />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

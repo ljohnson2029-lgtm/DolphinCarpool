@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -457,6 +458,11 @@ const Conversations = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Messages — Dolphin Carpool"
+        description="Coordinate confirmed carpools with parents through in-app ride conversations."
+        path="/conversations"
+      />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

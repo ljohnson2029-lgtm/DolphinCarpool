@@ -15,6 +15,7 @@ import {
 
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/DashboardLayout';
+import SEO from '@/components/SEO';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import { SignOutDialog } from '@/components/ConfirmDialogs';
@@ -171,6 +172,11 @@ const Profile = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="My Profile — Dolphin Carpool"
+        description="Manage your Dolphin Carpool profile, children, vehicle details, and family connections."
+        path="/profile"
+      />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

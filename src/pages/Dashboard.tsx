@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -138,6 +139,11 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Dashboard — Dolphin Carpool"
+        description="Your Dolphin Carpool dashboard: upcoming rides, suggested partners, and quick links to plan carpools with your school community."
+        path="/dashboard"
+      />
       <div className="min-h-screen bg-gradient-to-br from-gray-50/50 via-white to-blue-50/30">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           
