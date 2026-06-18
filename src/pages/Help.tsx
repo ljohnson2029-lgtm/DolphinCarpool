@@ -114,6 +114,31 @@ const faqs = [
   },
 ];
 
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    ...helpSections.flatMap((section) =>
+      section.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      }))
+    ),
+    ...faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  ],
+};
+
 export default function Help() {
   const { toast } = useToast();
   const [name, setName] = useState("");
@@ -185,6 +210,7 @@ export default function Help() {
         description="Browse FAQs and guides for Dolphin Carpool, or contact support for help with rides, accounts, and family carpool coordination."
         path="/help"
       />
+      <JsonLd data={FAQ_SCHEMA} />
       <div className="container max-w-4xl mx-auto px-4 pb-24">
         <Breadcrumbs items={[{ label: "Help Center" }]} />
 
