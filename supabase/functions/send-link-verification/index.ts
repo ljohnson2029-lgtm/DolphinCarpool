@@ -91,18 +91,18 @@ const handler = async (req: Request): Promise<Response> => {
     // Verify the code actually belongs to a student_parent_links row owned by the caller (the student)
     const { data: linkRow, error: linkErr } = await supabase
       .from("student_parent_links")
-      .select("id, verification_code, parent_email")
+      .select("id, verification_code")
       .eq("student_id", user.id)
       .eq("verification_code", code)
-      .eq("parent_email", parentEmail.toLowerCase())
       .maybeSingle();
 
     if (linkErr || !linkRow) {
       return new Response(
-        JSON.stringify({ error: "No matching link request found for this user/code/email" }),
+        JSON.stringify({ error: "No matching link request found for this user/code" }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
+
 
 
     // Escape HTML to prevent injection in email
