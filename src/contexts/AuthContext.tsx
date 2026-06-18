@@ -35,7 +35,9 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   logout: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
+
 
 /* eslint-disable react-refresh/only-export-components */
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
