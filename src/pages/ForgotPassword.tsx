@@ -116,7 +116,8 @@ const ForgotPassword = () => {
           newPassword: password,
         },
       });
-      if (fnErr || (data as ResetFunctionResponse)?.error) {
+      console.log("password reset update response", { data, fnErr });
+      if (fnErr || !(data as ResetFunctionResponse)?.success || (data as ResetFunctionResponse)?.error) {
         const body = await getFunctionErrorBody(data as ResetFunctionResponse, fnErr);
         const errCode = body?.error;
         const errMsg = body?.message;
@@ -129,6 +130,8 @@ const ForgotPassword = () => {
           setError(errMsg || "This password has appeared in known data breaches. Please choose a different, unique password.");
         } else if (errCode === "weak_password") {
           setError("Password must be 8+ characters with uppercase, lowercase, and a number.");
+        } else if (errCode === "user_not_found") {
+          setError("We couldn't find an account for that email address.");
         } else {
           setError(errMsg || "Could not update password. Please try again.");
         }
