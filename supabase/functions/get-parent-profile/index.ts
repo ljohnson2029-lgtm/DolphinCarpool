@@ -19,14 +19,12 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-
     const supabase = createClient(supabaseUrl, serviceKey);
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
+
     if (authError || !user) {
       console.error("Auth error:", authError);
       return new Response(
@@ -36,7 +34,6 @@ serve(async (req) => {
     }
 
     const { parentId } = await req.json();
-    
     if (!parentId) {
       return new Response(
         JSON.stringify({ error: "Parent ID is required" }),
@@ -44,7 +41,31 @@ serve(async (req) => {
       );
     }
 
-    // Fetch profile data
+    const isSelf = parentId === user.id;
+
+    // Verify relationship if not viewing own profile
+    let hasRelationship = isSelf;
+    if (!isSelf) {
+      const [{ data: al }, { data: cp }, { data: ss }, { data: conv }, { data: pr }] = await Promise.all([
+        supabase.from("account_links").select("id")
+          .or(`and(parent_id.eq.${user.id},student_id.eq.${parentId}),and(parent_id.eq.${parentId},student_id.eq.${user.id})`)
+          .eq("status", "approved").limit(1),
+        supabase.from("co_parent_links").select("id")
+          .or(`and(requester_id.eq.${user.id},recipient_id.eq.${parentId}),and(requester_id.eq.${parentId},recipient_id.eq.${user.id})`)
+          .eq("status", "approved").limit(1),
+        supabase.from("series_spaces").select("id")
+          .or(`and(parent_a_id.eq.${user.id},parent_b_id.eq.${parentId}),and(parent_a_id.eq.${parentId},parent_b_id.eq.${user.id})`).limit(1),
+        supabase.from("ride_conversations").select("id").eq("status", "accepted")
+          .or(`and(sender_id.eq.${user.id},recipient_id.eq.${parentId}),and(sender_id.eq.${parentId},recipient_id.eq.${user.id})`).limit(1),
+        supabase.from("private_ride_requests").select("id").in("status", ["accepted", "completed"])
+          .or(`and(sender_id.eq.${user.id},recipient_id.eq.${parentId}),and(sender_id.eq.${parentId},recipient_id.eq.${user.id})`).limit(1),
+      ]);
+      hasRelationship =
+        (al?.length ?? 0) > 0 || (cp?.length ?? 0) > 0 ||
+        (ss?.length ?? 0) > 0 || (conv?.length ?? 0) > 0 || (pr?.length ?? 0) > 0;
+    }
+
+    // Fetch profile data (only the columns we may need)
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
       .select("id, username, first_name, last_name, home_address, phone_number, created_at, account_type, grade_level, share_phone, share_email, car_make, car_model, car_color, license_plate")
@@ -60,35 +81,60 @@ serve(async (req) => {
       );
     }
 
-    // Fetch user email
-    const { data: userData } = await supabase
-      .from("users")
-      .select("email")
-      .eq("user_id", parentId)
-      .single();
+    // Enforce sharing flags server-side
+    const includePhone = isSelf || (hasRelationship && !!profileData.share_phone);
+    const includeEmail = isSelf || (hasRelationship && !!profileData.share_email);
+    const includeFullAddress = isSelf; // never share full home address with others
 
-    // Fetch children from the children table (parent's profile children)
-    const { data: childrenData } = await supabase
-      .from("children")
-      .select("id, first_name, last_name, grade_level")
-      .eq("user_id", parentId);
+    let email: string | null = null;
+    if (includeEmail) {
+      const { data: userData } = await supabase
+        .from("users")
+        .select("email")
+        .eq("user_id", parentId)
+        .single();
+      email = userData?.email ?? null;
+    }
 
-    const linkedStudents = (childrenData || []).map(c => ({
-      id: c.id,
-      first_name: c.first_name || "Unknown",
-      last_name: c.last_name || "",
-      grade_level: c.grade_level,
-    }));
+    // Children list: only return for self or confirmed relationships
+    let linkedStudents: Array<{ id: string; first_name: string; last_name: string; grade_level: string | null }> = [];
+    if (isSelf || hasRelationship) {
+      const { data: childrenData } = await supabase
+        .from("children")
+        .select("id, first_name, last_name, grade_level")
+        .eq("user_id", parentId);
+      linkedStudents = (childrenData || []).map(c => ({
+        id: c.id,
+        first_name: c.first_name || "Unknown",
+        last_name: c.last_name || "",
+        grade_level: c.grade_level,
+      }));
+    }
+
+    const safeProfile = {
+      id: profileData.id,
+      username: profileData.username,
+      first_name: profileData.first_name,
+      last_name: profileData.last_name,
+      account_type: profileData.account_type,
+      created_at: profileData.created_at,
+      grade_level: profileData.grade_level,
+      car_make: profileData.car_make,
+      car_model: profileData.car_model,
+      car_color: profileData.car_color,
+      // License plate is sensitive — only owner
+      license_plate: isSelf ? profileData.license_plate : null,
+      home_address: includeFullAddress ? profileData.home_address : null,
+      phone_number: includePhone ? profileData.phone_number : null,
+      email,
+      share_phone: profileData.share_phone,
+      share_email: profileData.share_email,
+      linked_students_count: linkedStudents.length,
+      linked_students: linkedStudents,
+    };
 
     return new Response(
-      JSON.stringify({
-        profile: {
-          ...profileData,
-          email: userData?.email || null,
-          linked_students_count: linkedStudents.length,
-          linked_students: linkedStudents,
-        },
-      }),
+      JSON.stringify({ profile: safeProfile }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
