@@ -46,9 +46,30 @@ serve(async (req) => {
       .eq("account_type", "parent")
       .neq("id", user.id);
 
+    const parentIds = (profiles || []).map(p => p.id);
+
+    // Determine which parents the caller is already connected to;
+    // only those parents' children names/grades will be returned in results.
+    const [{ data: alOut }, { data: alIn }, { data: coOut }, { data: coIn }, { data: ssRows }] = await Promise.all([
+      supabase.from("account_links").select("student_id").eq("parent_id", user.id).eq("status", "approved"),
+      supabase.from("account_links").select("parent_id").eq("student_id", user.id).eq("status", "approved"),
+      supabase.from("co_parent_links").select("recipient_id").eq("requester_id", user.id).eq("status", "approved"),
+      supabase.from("co_parent_links").select("requester_id").eq("recipient_id", user.id).eq("status", "approved"),
+      supabase.from("series_spaces").select("parent_a_id, parent_b_id")
+        .or(`parent_a_id.eq.${user.id},parent_b_id.eq.${user.id}`),
+    ]);
+    const connected = new Set<string>();
+    for (const r of alOut ?? []) connected.add(r.student_id);
+    for (const r of alIn ?? []) connected.add(r.parent_id);
+    for (const r of coOut ?? []) connected.add(r.recipient_id);
+    for (const r of coIn ?? []) connected.add(r.requester_id);
+    for (const r of ssRows ?? []) connected.add(r.parent_a_id === user.id ? r.parent_b_id : r.parent_a_id);
+
+    // Load children only for candidate parents (not the entire table)
     const { data: children } = await supabase
       .from("children")
-      .select("user_id, first_name, last_name, grade_level");
+      .select("user_id, first_name, last_name, grade_level")
+      .in("user_id", parentIds.length ? parentIds : ["00000000-0000-0000-0000-000000000000"]);
 
     const childrenByParent: Record<string, Array<{ first_name: string; last_name: string; grade_level: string | null }>> = {};
     if (children) {
@@ -61,6 +82,7 @@ serve(async (req) => {
         });
       }
     }
+
 
     const scored: Array<{
       id: string;
