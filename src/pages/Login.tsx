@@ -53,26 +53,37 @@ const Login = () => {
     setNeedsConfirm(null);
 
     try {
-      // Resolve username → email via existing edge function
-      const { data: loginData, error: loginError } = await supabase.functions.invoke("auth-login", {
-        body: { usernameOrEmail: usernameOrEmail.toLowerCase().trim(), password },
-      });
-      if (loginError || !loginData?.success) {
-        throw new Error("Invalid email/username or password");
-      }
-      const resolvedEmail: string = loginData.user.email;
+      const input = usernameOrEmail.trim();
 
+      // Resolve username → email (or use email directly)
+      let resolvedEmail = input.toLowerCase();
+      if (!input.includes("@")) {
+        const { data: loginData, error: loginError } = await supabase.functions.invoke("auth-login", {
+          body: { usernameOrEmail: input },
+        });
+        if (loginError || !loginData?.success || !loginData?.user?.email) {
+          console.error("Username lookup failed:", loginError, loginData);
+          throw new Error("Invalid email/username or password");
+        }
+        resolvedEmail = String(loginData.user.email).toLowerCase().trim();
+      }
+
+      console.log("Signing in with email:", resolvedEmail);
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: resolvedEmail,
         password,
       });
 
       if (signInError) {
+        console.error("Supabase signIn error:", signInError);
         const msg = signInError.message || "";
         if (/confirm/i.test(msg) || /not confirmed/i.test(msg)) {
           setNeedsConfirm(resolvedEmail);
-          setError("Please confirm your email before signing in.");
+          setError("Please confirm your email before signing in. Check your inbox for a confirmation link.");
           return;
+        }
+        if (/invalid login credentials/i.test(msg)) {
+          throw new Error("Invalid email/username or password");
         }
         throw signInError;
       }
