@@ -322,17 +322,7 @@ const Register = () => {
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password: studentPassword,
-      });
-      if (signInError) {
-        toast({ title: "Account created", description: "Please log in with your new credentials." });
-        navigate("/login");
-        return;
-      }
-      toast({ title: "Welcome!", description: "Your student account is ready." });
-      navigate("/dashboard");
+      await start2faAfterSignup(normalizedEmail, studentPassword);
     } catch (err) {
       setStudentError(err instanceof Error ? err.message : "Unexpected error");
     } finally {
