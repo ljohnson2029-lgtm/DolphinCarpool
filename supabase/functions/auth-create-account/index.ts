@@ -125,7 +125,7 @@ serve(async (req) => {
 
     const userId = authData.user.id;
 
-    const { error: insertUserErr } = await supabase.from("users").insert({
+    const { error: insertUserErr } = await supabase.from("users").upsert({
       user_id: userId,
       email: normalizedEmail,
       username,
@@ -134,30 +134,33 @@ serve(async (req) => {
       last_name: lastName,
       phone_number: phoneNumber,
       is_verified: false,
-    });
+    }, { onConflict: "user_id" });
 
     if (insertUserErr) {
       console.error("users insert error:", insertUserErr);
       await supabase.auth.admin.deleteUser(userId);
-      return new Response(JSON.stringify({ error: `Failed to create user record: ${insertUserErr.message}` }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const friendly = /duplicate key|unique constraint/i.test(insertUserErr.message)
+        ? "An account with this email already exists. Please log in instead."
+        : `Failed to create user record: ${insertUserErr.message}`;
+      return new Response(JSON.stringify({ error: friendly }), {
+        status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { error: profileErr } = await supabase.from("profiles").insert({
+    const { error: profileErr } = await supabase.from("profiles").upsert({
       id: userId,
       username,
       first_name: firstName,
       last_name: lastName,
       phone_number: phoneNumber,
       account_type: "parent",
-    });
+    }, { onConflict: "id" });
     if (profileErr) console.error("profiles insert error:", profileErr);
 
-    const { error: roleErr } = await supabase.from("user_roles").insert({
+    const { error: roleErr } = await supabase.from("user_roles").upsert({
       user_id: userId,
       role: "parent",
-    });
+    }, { onConflict: "user_id,role" });
     if (roleErr) console.error("user_roles insert error:", roleErr);
 
     return new Response(JSON.stringify({
