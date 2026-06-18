@@ -126,7 +126,7 @@ const FeaturesSection = () => {
 
                   {/* Footer CTA */}
                   <div className="mt-6 flex items-center text-xs font-semibold text-primary opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                    Learn more
+                    Explore carpooling features
                     <ArrowRight className="ml-1 h-3 w-3" />
                   </div>
                 </div>

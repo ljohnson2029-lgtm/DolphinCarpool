@@ -283,6 +283,7 @@ const Navigation = () => {
                 className="lg:hidden p-2 rounded-lg bg-white ring-2 ring-blue-500 hover:bg-gray-50 transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 whileTap={{ scale: 0.95 }}
+                aria-label="Toggle mobile menu"
               >
                 {isMobileMenuOpen ? (
                   <X className="w-6 h-6 text-blue-700" />
