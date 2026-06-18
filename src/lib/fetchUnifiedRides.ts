@@ -25,7 +25,8 @@ async function fetchProfilesForIds(ids: string[]): Promise<Record<string, any>> 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return profiles.reduce((acc: Record<string, any>, p) => {
     const email = users?.find(u => u.user_id === p.id)?.email;
-    acc[p.id] = { ...p, email };
+    const priv = privateProfiles?.find(pp => pp.id === p.id);
+    acc[p.id] = { ...p, ...(priv ?? {}), email };
     return acc;
   }, {});
 }
