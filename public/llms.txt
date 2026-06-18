@@ -1,0 +1,16 @@
+# Dolphin Carpool
+
+> Coordinate safe, reliable school carpools with verified families in your community.
+
+Dolphin Carpool helps parents and students organize rides to and from school. Parents can post available rides, find matches along their route, manage recurring carpool series, and communicate securely with confirmed partners. Students can view their schedules and linked family carpools.
+
+## Pages
+
+- [Home](/): Learn how Dolphin Carpool connects families and simplifies school commutes.
+- [About](/about): Mission and overview of the Dolphin Carpool community.
+- [Features](/features): Tools for posting rides, finding matches, scheduling, and messaging.
+- [Safety](/safety): Safety practices, privacy protections, and verification policies.
+- [Privacy](/privacy): How personal and family data is handled.
+- [Terms](/terms): Terms and conditions for using Dolphin Carpool.
+- [Help](/help): Guides and answers for parents and students.
+- [Feedback](/feedback): Share feedback or report issues with the team.
