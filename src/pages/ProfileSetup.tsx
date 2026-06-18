@@ -60,7 +60,7 @@ const OptionalLabel = ({ children, icon, htmlFor }: { children: React.ReactNode;
 );
 
 const ProfileSetup = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const formRef = useRef<HTMLDivElement>(null);
@@ -366,13 +366,15 @@ const ProfileSetup = () => {
         }
       }
 
+      await refreshProfile();
       if (isEditMode) {
         toast({ title: "Profile updated!", description: "Your changes have been saved." });
         navigate("/profile");
       } else {
         toast({ title: "Welcome!", description: "Your profile is complete. Enjoy the app!" });
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }
+
     } catch (error) {
       toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
     } finally {
