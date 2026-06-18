@@ -178,13 +178,15 @@ serve(async (req) => {
         username: p.username,
         distance_miles: Math.round(dist * 10) / 10,
         grade_matches: [...new Set(gradeMatches)],
-        their_kids: theirChildren.map(c => c.first_name).filter(Boolean),
+        // Don't expose child names of unconnected families
+        their_kids: [],
         schedule_overlap_days: overlapDays,
         their_active_days: [...theirDays],
         ride_count: rideCount,
         score: Math.round(totalScore * 10) / 10,
         neighborhood,
       });
+
     }
 
     // Sort and take top 8 for AI processing
