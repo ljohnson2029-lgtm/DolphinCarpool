@@ -83,9 +83,21 @@ serve(async (req) => {
     });
     if (updErr) {
       console.error("password update error", updErr);
-      return new Response(JSON.stringify({ error: "update_failed" }), {
-        status: 500, headers: { ...cors, "Content-Type": "application/json" },
-      });
+      const errAny = updErr as { code?: string; message?: string; reasons?: string[] };
+      const reasons = errAny.reasons || [];
+      if (errAny.code === "weak_password" || reasons.includes("pwned")) {
+        return new Response(
+          JSON.stringify({
+            error: "pwned_password",
+            message: "This password has appeared in known data breaches. Please choose a different, unique password.",
+          }),
+          { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
+        );
+      }
+      return new Response(
+        JSON.stringify({ error: "update_failed", message: errAny.message || "Could not update password." }),
+        { status: 500, headers: { ...cors, "Content-Type": "application/json" } }
+      );
     }
 
     // Delete the code
