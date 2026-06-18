@@ -11,7 +11,7 @@ const Features = () => {
         path="/features"
       />
       <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-        Features
+        Dolphin Carpool Features
       </h1>
       <FeaturesSection />
     </DashboardLayout>
