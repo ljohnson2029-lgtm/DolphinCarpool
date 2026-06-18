@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Car, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Car, ShieldCheck, ArrowLeft, Clock } from "lucide-react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import Navigation from "@/components/Navigation";
 import AddressRequiredModal from "@/components/AddressRequiredModal";
 import { useToast } from "@/hooks/use-toast";
@@ -149,6 +150,8 @@ const Login = () => {
       setTwofaEmail(resolvedEmail);
       setTwofaCode("");
       setTwofaError("");
+      setError("");
+      setNeedsConfirm(null);
       setStep("twofa");
       setResendCooldown(30);
     } catch (err) {
@@ -332,25 +335,34 @@ const Login = () => {
             )}
 
             {step === "twofa" && (
-              <form onSubmit={handleVerify2fa} className="space-y-4">
+              <form onSubmit={handleVerify2fa} className="space-y-5">
                 {twofaError && (
-                  <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                  <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm text-center">
                     {twofaError}
                   </div>
                 )}
-                <div>
-                  <Label htmlFor="twofa-code">Verification code</Label>
-                  <Input
-                    id="twofa-code"
-                    value={twofaCode}
-                    onChange={(e) => setTwofaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    autoFocus
-                    placeholder="123456"
-                    className="mt-1 h-12 text-center text-2xl tracking-[0.5em] font-mono"
+                <div className="flex flex-col items-center space-y-3">
+                  <Label htmlFor="twofa-code" className="sr-only">Verification code</Label>
+                  <InputOTP
                     maxLength={6}
-                  />
+                    value={twofaCode}
+                    onChange={(val) => setTwofaCode(val.replace(/\D/g, "").slice(0, 6))}
+                    autoFocus
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} className="h-12 w-12 text-lg" />
+                      <InputOTPSlot index={1} className="h-12 w-12 text-lg" />
+                      <InputOTPSlot index={2} className="h-12 w-12 text-lg" />
+                      <InputOTPSlot index={3} className="h-12 w-12 text-lg" />
+                      <InputOTPSlot index={4} className="h-12 w-12 text-lg" />
+                      <InputOTPSlot index={5} className="h-12 w-12 text-lg" />
+                    </InputOTPGroup>
+                  </InputOTP>
+                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Clock className="w-3.5 h-3.5" /> Code expires in 15 minutes
+                  </p>
                 </div>
 
                 <LoadingButton type="submit" loading={loading} className="w-full h-11">
