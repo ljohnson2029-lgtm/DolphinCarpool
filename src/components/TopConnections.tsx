@@ -99,7 +99,7 @@ export const TopConnections = ({ limit = 5, variant = 'dashboard' }: TopConnecti
           </div>
         ) : connections.length === 0 ? (
           <div className="text-center py-8">
-            <Users className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
+            <Users className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm text-muted-foreground mb-3">
               Start carpooling to build your network!
             </p>

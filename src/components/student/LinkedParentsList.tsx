@@ -76,7 +76,7 @@ export function LinkedParentsList({ parents, loading }: LinkedParentsListProps) 
     return (
       <Card className="border-dashed border-2">
         <CardContent className="py-12 text-center">
-          <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+          <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">No Parents Linked Yet</h3>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Link to your parent's account to see their carpool schedules and stay connected with family ride plans.

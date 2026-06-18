@@ -226,7 +226,7 @@ const Dashboard = () => {
             <Card className="bg-white border-gray-100 shadow-sm">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <MapPin className="w-5 h-5 text-gray-400" />
+                  <MapPin className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="text-3xl font-bold text-gray-900">Palos Verdes</div>
                 <div className="text-sm text-gray-500">Your Area</div>
@@ -238,7 +238,7 @@ const Dashboard = () => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-gray-500">Profile</span>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
                 </div>
                 <div className="text-lg font-semibold text-gray-900">
                   {profile.profile_complete ? 'Complete' : 'Incomplete'}
@@ -290,7 +290,7 @@ const Dashboard = () => {
                         {action.description}
                       </p>
                       
-                      <div className="flex items-center text-sm font-medium text-gray-400 group-hover:text-blue-600 transition-colors">
+                      <div className="flex items-center text-sm font-medium text-muted-foreground group-hover:text-blue-600 transition-colors">
                         Get Started
                         <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                       </div>

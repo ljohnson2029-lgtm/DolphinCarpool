@@ -340,7 +340,7 @@ export const AddressAutocompleteInput: React.FC<AddressAutocompleteInputProps> =
           ))}
 
           {/* Attribution (required by Mapbox TOS) */}
-          <li className="px-4 py-1.5 text-[10px] text-muted-foreground/60 text-right" aria-hidden="true">
+          <li className="px-4 py-1.5 text-[10px] text-muted-foreground text-right" aria-hidden="true">
             Powered by Mapbox
           </li>
         </ul>
