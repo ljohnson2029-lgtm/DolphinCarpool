@@ -1,4 +1,5 @@
 import SEO from "@/components/SEO";
+import JsonLd from "@/components/JsonLd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
