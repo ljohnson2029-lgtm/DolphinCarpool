@@ -263,17 +263,7 @@ const Register = () => {
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
-      if (signInError) {
-        toast({ title: "Account created", description: "Please log in with your new credentials." });
-        navigate("/login");
-        return;
-      }
-      toast({ title: "Welcome!", description: "Your account is ready." });
-      navigate("/dashboard");
+      await start2faAfterSignup(normalizedEmail, password);
     } catch (err) {
       logger.error("auth-create-account exception:", err);
       toast({
