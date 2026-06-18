@@ -115,10 +115,8 @@ const ForgotPassword = () => {
         }
         return;
       }
-      setStep("done");
-      toast({ title: "Password reset", description: "Your password has been successfully reset!" });
-      setTimeout(() => navigate("/login"), 3000);
-    } catch {
+      navigate("/login", { replace: true, state: { resetSuccess: true } });
+
       setError("Could not update password. Please try again.");
     } finally {
       setLoading(false);
