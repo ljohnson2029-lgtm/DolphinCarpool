@@ -18,7 +18,7 @@ import Navigation from "@/components/Navigation";
 import TermsAgreementStep from "@/components/TermsAgreementStep";
 import { cn } from "@/lib/utils";
 
-type Step = "choose" | "termsParent" | "termsStudent" | "code" | "form" | "checkEmail" | "student";
+type Step = "choose" | "termsParent" | "termsStudent" | "code" | "form" | "checkEmail" | "student" | "verify2fa";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -51,6 +51,109 @@ const Register = () => {
   const [studentConfirm, setStudentConfirm] = useState("");
   const [studentShowPw, setStudentShowPw] = useState(false);
   const [studentError, setStudentError] = useState("");
+
+  // 2FA verification (after account creation)
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [pendingPassword, setPendingPassword] = useState("");
+  const [twofaCode, setTwofaCode] = useState("");
+  const [twofaError, setTwofaError] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
+  const start2faAfterSignup = async (emailAddr: string, pw: string) => {
+    setPendingEmail(emailAddr);
+    setPendingPassword(pw);
+    setTwofaCode("");
+    setTwofaError("");
+    try {
+      await supabase.auth.signOut();
+    } catch { /* ignore */ }
+    const { error: sendErr } = await supabase.functions.invoke("send-2fa-code", {
+      body: { email: emailAddr, purpose: "signup" },
+    });
+    if (sendErr) {
+      logger.error("send-2fa-code error", sendErr);
+      toast({
+        title: "Couldn't send verification code",
+        description: "Your account was created. Please try signing in to receive a new code.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+    setStep("verify2fa");
+    setResendCooldown(30);
+  };
+
+  const submitVerify2fa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTwofaError("");
+    const code = twofaCode.trim();
+    if (!/^\d{6}$/.test(code)) {
+      setTwofaError("Please enter the 6-digit code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error: verErr } = await supabase.functions.invoke("verify-2fa-code", {
+        body: { email: pendingEmail, code, purpose: "signup" },
+      });
+      if (verErr || !data?.success) {
+        const reason = (data as { reason?: string } | null)?.reason;
+        if (reason === "expired") {
+          setTwofaError("Code expired. Click below to send a new one.");
+        } else {
+          setTwofaError("Invalid code. Please check your email and try again.");
+        }
+        return;
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: pendingEmail,
+        password: pendingPassword,
+      });
+      if (signInError) {
+        toast({
+          title: "Email verified!",
+          description: "Please log in to continue.",
+        });
+        navigate("/login");
+        return;
+      }
+      toast({
+        title: "Email verified!",
+        description: "Two-Factor Authentication is automatically enabled for your security. You can turn this off anytime in Settings.",
+      });
+      navigate("/dashboard");
+    } catch (err) {
+      logger.error("verify-2fa-code error", err);
+      setTwofaError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendVerify2fa = async () => {
+    if (resendCooldown > 0 || !pendingEmail) return;
+    setLoading(true);
+    setTwofaError("");
+    try {
+      const { error: sendErr } = await supabase.functions.invoke("send-2fa-code", {
+        body: { email: pendingEmail, purpose: "signup" },
+      });
+      if (sendErr) throw sendErr;
+      toast({ title: "Code sent", description: `A new code was sent to ${pendingEmail}.` });
+      setResendCooldown(30);
+    } catch (err) {
+      setTwofaError("Could not resend the code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (user) navigate("/dashboard");
@@ -160,17 +263,7 @@ const Register = () => {
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
-      if (signInError) {
-        toast({ title: "Account created", description: "Please log in with your new credentials." });
-        navigate("/login");
-        return;
-      }
-      toast({ title: "Welcome!", description: "Your account is ready." });
-      navigate("/dashboard");
+      await start2faAfterSignup(normalizedEmail, password);
     } catch (err) {
       logger.error("auth-create-account exception:", err);
       toast({
@@ -229,17 +322,7 @@ const Register = () => {
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password: studentPassword,
-      });
-      if (signInError) {
-        toast({ title: "Account created", description: "Please log in with your new credentials." });
-        navigate("/login");
-        return;
-      }
-      toast({ title: "Welcome!", description: "Your student account is ready." });
-      navigate("/dashboard");
+      await start2faAfterSignup(normalizedEmail, studentPassword);
     } catch (err) {
       setStudentError(err instanceof Error ? err.message : "Unexpected error");
     } finally {
@@ -269,6 +352,7 @@ const Register = () => {
               {step === "form" && <ArrowRight className="w-7 h-7 text-white" />}
               {step === "student" && <GraduationCap className="w-7 h-7 text-white" />}
               {step === "checkEmail" && <Mail className="w-7 h-7 text-white" />}
+              {step === "verify2fa" && <Mail className="w-7 h-7 text-white" />}
             </div>
             <CardTitle className="text-2xl">
               {step === "choose" && "Join Dolphin Carpool"}
@@ -277,6 +361,7 @@ const Register = () => {
               {step === "form" && "Create Your Parent Account"}
               {step === "student" && "Create Your Student Account"}
               {step === "checkEmail" && "Check your email!"}
+              {step === "verify2fa" && "Verify Your Email"}
             </CardTitle>
             <CardDescription>
               {step === "choose" && "Choose how you're signing up."}
@@ -287,6 +372,9 @@ const Register = () => {
               {step === "student" && "Just your email and password — your parent has already added you."}
               {step === "checkEmail" && (
                 <>We sent a verification link to <span className="font-semibold text-foreground">{email}</span>. Click the link to confirm your account.</>
+              )}
+              {step === "verify2fa" && (
+                <>We sent a 6-digit code to <span className="font-semibold text-foreground">{pendingEmail}</span>. Enter it below to activate your account.</>
               )}
             </CardDescription>
           </CardHeader>
@@ -620,6 +708,53 @@ const Register = () => {
                     You'll be able to sign in once your email is confirmed.
                   </p>
                 </motion.div>
+              )}
+
+              {step === "verify2fa" && (
+                <motion.form
+                  key="verify2fa"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  onSubmit={submitVerify2fa}
+                  className="space-y-4"
+                >
+                  {twofaError && (
+                    <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                      {twofaError}
+                    </div>
+                  )}
+                  <div>
+                    <Label htmlFor="signup-2fa-code">Verification code</Label>
+                    <Input
+                      id="signup-2fa-code"
+                      value={twofaCode}
+                      onChange={(e) => setTwofaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      autoFocus
+                      placeholder="123456"
+                      maxLength={6}
+                      className="mt-1 h-12 text-center text-2xl tracking-[0.5em] font-mono"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      The code expires in 15 minutes.
+                    </p>
+                  </div>
+                  <LoadingButton type="submit" loading={loading} className="w-full h-11">
+                    Verify and continue <ArrowRight className="w-4 h-4 ml-2" />
+                  </LoadingButton>
+                  <div className="text-center text-sm">
+                    <button
+                      type="button"
+                      onClick={resendVerify2fa}
+                      disabled={resendCooldown > 0 || loading}
+                      className="text-primary hover:underline disabled:opacity-50 disabled:no-underline"
+                    >
+                      {resendCooldown > 0 ? `Resend code (${resendCooldown}s)` : "Resend code"}
+                    </button>
+                  </div>
+                </motion.form>
               )}
             </AnimatePresence>
           </CardContent>

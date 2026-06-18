@@ -478,6 +478,7 @@ export type Database = {
           share_email: boolean | null
           share_phone: boolean | null
           show_on_map: boolean | null
+          two_factor_enabled: boolean
           updated_at: string
           username: string
         }
@@ -508,6 +509,7 @@ export type Database = {
           share_email?: boolean | null
           share_phone?: boolean | null
           show_on_map?: boolean | null
+          two_factor_enabled?: boolean
           updated_at?: string
           username: string
         }
@@ -538,6 +540,7 @@ export type Database = {
           share_email?: boolean | null
           share_phone?: boolean | null
           show_on_map?: boolean | null
+          two_factor_enabled?: boolean
           updated_at?: string
           username?: string
         }
@@ -1206,6 +1209,36 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      two_factor_codes: {
+        Row: {
+          code_hash: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          purpose: string
+          used_at: string | null
+        }
+        Insert: {
+          code_hash: string
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          purpose: string
+          used_at?: string | null
+        }
+        Update: {
+          code_hash?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          purpose?: string
+          used_at?: string | null
         }
         Relationships: []
       }
