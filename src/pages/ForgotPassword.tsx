@@ -15,6 +15,20 @@ import { KeyRound, ArrowLeft, CheckCircle2, Mail, Lock } from "lucide-react";
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 type Step = "email" | "code" | "password" | "done";
+type ResetFunctionResponse = { error?: string; message?: string; success?: boolean } | null;
+
+const getFunctionErrorBody = async (data: ResetFunctionResponse, fnErr: unknown): Promise<ResetFunctionResponse> => {
+  if (data?.error) return data;
+  const context = (fnErr as { context?: unknown } | null)?.context;
+  if (context instanceof Response) {
+    try {
+      return (await context.clone().json()) as ResetFunctionResponse;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -102,9 +116,10 @@ const ForgotPassword = () => {
           newPassword: password,
         },
       });
-      if (fnErr || (data as { error?: string })?.error) {
-        const errCode = (data as { error?: string })?.error;
-        const errMsg = (data as { message?: string })?.message;
+      if (fnErr || (data as ResetFunctionResponse)?.error) {
+        const body = await getFunctionErrorBody(data as ResetFunctionResponse, fnErr);
+        const errCode = body?.error;
+        const errMsg = body?.message;
         console.error("password reset failed", { errCode, errMsg, fnErr });
         if (errCode === "expired_code") {
           setExpired(true);

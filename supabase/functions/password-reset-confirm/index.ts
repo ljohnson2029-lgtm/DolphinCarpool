@@ -85,13 +85,22 @@ serve(async (req) => {
       console.error("password update error", updErr);
       const errAny = updErr as { code?: string; message?: string; reasons?: string[] };
       const reasons = errAny.reasons || [];
-      if (errAny.code === "weak_password" || reasons.includes("pwned")) {
+      if (reasons.includes("pwned")) {
         return new Response(
           JSON.stringify({
             error: "pwned_password",
             message: "This password has appeared in known data breaches. Please choose a different, unique password.",
           }),
-          { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
+          { status: 200, headers: { ...cors, "Content-Type": "application/json" } }
+        );
+      }
+      if (errAny.code === "weak_password") {
+        return new Response(
+          JSON.stringify({
+            error: "weak_password",
+            message: "Password must meet the security requirements. Please choose a stronger password.",
+          }),
+          { status: 200, headers: { ...cors, "Content-Type": "application/json" } }
         );
       }
       return new Response(
