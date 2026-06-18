@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Map as MapIcon, List, Hand, Car, Plus, RefreshCw, Sparkles, Users } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
@@ -111,6 +112,11 @@ const FamilyCarpools = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Family Carpools — Dolphin Carpool"
+        description="Browse, request, and offer family carpools with parents in your Dolphin Carpool community."
+        path="/carpools"
+      />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

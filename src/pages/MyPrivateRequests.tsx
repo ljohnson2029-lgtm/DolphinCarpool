@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -272,6 +273,11 @@ const MyPrivateRequests = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Private Ride Requests — Dolphin Carpool"
+        description="Review and manage your direct, private ride requests with other Dolphin parents."
+        path="/requests/private"
+      />
       <div className="container mx-auto px-4 max-w-7xl">
         <Breadcrumbs items={[{ label: "My Private Requests" }]} />
 

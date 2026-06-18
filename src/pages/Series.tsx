@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import SEO from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -105,6 +106,11 @@ const Series = () => {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Carpool Series — Dolphin Carpool"
+        description="Set up and manage recurring weekly carpool series with linked partner parents."
+        path="/series"
+      />
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Series</h1>
