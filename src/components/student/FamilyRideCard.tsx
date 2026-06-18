@@ -177,7 +177,7 @@ export function FamilyRideCard({ ride }: FamilyRideCardProps) {
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{ride.pickup_location}</span>
-                <ArrowRight className="h-3 w-3 flex-shrink-0 text-muted-foreground/50" />
+                <ArrowRight className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
                 <span className="truncate">{ride.dropoff_location}</span>
               </div>
             </div>

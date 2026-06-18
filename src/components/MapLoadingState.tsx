@@ -176,7 +176,7 @@ const MapLoadingState = ({ showControls = true }: MapLoadingStateProps) => {
 
         {/* Fun fact at bottom */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center">
-          <p className="text-xs text-muted-foreground/70 italic">
+          <p className="text-xs text-muted-foreground italic">
             🚗 Did you know? Carpooling can save over 1,500 lbs of CO2 per year!
           </p>
         </div>

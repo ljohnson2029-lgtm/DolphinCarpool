@@ -288,7 +288,7 @@ const ParentProfileForm = ({
         <CardContent className="space-y-4">
           {children.length === 0 ? (
             <div className="text-center py-6 space-y-2">
-              <Users className="h-8 w-8 mx-auto text-muted-foreground/50" />
+              <Users className="h-8 w-8 mx-auto text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
                 No children added yet. Add your children to start finding carpool matches.
               </p>
