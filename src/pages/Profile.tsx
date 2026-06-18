@@ -448,7 +448,7 @@ const Profile = () => {
                                   </div>
                                   <div>
                                     <p className="text-sm text-gray-500">Email</p>
-                                    <p className="font-semibold text-gray-900">{parent.parent_email}</p>
+                                    <p className="font-semibold text-gray-900">{parent.parent_email || 'No email on file'}</p>
                                   </div>
                                 </div>
                                 {parent.parent_phone && (
