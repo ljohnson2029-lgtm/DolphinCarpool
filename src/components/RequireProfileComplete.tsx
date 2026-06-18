@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 const RequireProfileComplete = ({ children }: { children: React.ReactNode }) => {
   const { user, profile, loading, profileError, logout } = useAuth();
   const location = useLocation();
+  const isAuthRoute = ["/login", "/register", "/forgot-password", "/reset-password", "/auth/callback", "/verify"].some(
+    (path) => location.pathname.startsWith(path)
+  );
 
-  if (loading) return null;
+  if (loading && !isAuthRoute) return null;
   if (!user) return <>{children}</>;
   if (!profile) {
     return (

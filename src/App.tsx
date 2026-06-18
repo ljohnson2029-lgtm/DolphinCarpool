@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import ParentOnlyRoute from "./components/ParentOnlyRoute";
@@ -79,8 +79,12 @@ const queryClient = new QueryClient({
 
 const AppRoutes = () => {
   const { loading } = useAuth();
+  const location = useLocation();
+  const isAuthRoute = ["/login", "/register", "/forgot-password", "/reset-password", "/auth/callback", "/verify"].some(
+    (path) => location.pathname.startsWith(path)
+  );
 
-  if (loading) {
+  if (loading && !isAuthRoute) {
     return <SplashScreen />;
   }
 

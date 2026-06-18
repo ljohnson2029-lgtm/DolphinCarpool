@@ -50,8 +50,8 @@ const Login = () => {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
-    if (user && step === "credentials") navigate("/dashboard");
-  }, [user, navigate, step]);
+    if (user && step === "credentials" && !loading) navigate("/dashboard");
+  }, [user, navigate, step, loading]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -154,8 +154,8 @@ const Login = () => {
         return;
       }
 
-      // 2FA required: sign out, send code, switch to twofa step
-      await supabase.auth.signOut();
+      // 2FA required: clear the temporary password-auth session, send code,
+      // then stay on this mounted login page for verification.
       const { error: sendErr } = await supabase.functions.invoke("send-2fa-code", {
         body: { email: resolvedEmail, purpose: "login" },
       });
@@ -170,6 +170,7 @@ const Login = () => {
       setNeedsConfirm(null);
       setStep("twofa");
       setResendCooldown(30);
+      await supabase.auth.signOut({ scope: "local" });
     } catch (err) {
       setError((err as Error).message || "Invalid email/username or password");
     } finally {
