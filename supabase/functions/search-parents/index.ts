@@ -128,10 +128,12 @@ serve(async (req) => {
             first_name: p.first_name || "",
             last_name: p.last_name || "",
             username: p.username,
-            children: parentChildren,
+            // Only expose children names/grades to already-connected parents
+            children: connected.has(p.id) ? parentChildren : [],
             score,
           });
         }
+
       }
     }
 
