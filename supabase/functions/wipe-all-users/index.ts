@@ -34,9 +34,13 @@ serve(async (req) => {
       if (data.users.length < 200) break;
     }
 
-    // Clean up orphaned rows in public tables (FKs should cascade, but be thorough)
-    await supabase.from("two_factor_codes").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabase.from("password_reset_codes").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    // Clean up orphaned rows in public tables (FKs may not cascade for all tables)
+    const ZERO = "00000000-0000-0000-0000-000000000000";
+    await supabase.from("two_factor_codes").delete().neq("id", ZERO);
+    await supabase.from("password_reset_codes").delete().neq("id", ZERO);
+    await supabase.from("user_roles").delete().neq("user_id", ZERO);
+    await supabase.from("profiles").delete().neq("id", ZERO);
+    await supabase.from("users").delete().neq("user_id", ZERO);
 
     return new Response(JSON.stringify({ success: true, deletedCount: deleted.length, deleted, failed }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },

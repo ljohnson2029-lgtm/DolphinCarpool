@@ -71,7 +71,8 @@ serve(async (req) => {
       });
     }
 
-    // Email uniqueness (clean orphans the same way as before)
+    // Email uniqueness — first reconcile any orphan public rows with this email
+    // (e.g. left over from a previous failed signup or partial wipe).
     const { data: existingEmail } = await supabase
       .from("users")
       .select("user_id, email")
@@ -81,21 +82,25 @@ serve(async (req) => {
     if (existingEmail) {
       const { data: authUsers } = await supabase.auth.admin.listUsers();
       const authUserExists = authUsers?.users?.some((u) => u.id === existingEmail.user_id);
-      if (!authUserExists) {
-        await supabase.from("users").delete().eq("user_id", existingEmail.user_id);
-        await supabase.from("profiles").delete().eq("id", existingEmail.user_id);
-        await supabase.from("user_roles").delete().eq("user_id", existingEmail.user_id);
-      } else {
-        return new Response(JSON.stringify({ error: "Email already registered. Please log in instead." }), {
+      if (authUserExists) {
+        return new Response(JSON.stringify({ error: "An account with this email already exists. Please log in instead." }), {
           status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      // Orphan public rows — remove them so the new signup can proceed.
+      await supabase.from("user_roles").delete().eq("user_id", existingEmail.user_id);
+      await supabase.from("profiles").delete().eq("id", existingEmail.user_id);
+      await supabase.from("users").delete().eq("user_id", existingEmail.user_id);
     }
 
     // Any leftover auth user with same email?
     const { data: allAuth } = await supabase.auth.admin.listUsers();
     const orphan = allAuth?.users?.find((u) => u.email?.toLowerCase() === normalizedEmail);
     if (orphan) {
+      // Also clean public rows tied to this orphan auth id (defensive).
+      await supabase.from("user_roles").delete().eq("user_id", orphan.id);
+      await supabase.from("profiles").delete().eq("id", orphan.id);
+      await supabase.from("users").delete().eq("user_id", orphan.id);
       await supabase.auth.admin.deleteUser(orphan.id);
     }
 
@@ -120,7 +125,7 @@ serve(async (req) => {
 
     const userId = authData.user.id;
 
-    const { error: insertUserErr } = await supabase.from("users").insert({
+    const { error: insertUserErr } = await supabase.from("users").upsert({
       user_id: userId,
       email: normalizedEmail,
       username,
@@ -129,30 +134,33 @@ serve(async (req) => {
       last_name: lastName,
       phone_number: phoneNumber,
       is_verified: false,
-    });
+    }, { onConflict: "user_id" });
 
     if (insertUserErr) {
       console.error("users insert error:", insertUserErr);
       await supabase.auth.admin.deleteUser(userId);
-      return new Response(JSON.stringify({ error: `Failed to create user record: ${insertUserErr.message}` }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const friendly = /duplicate key|unique constraint/i.test(insertUserErr.message)
+        ? "An account with this email already exists. Please log in instead."
+        : `Failed to create user record: ${insertUserErr.message}`;
+      return new Response(JSON.stringify({ error: friendly }), {
+        status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { error: profileErr } = await supabase.from("profiles").insert({
+    const { error: profileErr } = await supabase.from("profiles").upsert({
       id: userId,
       username,
       first_name: firstName,
       last_name: lastName,
       phone_number: phoneNumber,
       account_type: "parent",
-    });
+    }, { onConflict: "id" });
     if (profileErr) console.error("profiles insert error:", profileErr);
 
-    const { error: roleErr } = await supabase.from("user_roles").insert({
+    const { error: roleErr } = await supabase.from("user_roles").upsert({
       user_id: userId,
       role: "parent",
-    });
+    }, { onConflict: "user_id,role" });
     if (roleErr) console.error("user_roles insert error:", roleErr);
 
     return new Response(JSON.stringify({
