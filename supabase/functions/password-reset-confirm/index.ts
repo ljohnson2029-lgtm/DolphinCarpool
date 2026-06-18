@@ -10,6 +10,58 @@ async function hashCode(code: string, salt: string): Promise<string> {
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
+async function findAuthUserIdByEmail(admin: ReturnType<typeof createClient>, email: string): Promise<string | null> {
+  const { data: userRows, error: userLookupError } = await admin
+    .from("users")
+    .select("user_id, email")
+    .ilike("email", email)
+    .limit(5);
+
+  if (userLookupError) {
+    console.error("password reset users lookup error", userLookupError);
+  }
+
+  const matchingUserRow = userRows?.find((user) => String(user.email).trim().toLowerCase() === email);
+  if (matchingUserRow?.user_id) {
+    const { data: authUser, error: authLookupError } = await admin.auth.admin.getUserById(matchingUserRow.user_id);
+    console.log("password reset auth lookup", {
+      source: "users_table",
+      foundUserRow: true,
+      foundAuthUser: Boolean(authUser?.user),
+      emailMatches: authUser?.user?.email?.trim().toLowerCase() === email,
+    });
+
+    if (!authLookupError && authUser?.user?.email?.trim().toLowerCase() === email) {
+      return authUser.user.id;
+    }
+
+    console.error("password reset users/auth mismatch", {
+      authLookupError,
+      foundAuthUser: Boolean(authUser?.user),
+      emailMatches: authUser?.user?.email?.trim().toLowerCase() === email,
+    });
+  }
+
+  for (let page = 1; page <= 10; page += 1) {
+    const { data: authUsers, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    if (listError) {
+      console.error("password reset auth list fallback error", listError);
+      return null;
+    }
+
+    const matchingAuthUser = authUsers.users.find((user) => user.email?.trim().toLowerCase() === email);
+    if (matchingAuthUser) {
+      console.log("password reset auth lookup", { source: "auth_list_fallback", foundAuthUser: true });
+      return matchingAuthUser.id;
+    }
+
+    if (authUsers.users.length < 1000) break;
+  }
+
+  console.log("password reset auth lookup", { foundAuthUser: false });
+  return null;
+}
+
 serve(async (req) => {
   const pre = handleCorsPreflightIfNeeded(req);
   if (pre) return pre;
