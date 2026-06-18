@@ -1,4 +1,5 @@
 import SEO from "@/components/SEO";
+import JsonLd from "@/components/JsonLd";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +11,22 @@ import LandingTrust from "@/components/LandingTrust";
 import Footer from "@/components/Footer";
 import CreatorFooter from "@/components/CreatorFooter";
 import PageTransition from "@/components/PageTransition";
+
+const ORGANIZATION_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Dolphin Carpool",
+  url: "https://dolphincarpool.org/",
+  logo: "https://dolphincarpool.org/og-image.jpg",
+};
+
+const WEBSITE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Dolphin Carpool",
+  url: "https://dolphincarpool.org/",
+};
+
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -40,6 +57,7 @@ const Index = () => {
         description="Coordinate safe, reliable school carpools with verified parents in your community. Post rides, find matches, and manage recurring series."
         path="/"
       />
+      <JsonLd data={[ORGANIZATION_SCHEMA, WEBSITE_SCHEMA]} />
       <div className="min-h-screen">
         <Navigation />
 
