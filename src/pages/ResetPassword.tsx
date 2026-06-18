@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,13 @@ const ResetPassword = () => {
 
   return (
     <>
+      <SEO
+        title="Reset Password — Dolphin Carpool"
+        description="Choose a new password for your Dolphin Carpool account and get back to coordinating rides with your community."
+        path="/reset-password"
+      />
       <Navigation />
+
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-start justify-center p-4 pt-24 pb-32">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader className="text-center space-y-2">

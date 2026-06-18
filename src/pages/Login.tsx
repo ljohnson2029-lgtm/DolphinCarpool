@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -112,7 +113,13 @@ const Login = () => {
 
   return (
     <>
+      <SEO
+        title="Sign In — Dolphin Carpool"
+        description="Sign in to Dolphin Carpool to coordinate school rides, manage carpool series, and chat with confirmed partners."
+        path="/login"
+      />
       <Navigation />
+
       {loggedInUserId && (
         <AddressRequiredModal
           open={showAddressModal}

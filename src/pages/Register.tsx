@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -251,7 +252,13 @@ const Register = () => {
 
   return (
     <>
+      <SEO
+        title="Create Account — Dolphin Carpool"
+        description="Register a Dolphin Carpool parent or student account to start coordinating safe school rides with verified community members."
+        path="/register"
+      />
       <Navigation />
+
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-start justify-center p-4 pt-24 pb-32">
         <Card className="w-full max-w-xl shadow-xl">
           <CardHeader className="text-center space-y-2">
