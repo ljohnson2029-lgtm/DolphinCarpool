@@ -56,12 +56,7 @@ serve(async (req) => {
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
     // Check if user exists (don't reveal to client either way)
-    const lookup = await fetch(
-      `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(normalized)}`,
-      { headers: { apikey: SERVICE_ROLE, Authorization: `Bearer ${SERVICE_ROLE}` } }
-    );
-    const lookupJson = await lookup.json();
-    const userExists = Array.isArray(lookupJson?.users) && lookupJson.users.length > 0;
+    const userExists = await authUserExistsByEmail(admin, normalized);
 
     if (userExists && RESEND_API_KEY) {
       const code = Math.floor(100000 + Math.random() * 900000).toString();
