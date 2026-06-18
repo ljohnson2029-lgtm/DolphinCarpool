@@ -137,10 +137,12 @@ const Profile = () => {
     }
   }, [logout, navigate]);
 
-  const handleEditSave = useCallback(() => {
+  const { refreshProfile } = useAuth();
+  const handleEditSave = useCallback(async () => {
     setIsEditing(false);
-    window.location.reload();
-  }, []);
+    await refreshProfile();
+  }, [refreshProfile]);
+
 
   const getInitials = (firstName: string | null, lastName: string | null, username: string) => {
     if (firstName && lastName) return `${firstName[0]}${lastName[0]}`.toUpperCase();
