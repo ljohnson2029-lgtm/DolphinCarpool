@@ -52,6 +52,109 @@ const Register = () => {
   const [studentShowPw, setStudentShowPw] = useState(false);
   const [studentError, setStudentError] = useState("");
 
+  // 2FA verification (after account creation)
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [pendingPassword, setPendingPassword] = useState("");
+  const [twofaCode, setTwofaCode] = useState("");
+  const [twofaError, setTwofaError] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
+  const start2faAfterSignup = async (emailAddr: string, pw: string) => {
+    setPendingEmail(emailAddr);
+    setPendingPassword(pw);
+    setTwofaCode("");
+    setTwofaError("");
+    try {
+      await supabase.auth.signOut();
+    } catch { /* ignore */ }
+    const { error: sendErr } = await supabase.functions.invoke("send-2fa-code", {
+      body: { email: emailAddr, purpose: "signup" },
+    });
+    if (sendErr) {
+      logger.error("send-2fa-code error", sendErr);
+      toast({
+        title: "Couldn't send verification code",
+        description: "Your account was created. Please try signing in to receive a new code.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+    setStep("verify2fa");
+    setResendCooldown(30);
+  };
+
+  const submitVerify2fa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTwofaError("");
+    const code = twofaCode.trim();
+    if (!/^\d{6}$/.test(code)) {
+      setTwofaError("Please enter the 6-digit code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error: verErr } = await supabase.functions.invoke("verify-2fa-code", {
+        body: { email: pendingEmail, code, purpose: "signup" },
+      });
+      if (verErr || !data?.success) {
+        const reason = (data as { reason?: string } | null)?.reason;
+        if (reason === "expired") {
+          setTwofaError("Code expired. Click below to send a new one.");
+        } else {
+          setTwofaError("Invalid code. Please check your email and try again.");
+        }
+        return;
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: pendingEmail,
+        password: pendingPassword,
+      });
+      if (signInError) {
+        toast({
+          title: "Email verified!",
+          description: "Please log in to continue.",
+        });
+        navigate("/login");
+        return;
+      }
+      toast({
+        title: "Email verified!",
+        description: "Two-Factor Authentication is automatically enabled for your security. You can turn this off anytime in Settings.",
+      });
+      navigate("/dashboard");
+    } catch (err) {
+      logger.error("verify-2fa-code error", err);
+      setTwofaError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendVerify2fa = async () => {
+    if (resendCooldown > 0 || !pendingEmail) return;
+    setLoading(true);
+    setTwofaError("");
+    try {
+      const { error: sendErr } = await supabase.functions.invoke("send-2fa-code", {
+        body: { email: pendingEmail, purpose: "signup" },
+      });
+      if (sendErr) throw sendErr;
+      toast({ title: "Code sent", description: `A new code was sent to ${pendingEmail}.` });
+      setResendCooldown(30);
+    } catch (err) {
+      setTwofaError("Could not resend the code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (user) navigate("/dashboard");
   }, [user, navigate]);
