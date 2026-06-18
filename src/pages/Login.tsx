@@ -1,6 +1,6 @@
 import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Input } from "@/components/ui/input";
@@ -15,8 +15,23 @@ import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const state = location.state as { resetSuccess?: boolean } | null;
+    if (state?.resetSuccess) {
+      toast({
+        title: "Password reset successful",
+        description: "Your password has been reset successfully. Please log in with your new password.",
+      });
+      // Clear state so the toast doesn't reappear on re-render/navigation
+      window.history.replaceState({}, document.title);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
