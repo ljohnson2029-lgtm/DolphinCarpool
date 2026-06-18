@@ -150,6 +150,8 @@ const Login = () => {
       setTwofaEmail(resolvedEmail);
       setTwofaCode("");
       setTwofaError("");
+      setError("");
+      setNeedsConfirm(null);
       setStep("twofa");
       setResendCooldown(30);
     } catch (err) {
