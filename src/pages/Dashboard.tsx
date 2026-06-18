@@ -30,7 +30,7 @@ import { useScrollReveal, useCountUp } from "@/lib/animations";
 
 // Premium Dashboard with Apple/ESPN-quality design
 const Dashboard = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [upcomingRides, setUpcomingRides] = useState(0);
   const [totalConnections, setTotalConnections] = useState(0);
@@ -83,6 +83,25 @@ const Dashboard = () => {
     if (hour < 17) return 'Good afternoon';
     return 'Good evening';
   };
+
+  // Wait for auth to resolve before deciding to redirect — prevents bouncing
+  // back to /login during the brief window after 2FA sign-in while the
+  // AuthContext is still picking up the new session.
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="mb-8 space-y-2">
+            <Skeleton className="h-9 w-72" />
+            <Skeleton className="h-5 w-48" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[1, 2, 3].map(i => <Skeleton key={i} className="h-32 rounded-xl" />)}
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />;

@@ -202,13 +202,28 @@ const Login = () => {
         userId: signInData?.user?.id,
         error: signInError,
       });
-      if (signInError) {
+      if (signInError || !signInData?.session) {
         setTwofaError("Could not complete sign-in. Please try logging in again.");
         return;
       }
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData.session) {
-        console.error("No active session after 2FA sign-in:", sessionError, sessionData);
+
+      // Poll briefly to make sure the session is fully persisted before we
+      // navigate — otherwise the protected route can see a null user and
+      // redirect us back to /login.
+      let activeSession = signInData.session;
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData?.session) {
+          activeSession = sessionData.session;
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      console.log("Session confirmed after 2FA:", {
+        hasSession: !!activeSession,
+        userId: activeSession?.user?.id,
+      });
+      if (!activeSession) {
         setTwofaError("Could not start your login session. Please try logging in again.");
         return;
       }
