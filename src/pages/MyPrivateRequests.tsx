@@ -102,7 +102,7 @@ const MyPrivateRequests = () => {
       // Fetch recipient profiles for sent requests
       const recipientIds = [...new Set(sent.map(r => r.recipient_id))];
       const { data: recipientProfiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('id, first_name, last_name, username, phone_number')
         .in('id', recipientIds);
       
@@ -126,7 +126,7 @@ const MyPrivateRequests = () => {
       // Fetch sender profiles for received requests
       const senderIds = [...new Set(received.map(r => r.sender_id))];
       const { data: senderProfiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('id, first_name, last_name, username, phone_number')
         .in('id', senderIds);
       
