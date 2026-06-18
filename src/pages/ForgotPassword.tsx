@@ -103,15 +103,19 @@ const ForgotPassword = () => {
         },
       });
       if (fnErr || (data as { error?: string })?.error) {
-        const err = (data as { error?: string })?.error;
-        if (err === "expired_code") {
+        const errCode = (data as { error?: string })?.error;
+        const errMsg = (data as { message?: string })?.message;
+        console.error("password reset failed", { errCode, errMsg, fnErr });
+        if (errCode === "expired_code") {
           setExpired(true);
           setStep("code");
           setError("This code has expired. Please request a new one.");
-        } else if (err === "weak_password") {
+        } else if (errCode === "pwned_password") {
+          setError(errMsg || "This password has appeared in known data breaches. Please choose a different, unique password.");
+        } else if (errCode === "weak_password") {
           setError("Password must be 8+ characters with uppercase, lowercase, and a number.");
         } else {
-          setError("Could not update password. Please try again.");
+          setError(errMsg || "Could not update password. Please try again.");
         }
         return;
       }
