@@ -9,6 +9,7 @@ const RequireProfileComplete = ({ children }: { children: React.ReactNode }) => 
     (path) => location.pathname.startsWith(path)
   );
 
+  if (isAuthRoute) return <>{children}</>;
   if (loading && !isAuthRoute) return null;
   if (!user) return <>{children}</>;
   if (!profile) {
