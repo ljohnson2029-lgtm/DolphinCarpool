@@ -117,22 +117,32 @@ serve(async (req) => {
       });
     }
 
-    // Find auth user
-    const lookup = await fetch(
-      `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(normalized)}`,
-      { headers: { apikey: SERVICE_ROLE, Authorization: `Bearer ${SERVICE_ROLE}` } }
-    );
-    const lookupJson = await lookup.json();
-    const userId = lookupJson?.users?.[0]?.id;
+    const userId = await findAuthUserIdByEmail(admin, normalized);
     if (!userId) {
       return new Response(JSON.stringify({ error: "user_not_found" }), {
-        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+        status: 200, headers: { ...cors, "Content-Type": "application/json" },
       });
     }
 
-    const { error: updErr } = await admin.auth.admin.updateUserById(userId, {
+    const updateResult = await admin.auth.admin.updateUserById(userId, {
       password: String(newPassword),
     });
+    console.log("password reset update response", {
+      userId,
+      success: !updateResult.error,
+      updatedUserId: updateResult.data?.user?.id ?? null,
+      updatedEmail: updateResult.data?.user?.email ?? null,
+      error: updateResult.error
+        ? {
+            name: updateResult.error.name,
+            message: updateResult.error.message,
+            status: updateResult.error.status,
+            code: (updateResult.error as { code?: string }).code,
+            reasons: (updateResult.error as { reasons?: string[] }).reasons,
+          }
+        : null,
+    });
+    const updErr = updateResult.error;
     if (updErr) {
       console.error("password update error", updErr);
       const errAny = updErr as { code?: string; message?: string; reasons?: string[] };
@@ -166,7 +176,7 @@ serve(async (req) => {
     // Also clean up other codes for this email
     await admin.from("password_reset_codes").delete().eq("email", normalized);
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, updatedUserId: userId }), {
       status: 200, headers: { ...cors, "Content-Type": "application/json" },
     });
   } catch (e) {
