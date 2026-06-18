@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,9 +21,16 @@ import { KeyRound, ArrowLeft, CheckCircle2, Mail, Lock } from "lucide-react";
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 type Step = "email" | "code" | "password" | "done";
-type ResetFunctionResponse = { error?: string; message?: string; success?: boolean } | null;
+type ResetFunctionResponse = {
+  error?: string;
+  message?: string;
+  success?: boolean;
+} | null;
 
-const getFunctionErrorBody = async (data: ResetFunctionResponse, fnErr: unknown): Promise<ResetFunctionResponse> => {
+const getFunctionErrorBody = async (
+  data: ResetFunctionResponse,
+  fnErr: unknown,
+): Promise<ResetFunctionResponse> => {
   if (data?.error) return data;
   const context = (fnErr as { context?: unknown } | null)?.context;
   if (context instanceof Response) {
@@ -48,9 +61,12 @@ const ForgotPassword = () => {
     setExpired(false);
     setLoading(true);
     try {
-      const { error: fnErr } = await supabase.functions.invoke("password-reset-request", {
-        body: { email: email.trim().toLowerCase() },
-      });
+      const { error: fnErr } = await supabase.functions.invoke(
+        "password-reset-request",
+        {
+          body: { email: email.trim().toLowerCase() },
+        },
+      );
       if (fnErr) throw fnErr;
       setStep("code");
       toast({
@@ -58,7 +74,9 @@ const ForgotPassword = () => {
         description: `If an account exists for ${email}, a verification code has been sent.`,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not send reset code");
+      setError(
+        err instanceof Error ? err.message : "Could not send reset code",
+      );
     } finally {
       setLoading(false);
     }
@@ -74,9 +92,16 @@ const ForgotPassword = () => {
     }
     setLoading(true);
     try {
-      const { data, error: fnErr } = await supabase.functions.invoke("password-reset-confirm", {
-        body: { email: email.trim().toLowerCase(), code: code.trim(), action: "verify" },
-      });
+      const { data, error: fnErr } = await supabase.functions.invoke(
+        "password-reset-confirm",
+        {
+          body: {
+            email: email.trim().toLowerCase(),
+            code: code.trim(),
+            action: "verify",
+          },
+        },
+      );
       if (fnErr || (data as { error?: string })?.error) {
         const err = (data as { error?: string })?.error || "invalid_code";
         if (err === "expired_code") {
@@ -99,7 +124,9 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError("");
     if (!passwordRegex.test(password)) {
-      setError("Password must be 8+ characters with uppercase, lowercase, and a number.");
+      setError(
+        "Password must be 8+ characters with uppercase, lowercase, and a number.",
+      );
       return;
     }
     if (password !== confirm) {
@@ -108,16 +135,27 @@ const ForgotPassword = () => {
     }
     setLoading(true);
     try {
-      const { data, error: fnErr } = await supabase.functions.invoke("password-reset-confirm", {
-        body: {
-          email: email.trim().toLowerCase(),
-          code: code.trim(),
-          action: "reset",
-          newPassword: password,
+      const { data, error: fnErr } = await supabase.functions.invoke(
+        "password-reset-confirm",
+        {
+          body: {
+            email: email.trim().toLowerCase(),
+            code: code.trim(),
+            action: "reset",
+            newPassword: password,
+          },
         },
-      });
-      if (fnErr || (data as ResetFunctionResponse)?.error) {
-        const body = await getFunctionErrorBody(data as ResetFunctionResponse, fnErr);
+      );
+      console.log("password reset update response", { data, fnErr });
+      if (
+        fnErr ||
+        !(data as ResetFunctionResponse)?.success ||
+        (data as ResetFunctionResponse)?.error
+      ) {
+        const body = await getFunctionErrorBody(
+          data as ResetFunctionResponse,
+          fnErr,
+        );
         const errCode = body?.error;
         const errMsg = body?.message;
         console.error("password reset failed", { errCode, errMsg, fnErr });
@@ -126,9 +164,16 @@ const ForgotPassword = () => {
           setStep("code");
           setError("This code has expired. Please request a new one.");
         } else if (errCode === "pwned_password") {
-          setError(errMsg || "This password has appeared in known data breaches. Please choose a different, unique password.");
+          setError(
+            errMsg ||
+              "This password has appeared in known data breaches. Please choose a different, unique password.",
+          );
         } else if (errCode === "weak_password") {
-          setError("Password must be 8+ characters with uppercase, lowercase, and a number.");
+          setError(
+            "Password must be 8+ characters with uppercase, lowercase, and a number.",
+          );
+        } else if (errCode === "user_not_found") {
+          setError("We couldn't find an account for that email address.");
         } else {
           setError(errMsg || "Could not update password. Please try again.");
         }
@@ -137,17 +182,21 @@ const ForgotPassword = () => {
       navigate("/login", { replace: true, state: { resetSuccess: true } });
     } catch {
       setError("Could not update password. Please try again.");
-
     } finally {
       setLoading(false);
     }
   };
 
   const icon =
-    step === "done" ? <CheckCircle2 className="w-7 h-7 text-white" /> :
-    step === "password" ? <Lock className="w-7 h-7 text-white" /> :
-    step === "code" ? <Mail className="w-7 h-7 text-white" /> :
-    <KeyRound className="w-7 h-7 text-white" />;
+    step === "done" ? (
+      <CheckCircle2 className="w-7 h-7 text-white" />
+    ) : step === "password" ? (
+      <Lock className="w-7 h-7 text-white" />
+    ) : step === "code" ? (
+      <Mail className="w-7 h-7 text-white" />
+    ) : (
+      <KeyRound className="w-7 h-7 text-white" />
+    );
 
   return (
     <>
@@ -171,12 +220,18 @@ const ForgotPassword = () => {
               {step === "done" && "Password reset!"}
             </CardTitle>
             <CardDescription>
-              {step === "email" && "Enter your email and we'll send you a 6-digit code."}
+              {step === "email" &&
+                "Enter your email and we'll send you a 6-digit code."}
               {step === "code" && (
-                <>A verification code has been sent to <span className="font-semibold text-foreground">{email}</span>. Please check your inbox.</>
+                <>
+                  A verification code has been sent to{" "}
+                  <span className="font-semibold text-foreground">{email}</span>
+                  . Please check your inbox.
+                </>
               )}
               {step === "password" && "Choose a new password for your account."}
-              {step === "done" && "Your password has been successfully reset! Redirecting to sign in…"}
+              {step === "done" &&
+                "Your password has been successfully reset! Redirecting to sign in…"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -199,10 +254,19 @@ const ForgotPassword = () => {
                     className="mt-1 h-11"
                   />
                 </div>
-                <LoadingButton type="submit" loading={loading} className="w-full h-11">
+                <LoadingButton
+                  type="submit"
+                  loading={loading}
+                  className="w-full h-11"
+                >
                   Send Reset Code
                 </LoadingButton>
-                <Button type="button" variant="ghost" className="w-full" onClick={() => navigate("/login")}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => navigate("/login")}
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back to sign in
                 </Button>
               </form>
@@ -224,19 +288,42 @@ const ForgotPassword = () => {
                     placeholder="••••••"
                   />
                 </div>
-                <LoadingButton type="submit" loading={loading} className="w-full h-11">
+                <LoadingButton
+                  type="submit"
+                  loading={loading}
+                  className="w-full h-11"
+                >
                   Verify Code
                 </LoadingButton>
                 {expired ? (
-                  <Button type="button" variant="outline" className="w-full" onClick={() => sendCode()}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => sendCode()}
+                  >
                     Resend code
                   </Button>
                 ) : (
-                  <Button type="button" variant="ghost" className="w-full" onClick={() => sendCode()}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => sendCode()}
+                  >
                     Didn't get it? Resend
                   </Button>
                 )}
-                <Button type="button" variant="ghost" className="w-full" onClick={() => { setStep("email"); setCode(""); setError(""); }}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => {
+                    setStep("email");
+                    setCode("");
+                    setError("");
+                  }}
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" /> Use a different email
                 </Button>
               </form>
@@ -266,14 +353,22 @@ const ForgotPassword = () => {
                     className="mt-1 h-11"
                   />
                 </div>
-                <LoadingButton type="submit" loading={loading} className="w-full h-11">
+                <LoadingButton
+                  type="submit"
+                  loading={loading}
+                  className="w-full h-11"
+                >
                   Reset Password
                 </LoadingButton>
               </form>
             )}
 
             {step === "done" && (
-              <Button variant="outline" className="w-full" onClick={() => navigate("/login")}>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate("/login")}
+              >
                 Go to sign in now
               </Button>
             )}
