@@ -8,6 +8,34 @@ async function hashCode(code: string, salt: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
+async function authUserExistsByEmail(admin: ReturnType<typeof createClient>, email: string): Promise<boolean> {
+  const { data: userRows, error: userLookupError } = await admin
+    .from("users")
+    .select("user_id, email")
+    .ilike("email", email)
+    .limit(5);
+
+  if (userLookupError) console.error("password reset request users lookup error", userLookupError);
+
+  const matchingUserRow = userRows?.find((user) => String(user.email).trim().toLowerCase() === email);
+  if (matchingUserRow?.user_id) {
+    const { data: authUser, error: authLookupError } = await admin.auth.admin.getUserById(matchingUserRow.user_id);
+    return !authLookupError && authUser?.user?.email?.trim().toLowerCase() === email;
+  }
+
+  for (let page = 1; page <= 10; page += 1) {
+    const { data: authUsers, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    if (listError) {
+      console.error("password reset request auth list fallback error", listError);
+      return false;
+    }
+    if (authUsers.users.some((user) => user.email?.trim().toLowerCase() === email)) return true;
+    if (authUsers.users.length < 1000) break;
+  }
+
+  return false;
+}
+
 serve(async (req) => {
   const pre = handleCorsPreflightIfNeeded(req);
   if (pre) return pre;
