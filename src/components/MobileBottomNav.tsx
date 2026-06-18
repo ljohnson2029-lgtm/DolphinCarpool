@@ -72,7 +72,7 @@ const MobileBottomNav = () => {
           <SheetTrigger asChild>
             <button className="flex flex-col items-center justify-center flex-1 h-full min-w-[56px] min-h-[44px] text-muted-foreground hover:text-foreground transition-colors touch-manipulation">
               <Menu className="h-5 w-5" />
-              <span className="text-[10px] mt-1 font-medium">More</span>
+              <span className="text-[10px] mt-1 font-medium">Menu</span>
             </button>
           </SheetTrigger>
           <SheetContent side="bottom" className="h-auto max-h-[80vh] rounded-t-xl">

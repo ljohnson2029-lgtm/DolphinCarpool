@@ -42,7 +42,7 @@ const Safety = () => {
       />
       <JsonLd data={SAFETY_SCHEMA} />
       <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-        Safety
+        Safety & Trust at Dolphin Carpool
       </h1>
       <SafetySection />
     </DashboardLayout>
