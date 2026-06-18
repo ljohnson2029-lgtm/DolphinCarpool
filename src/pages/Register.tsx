@@ -360,6 +360,7 @@ const Register = () => {
               {step === "form" && "Create Your Parent Account"}
               {step === "student" && "Create Your Student Account"}
               {step === "checkEmail" && "Check your email!"}
+              {step === "verify2fa" && "Verify Your Email"}
             </CardTitle>
             <CardDescription>
               {step === "choose" && "Choose how you're signing up."}
@@ -370,6 +371,9 @@ const Register = () => {
               {step === "student" && "Just your email and password — your parent has already added you."}
               {step === "checkEmail" && (
                 <>We sent a verification link to <span className="font-semibold text-foreground">{email}</span>. Click the link to confirm your account.</>
+              )}
+              {step === "verify2fa" && (
+                <>We sent a 6-digit code to <span className="font-semibold text-foreground">{pendingEmail}</span>. Enter it below to activate your account.</>
               )}
             </CardDescription>
           </CardHeader>
