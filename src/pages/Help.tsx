@@ -178,8 +178,14 @@ export default function Help() {
 
   return (
     <DashboardLayout>
+      <SEO
+        title="Help Center — Dolphin Carpool"
+        description="Browse FAQs and guides for Dolphin Carpool, or contact support for help with rides, accounts, and family carpool coordination."
+        path="/help"
+      />
       <div className="container max-w-4xl mx-auto px-4 pb-24">
         <Breadcrumbs items={[{ label: "Help Center" }]} />
+
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Help Center</h1>

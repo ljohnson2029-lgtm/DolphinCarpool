@@ -1,12 +1,19 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Mail, MessageSquare } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const Feedback = () => {
   return (
     <DashboardLayout>
+      <SEO
+        title="Feedback — Dolphin Carpool"
+        description="Share feedback, ideas, or report issues with Dolphin Carpool. We use your input to make family carpooling safer and easier."
+        path="/feedback"
+      />
       <div className="container mx-auto px-4">
         <Breadcrumbs items={[{ label: "Feedback" }]} />
+
         
         {/* Header Section */}
         <div className="text-center mb-8">

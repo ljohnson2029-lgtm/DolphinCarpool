@@ -2,11 +2,19 @@ import { Shield, Lock, Eye, Users, Database, Mail, Trash2, Download } from "luci
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import SEO from "@/components/SEO";
 
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Privacy Policy — Dolphin Carpool"
+        description="How Dolphin Carpool collects, uses, and protects personal information for parents and students coordinating school carpools."
+        path="/privacy"
+      />
       <Navigation />
+      
+
       
       <main className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -34,8 +34,14 @@ const Index = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="Dolphin Carpool — Safe Family Carpools for Your School"
+        description="Coordinate safe, reliable school carpools with verified parents in your community. Post rides, find matches, and manage recurring series."
+        path="/"
+      />
       <div className="min-h-screen">
         <Navigation />
+
         <HeroSection />
         <LandingHowItWorks />
         <LandingFeatures />

@@ -112,7 +112,13 @@ const Login = () => {
 
   return (
     <>
+      <SEO
+        title="Sign In — Dolphin Carpool"
+        description="Sign in to Dolphin Carpool to coordinate school rides, manage carpool series, and chat with confirmed partners."
+        path="/login"
+      />
       <Navigation />
+
       {loggedInUserId && (
         <AddressRequiredModal
           open={showAddressModal}
