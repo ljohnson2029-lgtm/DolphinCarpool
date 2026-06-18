@@ -18,7 +18,7 @@ import Navigation from "@/components/Navigation";
 import TermsAgreementStep from "@/components/TermsAgreementStep";
 import { cn } from "@/lib/utils";
 
-type Step = "choose" | "termsParent" | "termsStudent" | "code" | "form" | "checkEmail" | "student";
+type Step = "choose" | "termsParent" | "termsStudent" | "code" | "form" | "checkEmail" | "student" | "verify2fa";
 
 const Register = () => {
   const navigate = useNavigate();
