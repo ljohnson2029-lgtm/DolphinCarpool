@@ -34,6 +34,7 @@ interface AuthContextType {
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
+  profileError: string | null;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -49,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,21 +62,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Defer profile fetch to avoid deadlock
         if (session?.user) {
+          setLoading(true);
           setTimeout(() => {
-            fetchProfile(session.user.id);
+            fetchProfile(session.user.id).finally(() => setLoading(false));
           }, 0);
         } else {
           setProfile(null);
+          setProfileError(null);
+          setLoading(false);
         }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+        setProfileError(null);
       }
       setLoading(false);
     });
@@ -91,6 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (error) {
       console.error('Error fetching profile:', error);
+      setProfile(null);
+      setProfileError('We could not load your profile. Please refresh or sign in again.');
       return;
     }
 
@@ -112,10 +122,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setSession(null);
       setProfile(null);
+      setProfileError('We could not find a profile for this account. Please sign in again or contact support.');
       return;
     }
 
     setProfile(data as unknown as Profile);
+    setProfileError(null);
   };
 
   const logout = async () => {
@@ -145,10 +157,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     setSession(null);
     setProfile(null);
+    setProfileError(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, session, loading, logout, refreshProfile: async () => { if (user) await fetchProfile(user.id); } }}>
+    <AuthContext.Provider value={{ user, profile, session, loading, profileError, logout, refreshProfile: async () => { if (user) await fetchProfile(user.id); } }}>
       {children}
     </AuthContext.Provider>
   );

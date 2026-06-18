@@ -60,13 +60,29 @@ const Login = () => {
   }, [resendCooldown]);
 
   const finalizeLogin = async () => {
-    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    console.log("Login session after authentication:", {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      sessionError,
+    });
+
+    const authUser = session?.user;
+    if (!authUser) {
+      throw new Error("Your login session was not created. Please sign in again.");
+    }
+
     if (authUser) {
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("home_address, account_type")
         .eq("id", authUser.id)
         .maybeSingle();
+
+      if (profileError) {
+        console.error("Profile fetch failed after login:", profileError);
+        throw new Error("Login succeeded, but your profile could not be loaded. Please refresh or sign in again.");
+      }
 
       setLoggedInUserId(authUser.id);
       const needsAddress = !profileData?.home_address;
@@ -79,7 +95,7 @@ const Login = () => {
         return;
       }
     }
-    navigate("/dashboard");
+    navigate("/dashboard", { replace: true });
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -177,12 +193,23 @@ const Login = () => {
         setTwofaError("Invalid code. Please try again.");
         return;
       }
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: twofaEmail,
         password,
       });
+      console.log("2FA sign-in response:", {
+        hasSession: !!signInData?.session,
+        userId: signInData?.user?.id,
+        error: signInError,
+      });
       if (signInError) {
         setTwofaError("Could not complete sign-in. Please try logging in again.");
+        return;
+      }
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        console.error("No active session after 2FA sign-in:", sessionError, sessionData);
+        setTwofaError("Could not start your login session. Please try logging in again.");
         return;
       }
       await finalizeLogin();
