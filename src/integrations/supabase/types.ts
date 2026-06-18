@@ -146,10 +146,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "co_parent_links_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "co_parent_links_requester_id_fkey"
             columns: ["requester_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_parent_links_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -725,6 +739,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ride_conversations_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ride_conversations_ride_id_fkey"
             columns: ["ride_id"]
             isOneToOne: false
@@ -736,6 +757,13 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ride_conversations_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -858,6 +886,13 @@ export type Database = {
             columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rides_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1098,10 +1133,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "student_parent_links_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "student_parent_links_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_parent_links_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1231,6 +1280,72 @@ export type Database = {
       }
     }
     Views: {
+      profiles_public: {
+        Row: {
+          accept_requests_from_anyone: boolean | null
+          account_type: string | null
+          avatar_url: string | null
+          car_color: string | null
+          car_make: string | null
+          car_model: string | null
+          car_seats: number | null
+          first_name: string | null
+          grade_level: string | null
+          home_latitude: number | null
+          home_longitude: number | null
+          id: string | null
+          last_name: string | null
+          phone_number: string | null
+          profile_complete: boolean | null
+          share_email: boolean | null
+          share_phone: boolean | null
+          show_on_map: boolean | null
+          username: string | null
+        }
+        Insert: {
+          accept_requests_from_anyone?: boolean | null
+          account_type?: string | null
+          avatar_url?: string | null
+          car_color?: string | null
+          car_make?: string | null
+          car_model?: string | null
+          car_seats?: number | null
+          first_name?: string | null
+          grade_level?: string | null
+          home_latitude?: never
+          home_longitude?: never
+          id?: string | null
+          last_name?: string | null
+          phone_number?: never
+          profile_complete?: boolean | null
+          share_email?: boolean | null
+          share_phone?: boolean | null
+          show_on_map?: boolean | null
+          username?: string | null
+        }
+        Update: {
+          accept_requests_from_anyone?: boolean | null
+          account_type?: string | null
+          avatar_url?: string | null
+          car_color?: string | null
+          car_make?: string | null
+          car_model?: string | null
+          car_seats?: number | null
+          first_name?: string | null
+          grade_level?: string | null
+          home_latitude?: never
+          home_longitude?: never
+          id?: string | null
+          last_name?: string | null
+          phone_number?: never
+          profile_complete?: boolean | null
+          share_email?: boolean | null
+          share_phone?: boolean | null
+          show_on_map?: boolean | null
+          username?: string | null
+        }
+        Relationships: []
+      }
       student_parent_links_safe: {
         Row: {
           approved_at: string | null
@@ -1265,10 +1380,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "student_parent_links_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "student_parent_links_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_parent_links_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
