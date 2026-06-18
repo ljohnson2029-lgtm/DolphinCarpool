@@ -1,0 +1,105 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { getCorsHeaders, handleCorsPreflightIfNeeded } from "../_shared/cors.ts";
+
+async function hashCode(code: string, salt: string): Promise<string> {
+  const data = new TextEncoder().encode(`${salt}:${code}`);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+serve(async (req) => {
+  const pre = handleCorsPreflightIfNeeded(req);
+  if (pre) return pre;
+  const cors = getCorsHeaders(req);
+
+  try {
+    const { email, code, action, newPassword } = await req.json();
+    if (!email || !code) {
+      return new Response(JSON.stringify({ error: "Email and code required" }), {
+        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+    const normalized = String(email).trim().toLowerCase();
+    const codeStr = String(code).trim();
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+
+    const codeHash = await hashCode(codeStr, normalized);
+
+    const { data: row } = await admin
+      .from("password_reset_codes")
+      .select("*")
+      .eq("email", normalized)
+      .eq("code_hash", codeHash)
+      .is("used_at", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!row) {
+      return new Response(JSON.stringify({ error: "invalid_code" }), {
+        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+    if (new Date(row.expires_at).getTime() < Date.now()) {
+      return new Response(JSON.stringify({ error: "expired_code" }), {
+        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "verify") {
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    // action === "reset"
+    if (!newPassword || !passwordRegex.test(String(newPassword))) {
+      return new Response(JSON.stringify({ error: "weak_password" }), {
+        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    // Find auth user
+    const lookup = await fetch(
+      `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(normalized)}`,
+      { headers: { apikey: SERVICE_ROLE, Authorization: `Bearer ${SERVICE_ROLE}` } }
+    );
+    const lookupJson = await lookup.json();
+    const userId = lookupJson?.users?.[0]?.id;
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "user_not_found" }), {
+        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    const { error: updErr } = await admin.auth.admin.updateUserById(userId, {
+      password: String(newPassword),
+    });
+    if (updErr) {
+      console.error("password update error", updErr);
+      return new Response(JSON.stringify({ error: "update_failed" }), {
+        status: 500, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    // Delete the code
+    await admin.from("password_reset_codes").delete().eq("id", row.id);
+    // Also clean up other codes for this email
+    await admin.from("password_reset_codes").delete().eq("email", normalized);
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200, headers: { ...cors, "Content-Type": "application/json" },
+    });
+  } catch (e) {
+    console.error(e);
+    return new Response(JSON.stringify({ error: "server_error" }), {
+      status: 500, headers: { ...cors, "Content-Type": "application/json" },
+    });
+  }
+});

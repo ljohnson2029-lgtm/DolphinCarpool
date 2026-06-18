@@ -25,6 +25,10 @@ project_id = "dchwbbvpsgxwqezqhbfw"
     verify_jwt = true
   [functions.get-parent-locations]
     verify_jwt = true
+  [functions.password-reset-request]
+    verify_jwt = false
+  [functions.password-reset-confirm]
+    verify_jwt = false
   [functions.get-parent-profile]
     verify_jwt = true
   [functions.lookup-parent]
