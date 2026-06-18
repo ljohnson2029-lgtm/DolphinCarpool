@@ -371,7 +371,7 @@ const ProfileSetup = () => {
         navigate("/profile");
       } else {
         toast({ title: "Welcome!", description: "Your profile is complete. Enjoy the app!" });
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }
     } catch (error) {
       toast({ title: "Error", description: (error as Error).message, variant: "destructive" });

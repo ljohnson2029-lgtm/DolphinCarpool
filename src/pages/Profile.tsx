@@ -31,7 +31,7 @@ interface LinkedParentInfo {
 }
 
 const Profile = () => {
-  const { user, profile, logout, loading } = useAuth();
+  const { user, profile, logout, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
@@ -137,11 +137,11 @@ const Profile = () => {
     }
   }, [logout, navigate]);
 
-  const { refreshProfile } = useAuth();
   const handleEditSave = useCallback(async () => {
     setIsEditing(false);
     await refreshProfile();
   }, [refreshProfile]);
+
 
 
   const getInitials = (firstName: string | null, lastName: string | null, username: string) => {
