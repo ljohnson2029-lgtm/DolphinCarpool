@@ -1,35 +1,56 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-import { getCorsHeaders, handleCorsPreflightIfNeeded } from "../_shared/cors.ts";
+import {
+  getCorsHeaders,
+  handleCorsPreflightIfNeeded,
+} from "../_shared/cors.ts";
 
 async function hashCode(code: string, salt: string): Promise<string> {
   const data = new TextEncoder().encode(`${salt}:${code}`);
   const buf = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
-async function authUserExistsByEmail(admin: ReturnType<typeof createClient>, email: string): Promise<boolean> {
+async function authUserExistsByEmail(
+  admin: ReturnType<typeof createClient>,
+  email: string,
+): Promise<boolean> {
   const { data: userRows, error: userLookupError } = await admin
     .from("users")
     .select("user_id, email")
     .ilike("email", email)
     .limit(5);
 
-  if (userLookupError) console.error("password reset request users lookup error", userLookupError);
+  if (userLookupError)
+    console.error("password reset request users lookup error", userLookupError);
 
-  const matchingUserRow = userRows?.find((user) => String(user.email).trim().toLowerCase() === email);
+  const matchingUserRow = userRows?.find(
+    (user) => String(user.email).trim().toLowerCase() === email,
+  );
   if (matchingUserRow?.user_id) {
-    const { data: authUser, error: authLookupError } = await admin.auth.admin.getUserById(matchingUserRow.user_id);
-    return !authLookupError && authUser?.user?.email?.trim().toLowerCase() === email;
+    const { data: authUser, error: authLookupError } =
+      await admin.auth.admin.getUserById(matchingUserRow.user_id);
+    return (
+      !authLookupError && authUser?.user?.email?.trim().toLowerCase() === email
+    );
   }
 
   for (let page = 1; page <= 10; page += 1) {
-    const { data: authUsers, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    const { data: authUsers, error: listError } =
+      await admin.auth.admin.listUsers({ page, perPage: 1000 });
     if (listError) {
-      console.error("password reset request auth list fallback error", listError);
+      console.error(
+        "password reset request auth list fallback error",
+        listError,
+      );
       return false;
     }
-    if (authUsers.users.some((user) => user.email?.trim().toLowerCase() === email)) return true;
+    if (
+      authUsers.users.some((user) => user.email?.trim().toLowerCase() === email)
+    )
+      return true;
     if (authUsers.users.length < 1000) break;
   }
 
@@ -45,7 +66,8 @@ serve(async (req) => {
     const { email } = await req.json();
     if (!email || typeof email !== "string") {
       return new Response(JSON.stringify({ error: "Email is required" }), {
-        status: 400, headers: { ...cors, "Content-Type": "application/json" },
+        status: 400,
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
     const normalized = email.trim().toLowerCase();
@@ -72,7 +94,11 @@ serve(async (req) => {
 
       const { error: insertErr } = await admin
         .from("password_reset_codes")
-        .insert({ email: normalized, code_hash: codeHash, expires_at: expiresAt });
+        .insert({
+          email: normalized,
+          code_hash: codeHash,
+          expires_at: expiresAt,
+        });
 
       if (insertErr) {
         console.error("insert error", insertErr);
@@ -92,7 +118,10 @@ serve(async (req) => {
 
       const emailRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
-        headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           from: "Dolphin Carpool <noreply@dolphincarpool.org>",
           to: [normalized],
@@ -107,12 +136,17 @@ serve(async (req) => {
 
     // Always return success to avoid email enumeration
     return new Response(JSON.stringify({ success: true }), {
-      status: 200, headers: { ...cors, "Content-Type": "application/json" },
+      status: 200,
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error(e);
-    return new Response(JSON.stringify({ error: "Unable to process request" }), {
-      status: 500, headers: { ...cors, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Unable to process request" }),
+      {
+        status: 500,
+        headers: { ...cors, "Content-Type": "application/json" },
+      },
+    );
   }
 });
