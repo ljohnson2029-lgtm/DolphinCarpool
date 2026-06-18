@@ -116,8 +116,9 @@ const ForgotPassword = () => {
         return;
       }
       navigate("/login", { replace: true, state: { resetSuccess: true } });
-
+    } catch {
       setError("Could not update password. Please try again.");
+
     } finally {
       setLoading(false);
     }
