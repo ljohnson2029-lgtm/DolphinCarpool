@@ -85,35 +85,41 @@ const Profile = () => {
       if (!user || profile?.account_type !== 'student') return;
       setLoadingParents(true);
       try {
-        const { data: links } = await supabase
-          .from('account_links')
-          .select('parent_id')
-          .eq('student_id', user.id)
-          .eq('status', 'approved');
-        
-        if (links && links.length > 0) {
-          const parentIds = links.map(l => l.parent_id);
-          const { data: parentsData } = await supabase
+        // Use SECURITY DEFINER RPC to bypass RLS on users table and get parent email
+        const { data: linkedData, error: rpcError } = await supabase
+          .rpc('get_linked_parents', { student_user_id: user.id });
+
+        if (rpcError) {
+          console.error('Error fetching linked parents via RPC:', rpcError);
+          return;
+        }
+
+        console.log('[Profile] Linked parents RPC data:', linkedData);
+
+        if (linkedData && linkedData.length > 0) {
+          const parentIds = linkedData.map((p: { parent_id: string }) => p.parent_id);
+
+          // Fetch phone numbers from profiles (subject to profiles RLS)
+          const { data: profilesData } = await supabase
             .from('profiles')
-            .select('id, first_name, last_name, phone_number')
+            .select('id, phone_number')
             .in('id', parentIds);
-          
-          if (parentsData) {
-            const { data: usersData } = await supabase
-              .from('users_safe')
-              .select('user_id, email')
-              .in('user_id', parentIds);
-            
-            const parents = parentsData.map(p => ({
-              parent_id: p.id,
-              parent_email: usersData?.find(u => u.user_id === p.id)?.email || '',
-              parent_first_name: p.first_name || '',
-              parent_last_name: p.last_name || '',
-              parent_phone: p.phone_number
-            }));
-            
-            setLinkedParents(parents);
-          }
+
+          const parents = linkedData.map((p: {
+            parent_id: string;
+            parent_email: string | null;
+            parent_first_name: string | null;
+            parent_last_name: string | null;
+          }) => ({
+            parent_id: p.parent_id,
+            parent_email: p.parent_email || '',
+            parent_first_name: p.parent_first_name || '',
+            parent_last_name: p.parent_last_name || '',
+            parent_phone: profilesData?.find(pr => pr.id === p.parent_id)?.phone_number || null,
+          }));
+
+          console.log('[Profile] Mapped linked parents:', parents);
+          setLinkedParents(parents);
         }
       } catch (err) {
         console.error('Error fetching linked parents:', err);
@@ -123,6 +129,7 @@ const Profile = () => {
     };
     fetchLinkedParents();
   }, [user, profile?.account_type]);
+
 
   const handleLogout = useCallback(async () => {
     setSigningOut(true);
@@ -441,7 +448,7 @@ const Profile = () => {
                                   </div>
                                   <div>
                                     <p className="text-sm text-gray-500">Email</p>
-                                    <p className="font-semibold text-gray-900">{parent.parent_email}</p>
+                                    <p className="font-semibold text-gray-900">{parent.parent_email || 'No email on file'}</p>
                                   </div>
                                 </div>
                                 {parent.parent_phone && (
