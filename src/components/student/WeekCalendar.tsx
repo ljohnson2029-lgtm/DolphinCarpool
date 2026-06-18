@@ -199,7 +199,7 @@ export function WeekCalendar({ rides, loading }: WeekCalendarProps) {
                 ) : dayRides.length > 0 ? (
                   dayRides.map((ride) => <RideChip key={ride.id} ride={ride} />)
                 ) : (
-                  <div className="flex items-center justify-center h-full text-muted-foreground/40 text-xs">
+                  <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
                     —
                   </div>
                 )}

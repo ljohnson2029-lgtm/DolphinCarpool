@@ -50,7 +50,7 @@ export const Breadcrumbs = ({
               aria-current={isLast ? "page" : undefined}
             >
               {/* Separator - Decorative only */}
-              <span className="text-muted-foreground/50" aria-hidden="true">
+              <span className="text-muted-foreground" aria-hidden="true">
                 {separator}
               </span>
 

@@ -167,7 +167,7 @@ const SuggestedPartners = () => {
     return (
       <Card className="border-dashed border-2 border-muted-foreground/20">
         <CardContent className="p-5 text-center space-y-2">
-          <MapPin className="h-8 w-8 mx-auto text-muted-foreground/50" />
+          <MapPin className="h-8 w-8 mx-auto text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
             Add your home address in{" "}
             <button className="text-primary underline" onClick={() => navigate("/profile")}>
