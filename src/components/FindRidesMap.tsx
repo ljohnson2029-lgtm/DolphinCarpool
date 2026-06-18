@@ -309,7 +309,7 @@ const useMapRides = (userId: string | undefined) => {
       if (userIds.length > 0) {
         const [profilesResult, usersResult, childrenResult] = await Promise.all([
           supabase
-            .from("profiles")
+            .from("profiles_public")
             .select("id, first_name, last_name, username, phone_number, share_phone, share_email")
             .in("id", userIds),
           supabase.from("users").select("user_id, email").in("user_id", userIds),

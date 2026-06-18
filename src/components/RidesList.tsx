@@ -145,7 +145,7 @@ const RidesList = ({
       const senderIds = [...new Set(data.map(c => c.sender_id))];
       
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('id, first_name, last_name, username, phone_number, share_phone, share_email')
         .in('id', senderIds);
       
@@ -218,7 +218,7 @@ const RidesList = ({
       if (userIds.length > 0) {
         const [profilesResult, usersResult, childrenResult] = await Promise.all([
           supabase
-            .from("profiles")
+            .from("profiles_public")
             .select("id, first_name, last_name, username, grade_level, phone_number, share_phone, share_email")
             .in("id", userIds),
           supabase.from("users").select("user_id, email").in("user_id", userIds),
@@ -322,7 +322,7 @@ const RidesList = ({
     try {
       // First, fetch the owner's contact info
       const { data: ownerProfile, error: profileError } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('first_name, last_name, phone_number, share_email, share_phone')
         .eq('id', respondingToRide.user_id)
         .single();

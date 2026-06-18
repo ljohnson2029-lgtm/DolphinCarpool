@@ -11,8 +11,13 @@ interface FetchResult {
 async function fetchProfilesForIds(ids: string[]): Promise<Record<string, any>> {
   if (ids.length === 0) return {};
   
-  const [{ data: profiles }, { data: users }] = await Promise.all([
-    supabase.from('profiles').select('id, first_name, last_name, username, phone_number, share_phone, share_email, car_make, car_model, car_color, license_plate, home_address').in('id', ids),
+  // profiles_public exposes only safe display fields (no home_address, no license_plate,
+  // no emergency contacts). Phone is included only for users who opted in via share_phone.
+  // license_plate / home_address are fetched from the underlying profiles table — RLS
+  // restricts those rows to confirmed/accepted relationships only.
+  const [{ data: profiles }, { data: privateProfiles }, { data: users }] = await Promise.all([
+    supabase.from('profiles_public').select('id, first_name, last_name, username, phone_number, share_phone, share_email, car_make, car_model, car_color').in('id', ids),
+    supabase.from('profiles').select('id, license_plate, home_address').in('id', ids),
     supabase.from('users_safe').select('user_id, email').in('user_id', ids),
   ]);
 
@@ -20,7 +25,8 @@ async function fetchProfilesForIds(ids: string[]): Promise<Record<string, any>> 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return profiles.reduce((acc: Record<string, any>, p) => {
     const email = users?.find(u => u.user_id === p.id)?.email;
-    acc[p.id] = { ...p, email };
+    const priv = privateProfiles?.find(pp => pp.id === p.id);
+    acc[p.id] = { ...p, ...(priv ?? {}), email };
     return acc;
   }, {});
 }

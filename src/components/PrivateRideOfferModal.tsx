@@ -135,7 +135,7 @@ const PrivateRideOfferModal = ({
     setLoadingProfile(true);
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('id, username, first_name, last_name, phone_number, share_email, share_phone')
         .eq('id', recipientId)
         .single();

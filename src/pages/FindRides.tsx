@@ -132,7 +132,7 @@ const FindRides = () => {
     
     if (userIds.length > 0) {
       const { data: profilesData } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('id, first_name, last_name, username, phone_number, share_phone, share_email')
         .in('id', userIds);
       
