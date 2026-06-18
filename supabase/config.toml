@@ -45,3 +45,5 @@ project_id = "dchwbbvpsgxwqezqhbfw"
     verify_jwt = false
   [functions.verify-2fa-code]
     verify_jwt = false
+  [functions.wipe-all-users]
+    verify_jwt = false
