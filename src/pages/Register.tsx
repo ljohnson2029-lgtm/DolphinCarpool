@@ -708,6 +708,53 @@ const Register = () => {
                   </p>
                 </motion.div>
               )}
+
+              {step === "verify2fa" && (
+                <motion.form
+                  key="verify2fa"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  onSubmit={submitVerify2fa}
+                  className="space-y-4"
+                >
+                  {twofaError && (
+                    <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                      {twofaError}
+                    </div>
+                  )}
+                  <div>
+                    <Label htmlFor="signup-2fa-code">Verification code</Label>
+                    <Input
+                      id="signup-2fa-code"
+                      value={twofaCode}
+                      onChange={(e) => setTwofaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      autoFocus
+                      placeholder="123456"
+                      maxLength={6}
+                      className="mt-1 h-12 text-center text-2xl tracking-[0.5em] font-mono"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      The code expires in 15 minutes.
+                    </p>
+                  </div>
+                  <LoadingButton type="submit" loading={loading} className="w-full h-11">
+                    Verify and continue <ArrowRight className="w-4 h-4 ml-2" />
+                  </LoadingButton>
+                  <div className="text-center text-sm">
+                    <button
+                      type="button"
+                      onClick={resendVerify2fa}
+                      disabled={resendCooldown > 0 || loading}
+                      className="text-primary hover:underline disabled:opacity-50 disabled:no-underline"
+                    >
+                      {resendCooldown > 0 ? `Resend code (${resendCooldown}s)` : "Resend code"}
+                    </button>
+                  </div>
+                </motion.form>
+              )}
             </AnimatePresence>
           </CardContent>
         </Card>
