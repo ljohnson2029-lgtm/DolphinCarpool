@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,15 +7,28 @@ import SEO from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Settings2, Sparkles, Trash2, Wrench } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { MessageSquare, Settings2, ShieldCheck, Wrench } from "lucide-react";
 import TestDataGenerator from "@/components/TestDataGenerator";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 import { useScrollReveal } from "@/lib/animations";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Settings = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { ref: headerRef, isVisible: headerVisible } = useScrollReveal<HTMLDivElement>();
+
+  const [twofaEnabled, setTwofaEnabled] = useState<boolean | null>(null);
+  const [twofaSaving, setTwofaSaving] = useState(false);
+  const [confirmDisableOpen, setConfirmDisableOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -23,13 +36,65 @@ const Settings = () => {
     }
   }, [user, navigate]);
 
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("two_factor_enabled")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) {
+        console.error("Failed to load 2FA preference:", error);
+        setTwofaEnabled(true);
+        return;
+      }
+      setTwofaEnabled(data?.two_factor_enabled !== false);
+    })();
+  }, [user]);
+
+  const updateTwofa = async (enabled: boolean) => {
+    if (!user) return;
+    setTwofaSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ two_factor_enabled: enabled })
+      .eq("id", user.id);
+    setTwofaSaving(false);
+    if (error) {
+      toast({
+        title: "Couldn't update setting",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    setTwofaEnabled(enabled);
+    toast({
+      title: enabled
+        ? "Two-Factor Authentication has been enabled."
+        : "Two-Factor Authentication has been disabled.",
+      description: enabled
+        ? "Your account is now more secure."
+        : "You can turn it back on anytime.",
+    });
+  };
+
+  const handleTwofaToggle = (next: boolean) => {
+    if (!next) {
+      setConfirmDisableOpen(true);
+    } else {
+      updateTwofa(true);
+    }
+  };
+
   const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost';
 
   return (
     <DashboardLayout>
       <SEO
         title="Settings — Dolphin Carpool"
-        description="Manage your Dolphin Carpool account settings, notifications, and account deletion."
+        description="Manage your Dolphin Carpool account settings, security, notifications, and account deletion."
         path="/settings"
       />
       <motion.div
@@ -41,7 +106,6 @@ const Settings = () => {
         <div className="container mx-auto px-4 max-w-4xl py-8">
           <Breadcrumbs items={[{ label: "Settings" }]} />
 
-          {/* Premium Header */}
           <motion.div
             ref={headerRef}
             initial={{ opacity: 0, y: 20 }}
@@ -67,6 +131,48 @@ const Settings = () => {
           </motion.div>
 
           <div className="space-y-6">
+            {/* Security */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              whileHover={{ y: -2 }}
+            >
+              <Card className="rounded-2xl border-gray-100 bg-white/90 backdrop-blur-sm shadow-sm hover:shadow-lg transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
+                      <ShieldCheck className="w-4 h-4 text-primary" />
+                    </div>
+                    Security
+                  </CardTitle>
+                  <CardDescription>
+                    Manage how you sign in to Dolphin Carpool.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="font-medium">Two-Factor Authentication</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        When enabled, you will be asked to enter a verification code sent to your email each time you log in. Recommended for account security.
+                      </p>
+                    </div>
+                    {twofaEnabled === null ? (
+                      <Skeleton className="h-6 w-11 rounded-full" />
+                    ) : (
+                      <Switch
+                        checked={twofaEnabled}
+                        disabled={twofaSaving}
+                        onCheckedChange={handleTwofaToggle}
+                        aria-label="Two-Factor Authentication"
+                      />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
             {/* Feedback */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -125,7 +231,6 @@ const Settings = () => {
               </motion.div>
             )}
 
-            {/* Delete Account */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -137,6 +242,26 @@ const Settings = () => {
           </div>
         </div>
       </motion.div>
+
+      <AlertDialog open={confirmDisableOpen} onOpenChange={setConfirmDisableOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disable Two-Factor Authentication?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disable Two-Factor Authentication? This makes your account less secure.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep it on</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => updateTwofa(false)}
+            >
+              Yes, turn off
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 };
