@@ -467,12 +467,12 @@ export const NotificationDropdown = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsOpen(false);
-                          navigate('/series');
+                          navigate(notification.link_id ? `/series?space=${notification.link_id}` : '/series');
                         }}
                         className="h-7 mt-2 gap-1 text-xs"
                       >
                         <Repeat className="h-3 w-3" />
-                        View in Series
+                        {notification.type === 'series_message' ? 'View Messages' : 'View in Series'}
                       </Button>
                     )}
 
