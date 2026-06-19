@@ -10,7 +10,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import ParentOnlyRoute from "./components/ParentOnlyRoute";
 import RequireProfileComplete from "./components/RequireProfileComplete";
 import SplashScreen from "./components/SplashScreen";
-import PageTransition from "./components/PageTransition";
+
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -91,7 +91,6 @@ const AppRoutes = () => {
   return (
     <RequireProfileComplete>
       <Suspense fallback={<PageLoader />}>
-        <PageTransition>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
@@ -142,7 +141,6 @@ const AppRoutes = () => {
           <Route path="/profile/:userId" element={<PublicProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        </PageTransition>
       </Suspense>
     </RequireProfileComplete>
   );
