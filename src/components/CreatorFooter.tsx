@@ -27,11 +27,11 @@ const CreatorFooter = () => {
           <DialogHeader>
             <DialogTitle>About the Creators</DialogTitle>
             <DialogDescription>
-              Learn more about the creators of ​Dolphin.
+              Learn more about the creators of ​Dolphin Carpool.
             </DialogDescription>
           </DialogHeader>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            ​Dolphin was created by Ethan Fang and Luke Johnson to make carpooling safer and easier for ​Car Pool families. We built this platform to help parents coordinate rides, reduce traffic, and build a stronger school community.
+            ​Dolphin Carpool was created by Ethan Fang and Luke Johnson to make carpooling safer and easier for ​Car Pool families. We built this platform to help parents coordinate rides, reduce traffic, and build a stronger school community.
           </p>
         </DialogContent>
       </Dialog>
