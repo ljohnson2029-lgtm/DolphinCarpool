@@ -322,7 +322,8 @@ const SeriesSpaceView = ({ spaceId, otherParentName, onBack }: Props) => {
             body: {
               userId: otherParentId,
               type: "series_message",
-              message: `💬 ${currentUserName} sent you a message in your Series space`,
+              message: `💬 ${currentUserName || "A parent"} sent you a message about your series ride`,
+              linkId: spaceId,
             },
           });
         } catch {
