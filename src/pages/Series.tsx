@@ -30,6 +30,7 @@ const Series = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [activeSpaceId, setActiveSpaceId] = useState<string | null>(null);
   const [activeOtherParentName, setActiveOtherParentName] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const fetchSpaces = useCallback(async () => {
     if (!user) return;
