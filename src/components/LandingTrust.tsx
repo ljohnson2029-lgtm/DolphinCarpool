@@ -11,7 +11,7 @@ const LandingTrust = () => {
         <p className="text-primary-foreground/80 text-lg leading-relaxed mb-6">
           Only verified parents and students from our community can join. Your data stays private and is never shared outside.
         </p>
-        <div className="flex items-center justify-center gap-2 text-primary-foreground/60">
+        <div className="flex items-center justify-center gap-2 text-primary-foreground/90">
           <Lock className="w-4 h-4" />
           <span className="text-sm font-medium">End-to-end privacy · No ads · No data selling</span>
         </div>
