@@ -73,7 +73,7 @@ export const NotificationDropdown = () => {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setNotifications((prev) => [payload.new as Notification, ...prev].slice(0, 10));
+            setNotifications((prev) => [payload.new as Notification, ...prev].slice(0, 50));
             toast.info('New notification received', {
               icon: <Bell className="h-4 w-4" />,
             });
