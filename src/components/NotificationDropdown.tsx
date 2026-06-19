@@ -548,21 +548,6 @@ export const NotificationDropdown = () => {
           </div>
         )}
       </ScrollArea>
-      {notifications.length > 0 && (
-        <div className="border-t border-border p-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full text-xs text-muted-foreground hover:text-foreground"
-            onClick={() => {
-              setIsOpen(false);
-              navigate('/settings');
-            }}
-          >
-            View all notifications
-          </Button>
-        </div>
-      )}
     </>
   );
 
