@@ -314,7 +314,7 @@ export const NotificationDropdown = () => {
       navigate('/conversations');
     } else if (notification.type === 'ride_message') {
       setIsOpen(false);
-      navigate('/my-rides');
+      navigate('/my-rides?tab=pending');
     } else if (notification.type === 'series_message' || notification.type === 'series_ride' || notification.type === 'schedule_proposal' || notification.type === 'schedule_accepted' || notification.type === 'schedule_declined') {
       setIsOpen(false);
       navigate('/series');
@@ -323,10 +323,10 @@ export const NotificationDropdown = () => {
       navigate('/family-carpools');
     } else if (notification.type === 'schedule_cancel_one' || notification.type === 'schedule_leave_one') {
       setIsOpen(false);
-      navigate('/my-rides');
+      navigate('/my-rides?tab=pending');
     } else if (notification.type === 'ride_expiring') {
       setIsOpen(false);
-      navigate('/my-rides');
+      navigate('/my-rides?tab=pending');
     } else if (notification.type.includes('link') || notification.type.includes('unlinked')) {
       setIsOpen(false);
       navigate('/family-links');
@@ -433,7 +433,7 @@ export const NotificationDropdown = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsOpen(false);
-                          navigate(isIncomingJoinRequestNotif(notification.type) ? '/my-rides?tab=pending' : '/my-rides');
+                          navigate('/my-rides?tab=pending');
                         }}
                         className="h-7 mt-2 gap-1 text-xs"
                       >
@@ -501,7 +501,7 @@ export const NotificationDropdown = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsOpen(false);
-                          navigate('/my-rides');
+                          navigate('/my-rides?tab=pending');
                         }}
                         className="h-7 mt-2 gap-1 text-xs"
                       >
