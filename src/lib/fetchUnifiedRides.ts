@@ -16,8 +16,10 @@ async function fetchProfilesForIds(ids: string[]): Promise<Record<string, any>> 
   // license_plate / home_address are fetched from the underlying profiles table — RLS
   // restricts those rows to confirmed/accepted relationships only.
   const [{ data: profiles }, { data: privateProfiles }, { data: users }] = await Promise.all([
-    supabase.from('profiles_public').select('id, first_name, last_name, username, phone_number, share_phone, share_email, car_make, car_model, car_color').in('id', ids),
-    supabase.from('profiles').select('id, license_plate, home_address').in('id', ids),
+    supabase.from('profiles_public').select('id, first_name, last_name, username, share_phone, share_email, car_make, car_model, car_color').in('id', ids),
+    // Pull phone_number directly from `profiles` so confirmed-ride contact cards always show it
+    // (profiles_public masks phone_number based on share_phone). RLS on profiles still restricts rows.
+    supabase.from('profiles').select('id, license_plate, home_address, phone_number').in('id', ids),
     supabase.from('users_safe').select('user_id, email').in('user_id', ids),
   ]);
 
