@@ -394,7 +394,7 @@ export const NotificationDropdown = () => {
           )}
         </div>
       </div>
-      <ScrollArea className={isMobile ? "h-[calc(100vh-120px)]" : "max-h-[400px]"}>
+      <ScrollArea className={isMobile ? "h-[calc(100vh-120px)]" : "h-[480px]"}>
         {notifications.length === 0 ? (
           <div className="p-8 text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
