@@ -1,0 +1,1 @@
+ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS fk_notification_link;
