@@ -62,7 +62,7 @@ const RideRequestForm = ({
   const [dropoffCoords, setDropoffCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [rideDate, setRideDate] = useState("");
   const [rideTime, setRideTime] = useState("");
-  const [seatsNeeded, setSeatsNeeded] = useState("");
+  
   const [personalMessage, setPersonalMessage] = useState("");
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState<string[]>([]);
@@ -162,7 +162,7 @@ const RideRequestForm = ({
         dropoff_longitude: dropoffCoords?.lng || null,
         ride_date: rideDate,
         ride_time: rideTime,
-        seats_needed: parseInt(seatsNeeded),
+        seats_needed: selectedChildIds.length,
         is_recurring: isRecurring,
         recurring_days: isRecurring ? recurringDays : null,
         transaction_type: isBroadcast ? 'broadcast' : 'direct',
@@ -176,7 +176,7 @@ const RideRequestForm = ({
       // For direct requests, create conversation entry
       if (!isBroadcast && recipientParentId && rideData?.[0]) {
         const conversationMessage = personalMessage || 
-          `I'd like to request a ride for ${new Date(rideDate).toLocaleDateString()} at ${rideTime}. ${seatsNeeded} seat${parseInt(seatsNeeded) > 1 ? 's' : ''} needed.`;
+          `I'd like to request a ride for ${new Date(rideDate).toLocaleDateString()} at ${rideTime}. ${selectedChildIds.length} seat${selectedChildIds.length > 1 ? 's' : ''} needed.`;
         
         await supabase.from('ride_conversations').insert({
           ride_id: rideData[0].id,
@@ -210,7 +210,7 @@ const RideRequestForm = ({
       setDropoffCoords(null);
       setRideDate("");
       setRideTime("");
-      setSeatsNeeded("");
+      
       setPersonalMessage("");
       setIsRecurring(false);
       setRecurringDays([]);
@@ -379,20 +379,6 @@ const RideRequestForm = ({
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="seats" className="text-sm sm:text-base">Number of Kids</Label>
-            <Input
-              id="seats"
-              type="number"
-              min="1"
-              max="8"
-              value={seatsNeeded}
-              onChange={(e) => setSeatsNeeded(e.target.value)}
-              placeholder="How many kids need a ride?"
-              required
-              className="h-11 sm:h-10 text-base sm:text-sm"
-            />
-          </div>
 
           {!isBroadcast && recipientParentName && (
             <div>
