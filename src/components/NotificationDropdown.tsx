@@ -75,14 +75,19 @@ export const NotificationDropdown = () => {
           if (payload.eventType === 'INSERT') {
             const newNotification = payload.new as Notification;
             setNotifications((prev) => [newNotification, ...prev].slice(0, 50));
-            toast.info(
-              newNotification.type === 'series_message'
-                ? newNotification.message
-                : 'New notification received',
-              {
-              icon: <Bell className="h-4 w-4" />,
-              }
-            );
+            if (newNotification.type === 'series_message') {
+              toast.info(newNotification.message, {
+                icon: <Bell className="h-4 w-4" />,
+                action: {
+                  label: 'View Messages',
+                  onClick: () => navigate(newNotification.link_id ? `/series?space=${newNotification.link_id}` : '/series'),
+                },
+              });
+            } else {
+              toast.info('New notification received', {
+                icon: <Bell className="h-4 w-4" />,
+              });
+            }
           } else if (payload.eventType === 'UPDATE') {
             setNotifications((prev) =>
               prev.map((n) =>
