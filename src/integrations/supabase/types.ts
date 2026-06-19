@@ -285,13 +285,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_notification_link"
-            columns: ["link_id"]
-            isOneToOne: false
-            referencedRelation: "account_links"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "fk_notification_user"
             columns: ["user_id"]
             isOneToOne: false
