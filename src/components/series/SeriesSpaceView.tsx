@@ -316,18 +316,32 @@ const SeriesSpaceView = ({ spaceId, otherParentName, onBack }: Props) => {
     if (error) {
       setNewMessage(text);
     } else {
-      if (otherParentId) {
+      let recipientId = otherParentId;
+      if (!recipientId) {
+        const { data: space } = await supabase
+          .from("series_spaces")
+          .select("parent_a_id, parent_b_id")
+          .eq("id", spaceId)
+          .maybeSingle();
+        recipientId = space ? (space.parent_a_id === user.id ? space.parent_b_id : space.parent_a_id) : "";
+        if (recipientId) setOtherParentId(recipientId);
+      }
+
+      if (recipientId && recipientId !== user.id) {
         try {
-          await supabase.functions.invoke("create-notification", {
+          const { error: notificationError } = await supabase.functions.invoke("create-notification", {
             body: {
-              userId: otherParentId,
+              userId: recipientId,
               type: "series_message",
               message: `💬 ${currentUserName || "A parent"} sent you a message about your series ride`,
               linkId: spaceId,
             },
           });
+          if (notificationError) {
+            console.error("Series message notification failed:", notificationError);
+          }
         } catch {
-          // Silently ignore notification errors
+          console.error("Series message notification failed unexpectedly");
         }
       }
     }
