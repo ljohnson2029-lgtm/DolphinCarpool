@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -29,6 +30,7 @@ const Series = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [activeSpaceId, setActiveSpaceId] = useState<string | null>(null);
   const [activeOtherParentName, setActiveOtherParentName] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const fetchSpaces = useCallback(async () => {
     if (!user) return;
@@ -76,6 +78,19 @@ const Series = () => {
   useEffect(() => {
     fetchSpaces();
   }, [fetchSpaces]);
+
+  // Auto-open a space when navigated with ?space=<id>
+  useEffect(() => {
+    const targetSpaceId = searchParams.get("space");
+    if (!targetSpaceId || activeSpaceId === targetSpaceId || spaces.length === 0) return;
+    const match = spaces.find((s) => s.id === targetSpaceId);
+    if (match) {
+      setActiveSpaceId(match.id);
+      setActiveOtherParentName(match.other_parent_name);
+      searchParams.delete("space");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, spaces, activeSpaceId, setSearchParams]);
 
   const handleSpaceCreated = (spaceId: string, otherParentName: string) => {
     setShowSearch(false);
