@@ -338,7 +338,7 @@ export const NotificationDropdown = () => {
       navigate('/my-rides?tab=pending');
     } else if (isRideNotification(notification.type)) {
       setIsOpen(false);
-      navigate('/find-rides');
+      navigate('/my-rides?tab=pending');
     }
   };
 
