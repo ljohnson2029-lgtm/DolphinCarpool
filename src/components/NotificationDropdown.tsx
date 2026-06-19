@@ -73,7 +73,7 @@ export const NotificationDropdown = () => {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setNotifications((prev) => [payload.new as Notification, ...prev].slice(0, 10));
+            setNotifications((prev) => [payload.new as Notification, ...prev].slice(0, 50));
             toast.info('New notification received', {
               icon: <Bell className="h-4 w-4" />,
             });
@@ -108,7 +108,7 @@ export const NotificationDropdown = () => {
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(10);
+      .limit(50);
 
     if (error) {
       console.error('Error fetching notifications:', error);
@@ -394,7 +394,7 @@ export const NotificationDropdown = () => {
           )}
         </div>
       </div>
-      <ScrollArea className={isMobile ? "h-[calc(100vh-120px)]" : "max-h-[400px]"}>
+      <ScrollArea className={isMobile ? "h-[calc(100vh-120px)]" : "h-[480px]"}>
         {notifications.length === 0 ? (
           <div className="p-8 text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
@@ -548,21 +548,6 @@ export const NotificationDropdown = () => {
           </div>
         )}
       </ScrollArea>
-      {notifications.length > 0 && (
-        <div className="border-t border-border p-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full text-xs text-muted-foreground hover:text-foreground"
-            onClick={() => {
-              setIsOpen(false);
-              navigate('/settings');
-            }}
-          >
-            View all notifications
-          </Button>
-        </div>
-      )}
     </>
   );
 
