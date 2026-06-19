@@ -81,9 +81,10 @@ serve(async (req) => {
       );
     }
 
-    // Enforce sharing flags server-side
-    const includePhone = isSelf || (hasRelationship && !!profileData.share_phone);
-    const includeEmail = isSelf || (hasRelationship && !!profileData.share_email);
+    // Phone and email are always shared with confirmed contacts (relationship-gated).
+    // Phone is mandatory at signup, so it should always be present for parents.
+    const includePhone = isSelf || hasRelationship;
+    const includeEmail = isSelf || hasRelationship;
     const includeFullAddress = isSelf; // never share full home address with others
 
     let email: string | null = null;
@@ -95,6 +96,8 @@ serve(async (req) => {
         .single();
       email = userData?.email ?? null;
     }
+
+    console.log("[get-parent-profile] parentId:", parentId, "isSelf:", isSelf, "hasRelationship:", hasRelationship, "phone_number present:", !!profileData.phone_number);
 
     // Children list: only return for self or confirmed relationships
     let linkedStudents: Array<{ id: string; first_name: string; last_name: string; grade_level: string | null }> = [];
