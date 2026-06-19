@@ -73,10 +73,16 @@ export const NotificationDropdown = () => {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setNotifications((prev) => [payload.new as Notification, ...prev].slice(0, 50));
-            toast.info('New notification received', {
+            const newNotification = payload.new as Notification;
+            setNotifications((prev) => [newNotification, ...prev].slice(0, 50));
+            toast.info(
+              newNotification.type === 'series_message'
+                ? newNotification.message
+                : 'New notification received',
+              {
               icon: <Bell className="h-4 w-4" />,
-            });
+              }
+            );
           } else if (payload.eventType === 'UPDATE') {
             setNotifications((prev) =>
               prev.map((n) =>
