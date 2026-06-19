@@ -19,7 +19,7 @@ const features = [
   {
     icon: Heart,
     title: "100% Free",
-    description: "​Dolphin is completely free for all ​Car Pool families. No fees, no subscriptions.",
+    description: "​Dolphin is completely free for all ​carpool families. No fees, no subscriptions.",
   },
 ];
 

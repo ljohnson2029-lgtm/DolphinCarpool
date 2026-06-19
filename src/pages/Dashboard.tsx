@@ -212,7 +212,7 @@ const Dashboard = () => {
                   {profile.first_name || profile.username}!
                 </h1>
                 <p className="text-gray-500 text-lg">
-                  Manage your carpools and connect with Car Pool families
+                  Manage your carpools and connect with carpool families
                 </p>
               </div>
 
