@@ -59,18 +59,22 @@ serve(async (req) => {
     // co-parent, ride conversation participant, or private ride participant).
     if (userId !== user.id) {
       const serviceCheck = createClient(supabaseUrl, supabaseServiceKey);
-      const [linkA, linkB, coA, coB, conv, priv] = await Promise.all([
+      const [linkA, linkB, coA, coB, conv, priv, seriesSpace] = await Promise.all([
         serviceCheck.from("account_links").select("id").eq("parent_id", user.id).eq("student_id", userId).eq("status", "approved").limit(1),
         serviceCheck.from("account_links").select("id").eq("student_id", user.id).eq("parent_id", userId).eq("status", "approved").limit(1),
         serviceCheck.from("co_parent_links").select("id").eq("requester_id", user.id).eq("recipient_id", userId).limit(1),
         serviceCheck.from("co_parent_links").select("id").eq("recipient_id", user.id).eq("requester_id", userId).limit(1),
         serviceCheck.from("ride_conversations").select("id").or(`and(sender_id.eq.${user.id},recipient_id.eq.${userId}),and(sender_id.eq.${userId},recipient_id.eq.${user.id})`).limit(1),
         serviceCheck.from("private_ride_requests").select("id").or(`and(sender_id.eq.${user.id},recipient_id.eq.${userId}),and(sender_id.eq.${userId},recipient_id.eq.${user.id})`).limit(1),
+        linkId
+          ? serviceCheck.from("series_spaces").select("id").eq("id", linkId).or(`and(parent_a_id.eq.${user.id},parent_b_id.eq.${userId}),and(parent_a_id.eq.${userId},parent_b_id.eq.${user.id})`).limit(1)
+          : Promise.resolve({ data: [] }),
       ]);
       const hasRelationship =
         (linkA.data?.length ?? 0) > 0 || (linkB.data?.length ?? 0) > 0 ||
         (coA.data?.length ?? 0) > 0 || (coB.data?.length ?? 0) > 0 ||
-        (conv.data?.length ?? 0) > 0 || (priv.data?.length ?? 0) > 0;
+        (conv.data?.length ?? 0) > 0 || (priv.data?.length ?? 0) > 0 ||
+        (seriesSpace.data?.length ?? 0) > 0;
       if (!hasRelationship) {
         return new Response(
           JSON.stringify({ error: "Forbidden: no relationship with target user" }),
