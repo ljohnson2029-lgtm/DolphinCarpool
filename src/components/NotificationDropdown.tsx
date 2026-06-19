@@ -433,7 +433,7 @@ export const NotificationDropdown = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsOpen(false);
-                          navigate(isIncomingJoinRequestNotif(notification.type) ? '/my-rides?tab=pending' : '/my-rides');
+                          navigate('/my-rides?tab=pending');
                         }}
                         className="h-7 mt-2 gap-1 text-xs"
                       >
