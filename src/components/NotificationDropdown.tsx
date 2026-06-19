@@ -317,7 +317,7 @@ export const NotificationDropdown = () => {
       navigate('/my-rides?tab=pending');
     } else if (notification.type === 'series_message' || notification.type === 'series_ride' || notification.type === 'schedule_proposal' || notification.type === 'schedule_accepted' || notification.type === 'schedule_declined') {
       setIsOpen(false);
-      navigate('/series');
+      navigate(notification.link_id ? `/series?space=${notification.link_id}` : '/series');
     } else if (notification.type === 'schedule_cancelled') {
       setIsOpen(false);
       navigate('/family-carpools');
