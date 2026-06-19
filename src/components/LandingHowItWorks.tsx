@@ -4,7 +4,7 @@ const steps = [
   {
     icon: UserPlus,
     title: "Create Your Profile",
-    description: "Sign up with your ​Car Pool email and add your home address to get started.",
+    description: "Sign up with your ​carpool email and add your home address to get started.",
   },
   {
     icon: MapPin,

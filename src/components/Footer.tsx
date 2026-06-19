@@ -64,7 +64,7 @@ const Footer = ({ showLegalAndContact = true }: FooterProps) => {
         {/* Bottom */}
         <div className="pt-8 border-t border-primary-foreground/15">
           <p className="text-primary-foreground/90 text-xs text-center">
-            © {currentYear} ​Car Pool ​Dolphin. All rights reserved.
+            © {currentYear} ​carpool ​Dolphin. All rights reserved.
           </p>
         </div>
       </div>
