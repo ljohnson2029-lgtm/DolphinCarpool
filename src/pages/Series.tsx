@@ -79,6 +79,19 @@ const Series = () => {
     fetchSpaces();
   }, [fetchSpaces]);
 
+  // Auto-open a space when navigated with ?space=<id>
+  useEffect(() => {
+    const targetSpaceId = searchParams.get("space");
+    if (!targetSpaceId || activeSpaceId === targetSpaceId || spaces.length === 0) return;
+    const match = spaces.find((s) => s.id === targetSpaceId);
+    if (match) {
+      setActiveSpaceId(match.id);
+      setActiveOtherParentName(match.other_parent_name);
+      searchParams.delete("space");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, spaces, activeSpaceId, setSearchParams]);
+
   const handleSpaceCreated = (spaceId: string, otherParentName: string) => {
     setShowSearch(false);
     setActiveSpaceId(spaceId);
