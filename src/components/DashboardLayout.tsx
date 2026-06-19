@@ -90,8 +90,6 @@ export const DashboardLayout = ({
         <div
           className={cn(
             "mx-auto px-4 sm:px-6 lg:px-8 h-full",
-            // Smooth fade-in animation for route changes
-            "animate-in fade-in slide-in-from-bottom-2 duration-500",
             // Constraint width unless fullWidth is requested
             !fullWidth && "max-w-7xl",
           )}
