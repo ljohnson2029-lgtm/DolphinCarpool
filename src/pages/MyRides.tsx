@@ -137,7 +137,7 @@ const MyRides = () => {
       }).filter(Boolean)
     )] as string[];
 
-    const childrenByParent: Record<string, { name: string; grade: string }[]> = {};
+    const childrenByParent: Record<string, { id: string; name: string; grade: string }[]> = {};
     const vehicleByParent: Record<string, { carMake: string | null; carModel: string | null; carColor: string | null; licensePlate: string | null }> = {};
     const phoneByParent: Record<string, string | null> = {};
 
@@ -150,10 +150,12 @@ const MyRides = () => {
           if (data.profile.linked_students) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             childrenByParent[parentId] = data.profile.linked_students.map((s: any) => ({
+              id: s.id,
               name: [s.first_name, s.last_name].filter(Boolean).join(' ') || 'Unknown',
               grade: s.grade_level || 'N/A',
             }));
           }
+
            vehicleByParent[parentId] = {
               carMake: data.profile.car_make || null,
               carModel: data.profile.car_model || null,
