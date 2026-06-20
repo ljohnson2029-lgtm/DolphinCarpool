@@ -50,11 +50,6 @@ export function ContactCardModal({ open, onClose, parentName, phone }: ContactCa
             </div>
           )}
 
-          {!phone && (
-            <p className="text-sm text-muted-foreground text-center py-2">
-              No phone number available for this parent.
-            </p>
-          )}
         </div>
       </DialogContent>
     </Dialog>
