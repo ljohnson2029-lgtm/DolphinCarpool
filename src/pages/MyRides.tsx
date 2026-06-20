@@ -179,15 +179,20 @@ const MyRides = () => {
     logger.log('[Student MyRides] Schedule data:', scheduleData);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rides: UnifiedRide[] = scheduleData.map((r: any) => {
-      const isParentDriving = r.type === 'offer';
+      const rideOwnerId = r.user_id;
+      const linkedParentId = r.parent_id;
+      const rideOwnerIsDriver = r.type === 'offer';
       const hasConnection = Boolean(r.connected_parent_id);
       const connectedParentName = r.connected_parent_first_name
         ? `${r.connected_parent_first_name} ${r.connected_parent_last_name || ''}`.trim()
         : null;
+      const linkedParentName = [r.parent_first_name, r.parent_last_name].filter(Boolean).join(' ').trim();
 
       // The linked parent in this row is r.parent_id. They could be the ride
       // owner (r.user_id === r.parent_id) or the joiner.
-      const linkedIsRideOwner = r.user_id === r.parent_id;
+      const linkedIsRideOwner = rideOwnerId === linkedParentId;
+      const joinerParentId = linkedIsRideOwner ? r.connected_parent_id : linkedParentId;
+      const otherParticipantId = linkedIsRideOwner ? joinerParentId : rideOwnerId;
       const rideOwnerSelected: string[] | null = Array.isArray(r.ride_selected_children) ? r.ride_selected_children : null;
       const joinerSelected: string[] | null = Array.isArray(r.joiner_selected_children) ? r.joiner_selected_children : null;
 
@@ -204,17 +209,19 @@ const MyRides = () => {
       };
 
 
-      const rideOwnerAllKids = (childrenByParent[r.user_id] || []) as { id?: string; name: string; grade: string }[];
-      const connectedAllKids = r.connected_parent_id
-        ? ((childrenByParent[r.connected_parent_id] || []) as { id?: string; name: string; grade: string }[])
+      const rideOwnerAllKids = (childrenByParent[rideOwnerId] || []) as { id?: string; name: string; grade: string }[];
+      const joinerAllKids = joinerParentId
+        ? ((childrenByParent[joinerParentId] || []) as { id?: string; name: string; grade: string }[])
         : [];
 
-      // Use selected_children when present; else fall back to all kids on that parent.
+      // r.selected_children always belongs to the ride owner; rc.selected_children
+      // always belongs to the accepted joiner. Keep those arrays tied to the
+      // correct parent so student rows show both families' passengers.
       const rideOwnerKids = filterKids(rideOwnerAllKids, rideOwnerSelected);
-      const connectedKids = filterKids(connectedAllKids, joinerSelected);
+      const joinerKids = filterKids(joinerAllKids, joinerSelected);
 
-      const myKids = linkedIsRideOwner ? rideOwnerKids : connectedKids;
-      const otherKids = linkedIsRideOwner ? connectedKids : rideOwnerKids;
+      const myKids = linkedIsRideOwner ? rideOwnerKids : joinerKids;
+      const otherKids = linkedIsRideOwner ? joinerKids : rideOwnerKids;
 
       // Combined for fallback display when nothing else available
       const allKidsMap = new Map<string, { name: string; grade: string }>();
@@ -223,19 +230,34 @@ const MyRides = () => {
         if (!allKidsMap.has(key)) allKidsMap.set(key, k);
       });
       const fallbackKids = Array.from(allKidsMap.values());
+      logger.log('[Student MyRides] Passenger children for ride:', {
+        rideId: r.id,
+        rideOwnerId,
+        linkedParentId,
+        joinerParentId,
+        otherParticipantId,
+        rideOwnerSelected,
+        joinerSelected,
+        rideOwnerKids,
+        joinerKids,
+        allPassengerChildren: fallbackKids,
+      });
 
       let status: UnifiedRide['status'];
       if (hasConnection) {
         // Fully confirmed between both parties → Active tab
-        status = isParentDriving ? 'joined-ride' : 'helping-out';
+        status = rideOwnerIsDriver ? 'joined-ride' : 'helping-out';
       } else {
-        status = isParentDriving ? 'posted-offering' : 'posted-looking';
+        status = rideOwnerIsDriver ? 'posted-offering' : 'posted-looking';
       }
 
-      const driverId = isParentDriving ? r.parent_id : (r.connected_parent_id || null);
+      const driverId = rideOwnerIsDriver ? rideOwnerId : (joinerParentId || null);
       const driverVehicle = driverId ? vehicleByParent[driverId] : undefined;
-      const otherParentId = r.connected_parent_id || r.parent_id;
-      const otherParentVehicle = vehicleByParent[otherParentId];
+      const driverDisplayName = driverId === linkedParentId
+        ? linkedParentName
+        : connectedParentName || 'Waiting for driver';
+      const otherParentId = otherParticipantId || r.connected_parent_id || r.parent_id;
+      const otherParentVehicle = otherParentId ? vehicleByParent[otherParentId] : undefined;
 
       return {
         id: r.id,
@@ -250,13 +272,13 @@ const MyRides = () => {
         seatsAvailable: r.seats_available,
         seatsNeeded: r.seats_needed,
         isDriver: false,
-        otherParent: hasConnection ? {
-          id: r.connected_parent_id || r.parent_id,
+        otherParent: hasConnection && otherParentId ? {
+          id: otherParentId,
           firstName: r.connected_parent_first_name || r.parent_first_name,
           lastName: r.connected_parent_last_name || r.parent_last_name,
           username: '',
           email: null,
-          phone: phoneByParent[r.connected_parent_id || r.parent_id] || null,
+          phone: phoneByParent[otherParentId] || null,
           children: otherKids,
           carMake: otherParentVehicle?.carMake || null,
           carModel: otherParentVehicle?.carModel || null,
@@ -267,9 +289,7 @@ const MyRides = () => {
         myCarInfo: driverVehicle || undefined,
         originalData: r,
         _studentView: true,
-        _driverName: isParentDriving
-          ? `${r.parent_first_name || ''} ${r.parent_last_name || ''}`.trim()
-          : connectedParentName || 'Waiting for driver',
+        _driverName: driverDisplayName,
         _studentPassengerName: studentDisplayName,
       } as UnifiedRide & { _studentView?: boolean; _driverName?: string; _studentPassengerName?: string };
     });
