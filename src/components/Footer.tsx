@@ -14,7 +14,7 @@ const Footer = ({ showLegalAndContact = true }: FooterProps) => {
         <div className={`grid gap-10 mb-10 ${showLegalAndContact ? 'sm:grid-cols-2 md:grid-cols-4' : 'sm:grid-cols-2 md:grid-cols-3'}`}>
           {/* Brand */}
           <div className="sm:col-span-2 md:col-span-1">
-            <h3 className="text-xl font-bold mb-3">​Dolphin</h3>
+            <h3 className="text-xl font-bold mb-3">​Dolphin Carpool</h3>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               Safe carpooling for Families in our Community{"\n"}
             </p>
