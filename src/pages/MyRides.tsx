@@ -173,7 +173,7 @@ const MyRides = () => {
 
     const today = new Date().toISOString().split('T')[0];
     const studentDisplayName = `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || profile?.username || 'You';
-    const studentGrade = profile?.grade_level || 'N/A';
+    void (profile?.grade_level || 'N/A');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     logger.log('[Student MyRides] Schedule data:', scheduleData);
