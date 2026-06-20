@@ -137,7 +137,7 @@ const MyRides = () => {
       }).filter(Boolean)
     )] as string[];
 
-    const childrenByParent: Record<string, { name: string; grade: string }[]> = {};
+    const childrenByParent: Record<string, { id: string; name: string; grade: string }[]> = {};
     const vehicleByParent: Record<string, { carMake: string | null; carModel: string | null; carColor: string | null; licensePlate: string | null }> = {};
     const phoneByParent: Record<string, string | null> = {};
 
@@ -150,10 +150,12 @@ const MyRides = () => {
           if (data.profile.linked_students) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             childrenByParent[parentId] = data.profile.linked_students.map((s: any) => ({
+              id: s.id,
               name: [s.first_name, s.last_name].filter(Boolean).join(' ') || 'Unknown',
               grade: s.grade_level || 'N/A',
             }));
           }
+
            vehicleByParent[parentId] = {
               carMake: data.profile.car_make || null,
               carModel: data.profile.car_model || null,
@@ -171,8 +173,10 @@ const MyRides = () => {
 
     const today = new Date().toISOString().split('T')[0];
     const studentDisplayName = `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || profile?.username || 'You';
-    const studentGrade = profile?.grade_level || 'N/A';
+    
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    logger.log('[Student MyRides] Schedule data:', scheduleData);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rides: UnifiedRide[] = scheduleData.map((r: any) => {
       const isParentDriving = r.type === 'offer';
@@ -181,25 +185,44 @@ const MyRides = () => {
         ? `${r.connected_parent_first_name} ${r.connected_parent_last_name || ''}`.trim()
         : null;
 
-      const rideOwnerKids = childrenByParent[r.user_id] || [];
-      const linkedParentKids = childrenByParent[r.parent_id] || [];
-      const connectedParentKids = r.connected_parent_id ? (childrenByParent[r.connected_parent_id] || []) : [];
-      
-      const allKidsSet = new Map<string, { name: string; grade: string }>();
-      [...rideOwnerKids, ...linkedParentKids, ...connectedParentKids].forEach(k => {
+      // The linked parent in this row is r.parent_id. They could be the ride
+      // owner (r.user_id === r.parent_id) or the joiner.
+      const linkedIsRideOwner = r.user_id === r.parent_id;
+      const rideOwnerSelected: string[] | null = Array.isArray(r.ride_selected_children) ? r.ride_selected_children : null;
+      const joinerSelected: string[] | null = Array.isArray(r.joiner_selected_children) ? r.joiner_selected_children : null;
+
+      const filterKids = (kids: { name: string; grade: string; id?: string }[], selected: string[] | null) => {
+        if (!selected || selected.length === 0) return kids.map(({ name, grade }) => ({ name, grade }));
+        return kids
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .filter((k: any) => k.id && selected.includes(k.id))
+          .map(({ name, grade }) => ({ name, grade }));
+      };
+
+      const rideOwnerAllKids = (childrenByParent[r.user_id] || []) as { id?: string; name: string; grade: string }[];
+      const connectedAllKids = r.connected_parent_id
+        ? ((childrenByParent[r.connected_parent_id] || []) as { id?: string; name: string; grade: string }[])
+        : [];
+
+      // Use selected_children when present; else fall back to all kids on that parent.
+      const rideOwnerKids = filterKids(rideOwnerAllKids, rideOwnerSelected);
+      const connectedKids = filterKids(connectedAllKids, joinerSelected);
+
+      const myKids = linkedIsRideOwner ? rideOwnerKids : connectedKids;
+      const otherKids = linkedIsRideOwner ? connectedKids : rideOwnerKids;
+
+      // Combined for fallback display when nothing else available
+      const allKidsMap = new Map<string, { name: string; grade: string }>();
+      [...myKids, ...otherKids].forEach(k => {
         const key = `${k.name}-${k.grade}`.toLowerCase();
-        if (!allKidsSet.has(key)) allKidsSet.set(key, k);
+        if (!allKidsMap.has(key)) allKidsMap.set(key, k);
       });
-      const allKids = Array.from(allKidsSet.values());
-      
-      const myKids = allKids.length > 0
-        ? allKids
-        : [{ name: studentDisplayName, grade: studentGrade }];
-      const otherKids: { name: string; grade: string }[] = [];
+      const fallbackKids = Array.from(allKidsMap.values());
 
       let status: UnifiedRide['status'];
       if (hasConnection) {
-        status = isParentDriving ? 'posted-offering' : 'helping-out';
+        // Fully confirmed between both parties → Active tab
+        status = isParentDriving ? 'joined-ride' : 'helping-out';
       } else {
         status = isParentDriving ? 'posted-offering' : 'posted-looking';
       }
@@ -235,7 +258,7 @@ const MyRides = () => {
           carColor: otherParentVehicle?.carColor || null,
           licensePlate: otherParentVehicle?.licensePlate || null,
         } : null,
-        myChildren: myKids,
+        myChildren: myKids.length > 0 ? myKids : (hasConnection ? [] : fallbackKids),
         myCarInfo: driverVehicle || undefined,
         originalData: r,
         _studentView: true,
@@ -245,6 +268,7 @@ const MyRides = () => {
         _studentPassengerName: studentDisplayName,
       } as UnifiedRide & { _studentView?: boolean; _driverName?: string; _studentPassengerName?: string };
     });
+
 
     // ── Fetch series rides for student ──
     const DAY_MAP: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };

@@ -1535,6 +1535,7 @@ export type Database = {
           dropoff_location: string
           dropoff_longitude: number
           id: string
+          joiner_selected_children: Json
           parent_email: string
           parent_first_name: string
           parent_id: string
@@ -1543,6 +1544,7 @@ export type Database = {
           pickup_location: string
           pickup_longitude: number
           ride_date: string
+          ride_selected_children: Json
           ride_time: string
           seats_available: number
           seats_needed: number
