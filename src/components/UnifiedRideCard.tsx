@@ -625,7 +625,7 @@ export const UnifiedRideCard = ({ ride, onCancel, isPast, topConnectionIds, onAc
                         <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Chadwick Student:</span>
                         <span className="font-medium">{child.name}</span>
                         {formatGrade(child.grade) && (
-                          <span className="text-muted-foreground text-xs">({formatGrade(child.grade)})</span>
+                          <span className="text-muted-foreground text-xs">, {formatGrade(child.grade)}</span>
                         )}
                         {isCurrentStudent && (
                           <span className="text-xs text-muted-foreground">(you)</span>
