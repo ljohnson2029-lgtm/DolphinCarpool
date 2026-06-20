@@ -193,11 +193,16 @@ const MyRides = () => {
 
       const filterKids = (kids: { name: string; grade: string; id?: string }[], selected: string[] | null) => {
         if (!selected || selected.length === 0) return kids.map(({ name, grade }) => ({ name, grade }));
-        return kids
+        const matched = kids
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .filter((k: any) => k.id && selected.includes(k.id))
           .map(({ name, grade }) => ({ name, grade }));
+        // Fallback: stale/deleted child ids in selected — show all kids of that parent
+        // so the passenger list still reflects who is actually riding.
+        if (matched.length === 0) return kids.map(({ name, grade }) => ({ name, grade }));
+        return matched;
       };
+
 
       const rideOwnerAllKids = (childrenByParent[r.user_id] || []) as { id?: string; name: string; grade: string }[];
       const connectedAllKids = r.connected_parent_id
