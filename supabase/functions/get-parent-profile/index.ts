@@ -63,7 +63,46 @@ serve(async (req) => {
       hasRelationship =
         (al?.length ?? 0) > 0 || (cp?.length ?? 0) > 0 ||
         (ss?.length ?? 0) > 0 || (conv?.length ?? 0) > 0 || (pr?.length ?? 0) > 0;
+
+      // Student callers: also grant access if the requested parent is connected
+      // (via rides/series/co-parent/conversations) to one of the student's linked parents.
+      if (!hasRelationship) {
+        const { data: callerProfile } = await supabase
+          .from("profiles").select("account_type").eq("id", user.id).single();
+        if (callerProfile?.account_type === "student") {
+          const { data: studentLinks } = await supabase
+            .from("account_links").select("parent_id")
+            .eq("student_id", user.id).eq("status", "approved");
+          const linkedParentIds = (studentLinks || []).map((l: { parent_id: string }) => l.parent_id);
+          if (linkedParentIds.includes(parentId)) {
+            hasRelationship = true;
+          } else if (linkedParentIds.length > 0) {
+            const orPairs = linkedParentIds.flatMap((lpid) => [
+              `and(parent_a_id.eq.${lpid},parent_b_id.eq.${parentId})`,
+              `and(parent_a_id.eq.${parentId},parent_b_id.eq.${lpid})`,
+            ]).join(",");
+            const convPairs = linkedParentIds.flatMap((lpid) => [
+              `and(sender_id.eq.${lpid},recipient_id.eq.${parentId})`,
+              `and(sender_id.eq.${parentId},recipient_id.eq.${lpid})`,
+            ]).join(",");
+            const cpPairs = linkedParentIds.flatMap((lpid) => [
+              `and(requester_id.eq.${lpid},recipient_id.eq.${parentId})`,
+              `and(requester_id.eq.${parentId},recipient_id.eq.${lpid})`,
+            ]).join(",");
+            const [{ data: ss2 }, { data: conv2 }, { data: pr2 }, { data: cp2 }] = await Promise.all([
+              supabase.from("series_spaces").select("id").or(orPairs).limit(1),
+              supabase.from("ride_conversations").select("id").eq("status", "accepted").or(convPairs).limit(1),
+              supabase.from("private_ride_requests").select("id").in("status", ["accepted", "completed"]).or(convPairs).limit(1),
+              supabase.from("co_parent_links").select("id").eq("status", "approved").or(cpPairs).limit(1),
+            ]);
+            hasRelationship =
+              (ss2?.length ?? 0) > 0 || (conv2?.length ?? 0) > 0 ||
+              (pr2?.length ?? 0) > 0 || (cp2?.length ?? 0) > 0;
+          }
+        }
+      }
     }
+
 
     // Fetch profile data (only the columns we may need)
     const { data: profileData, error: profileError } = await supabase
