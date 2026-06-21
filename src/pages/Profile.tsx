@@ -237,16 +237,18 @@ const Profile = () => {
               </div>
 
               <div className="flex gap-3">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsEditing(!isEditing)}
-                    className="gap-2"
-                  >
-                    <Edit3 className="h-4 w-4" />
-                    {isEditing ? 'Cancel' : 'Edit Profile'}
-                  </Button>
-                </motion.div>
+                {!isChild && (
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditing(!isEditing)}
+                      className="gap-2"
+                    >
+                      <Edit3 className="h-4 w-4" />
+                      {isEditing ? 'Cancel' : 'Edit Profile'}
+                    </Button>
+                  </motion.div>
+                )}
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     variant="ghost"
@@ -259,6 +261,11 @@ const Profile = () => {
                 </motion.div>
               </div>
             </div>
+            {isChild && (
+              <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100 text-sm text-blue-800">
+                Your profile information is managed by your parent. Contact your parent to make any changes.
+              </div>
+            )}
           </motion.div>
 
           {/* Content */}
