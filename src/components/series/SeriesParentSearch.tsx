@@ -76,11 +76,12 @@ const SeriesParentSearch = ({ onSpaceCreated, existingSpaces }: Props) => {
     const [aId, bId] = [user.id, parent.id].sort();
     const { data, error } = await supabase
       .from("series_spaces")
-      .insert({ parent_a_id: aId, parent_b_id: bId })
+      .insert({ parent_a_id: aId, parent_b_id: bId, created_by: user.id, status: "pending" })
       .select("id")
       .single();
 
     if (error) {
+      console.error("Failed to create series space:", error);
       // May be duplicate, try to find existing
       const { data: found } = await supabase
         .from("series_spaces")
@@ -95,6 +96,7 @@ const SeriesParentSearch = ({ onSpaceCreated, existingSpaces }: Props) => {
     }
     setCreating(false);
   };
+
 
   return (
     <div className="space-y-3">

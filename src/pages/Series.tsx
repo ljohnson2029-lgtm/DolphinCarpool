@@ -92,6 +92,61 @@ const Series = () => {
     }
   }, [searchParams, spaces, activeSpaceId, setSearchParams]);
 
+  // Auto-start (or open) a space when navigated with ?startWith=<parentId>
+  useEffect(() => {
+    const startWith = searchParams.get("startWith");
+    if (!startWith || !user || loading) return;
+
+    const existing = spaces.find(
+      (s) =>
+        (s.parent_a_id === user.id && s.parent_b_id === startWith) ||
+        (s.parent_b_id === user.id && s.parent_a_id === startWith)
+    );
+    if (existing) {
+      setActiveSpaceId(existing.id);
+      setActiveOtherParentName(existing.other_parent_name);
+      searchParams.delete("startWith");
+      setSearchParams(searchParams, { replace: true });
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("first_name, last_name, username")
+        .eq("id", startWith)
+        .maybeSingle();
+      const name = prof
+        ? [prof.first_name, prof.last_name].filter(Boolean).join(" ") || prof.username
+        : "Parent";
+      const [aId, bId] = [user.id, startWith].sort();
+      const { data, error } = await supabase
+        .from("series_spaces")
+        .insert({ parent_a_id: aId, parent_b_id: bId, created_by: user.id, status: "pending" })
+        .select("id")
+        .single();
+
+      let spaceId = data?.id;
+      if (error || !spaceId) {
+        const { data: found } = await supabase
+          .from("series_spaces")
+          .select("id")
+          .or(`and(parent_a_id.eq.${aId},parent_b_id.eq.${bId}),and(parent_a_id.eq.${bId},parent_b_id.eq.${aId})`)
+          .maybeSingle();
+        spaceId = found?.id;
+      }
+      if (cancelled || !spaceId) return;
+      searchParams.delete("startWith");
+      setSearchParams(searchParams, { replace: true });
+      setActiveSpaceId(spaceId);
+      setActiveOtherParentName(name);
+      fetchSpaces();
+    })();
+    return () => { cancelled = true; };
+  }, [searchParams, user, spaces, loading, setSearchParams, fetchSpaces]);
+
+
   const handleSpaceCreated = (spaceId: string, otherParentName: string) => {
     setShowSearch(false);
     setActiveSpaceId(spaceId);
