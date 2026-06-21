@@ -1239,12 +1239,15 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
       )}
 
       {/* Confirmation Dialogs */}
-      <JoinRideDialog
+      <InstantJoinRideDialog
         open={showJoinDialog}
         onOpenChange={setShowJoinDialog}
         onConfirm={handleConfirmResponse}
         ownerName={getOwnerName(respondingToRide)}
+        rideDate={respondingToRide?.ride_date || ''}
+        rideTime={respondingToRide?.ride_time || ''}
         loading={actionLoading}
+        maxSeats={respondingToRide?.seats_available || null}
       />
 
       <OfferRideDialog
