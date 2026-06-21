@@ -1095,7 +1095,7 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
     }
   }, []);
 
-  const handleConfirmResponse = useCallback(async () => {
+  const handleConfirmResponse = useCallback(async (selectedChildIds?: string[]) => {
     if (!user || !respondingToRide) return;
     setActionLoading(true);
 
@@ -1111,7 +1111,9 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
           respondingToRide.type === "request"
             ? "I can help with your ride request!"
             : "I'd like to join your offered ride!",
-      });
+        selected_children: selectedChildIds && selectedChildIds.length > 0 ? selectedChildIds : null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
 
       if (error) {
         toast({
