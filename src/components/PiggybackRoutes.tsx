@@ -179,11 +179,10 @@ const PiggybackRoutes = () => {
                 size="sm"
                 variant="outline"
                 className="w-full text-xs h-8 gap-1.5"
-                onClick={() => navigate(
-                  s.already_connected
-                    ? `/series?startWith=${s.parent_id}`
-                    : `/series?startWith=${s.parent_id}`
-                )}
+                onClick={() => {
+                  const nm = encodeURIComponent([s.first_name, s.last_name].filter(Boolean).join(" ") || s.username);
+                  navigate(`/series?startWith=${s.parent_id}&name=${nm}`);
+                }}
               >
                 <MessageCircle className="h-3.5 w-3.5" />
                 {s.already_connected ? "View Series" : "Start Series"}
