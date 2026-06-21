@@ -184,6 +184,12 @@ const PrivateRideRequestModal = ({
       });
       return;
     }
+    if (selectedChildIds.length === 0) {
+      setChildError("Please select at least one child for this ride");
+      return;
+    }
+    setChildError(null);
+    const seatsNeeded = selectedChildIds.length;
     setSubmitting(true);
 
     try {
