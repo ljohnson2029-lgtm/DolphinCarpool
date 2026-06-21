@@ -24,6 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { isFutureDateAndTime, PAST_DATETIME_ERROR } from "@/lib/rideValidation";
 import { cn } from "@/lib/utils";
+import ChildrenRidingSelector from "@/components/ChildrenRidingSelector";
 
 const CHADWICK_SCHOOL = {
   name: "Chadwick School",
