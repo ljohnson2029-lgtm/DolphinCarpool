@@ -154,6 +154,7 @@ const Series = () => {
       }
       if (cancelled || !spaceId) return;
       searchParams.delete("startWith");
+      searchParams.delete("name");
       setSearchParams(searchParams, { replace: true });
       setActiveSpaceId(spaceId);
       setActiveOtherParentName(name);
