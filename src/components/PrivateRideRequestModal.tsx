@@ -24,6 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { isFutureDateAndTime, PAST_DATETIME_ERROR } from "@/lib/rideValidation";
 import { cn } from "@/lib/utils";
+import ChildrenRidingSelector from "@/components/ChildrenRidingSelector";
 
 const CHADWICK_SCHOOL = {
   name: "Chadwick School",
@@ -61,7 +62,7 @@ const requestFormSchema = z.object({
   pickup_time: z.string().min(1, "Please select a pickup time"),
   is_round_trip: z.boolean().default(false),
   return_time: z.string().optional(),
-  seats_needed: z.number().min(1, "Must request at least 1 seat").max(5, "Maximum 5 seats"),
+  seats_needed: z.number().min(1).max(5).optional(),
   message: z.string().max(500, "Message must be less than 500 characters").optional(),
 }).refine((data) => {
   if (data.is_round_trip && !data.return_time) {
@@ -103,6 +104,8 @@ const PrivateRideRequestModal = ({
   const [recipientProfile, setRecipientProfile] = useState<Record<string, any> | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [selectedChildIds, setSelectedChildIds] = useState<string[]>([]);
+  const [childError, setChildError] = useState<string | null>(null);
   const [recipientContact, setRecipientContact] = useState<{
     firstName: string;
     lastName: string;
@@ -181,6 +184,12 @@ const PrivateRideRequestModal = ({
       });
       return;
     }
+    if (selectedChildIds.length === 0) {
+      setChildError("Please select at least one child for this ride");
+      return;
+    }
+    setChildError(null);
+    const seatsNeeded = selectedChildIds.length;
     setSubmitting(true);
 
     try {
@@ -230,7 +239,7 @@ const PrivateRideRequestModal = ({
           dropoff_address: CHADWICK_SCHOOL.address,
           dropoff_latitude: CHADWICK_SCHOOL.latitude,
           dropoff_longitude: CHADWICK_SCHOOL.longitude,
-          seats_needed: values.seats_needed,
+          seats_needed: seatsNeeded,
           seats_offered: null,
           message: values.message || null,
           distance_from_route: distance,
@@ -491,34 +500,13 @@ const PrivateRideRequestModal = ({
                 />
               )}
 
-              {/* Seats Needed */}
-              <FormField
-                control={form.control}
-                name="seats_needed"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>How many seats do you need? *</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(parseInt(value))}
-                      defaultValue={field.value.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} {num === 1 ? 'seat' : 'seats'}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+              {/* Children Riding */}
+              <ChildrenRidingSelector
+                selectedChildIds={selectedChildIds}
+                onSelectionChange={(ids) => { setSelectedChildIds(ids); setChildError(null); }}
+                error={childError}
               />
+
 
               {/* Message */}
               <FormField
