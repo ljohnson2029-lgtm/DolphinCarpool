@@ -112,14 +112,30 @@ const Series = () => {
 
     let cancelled = false;
     (async () => {
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("first_name, last_name, username")
-        .eq("id", startWith)
-        .maybeSingle();
-      const name = prof
-        ? [prof.first_name, prof.last_name].filter(Boolean).join(" ") || prof.username
-        : "Parent";
+      const nameFromUrl = searchParams.get("name");
+      let name = nameFromUrl?.trim() || "";
+      if (!name) {
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("first_name, last_name, username")
+          .eq("id", startWith)
+          .maybeSingle();
+        if (prof) {
+          name = [prof.first_name, prof.last_name].filter(Boolean).join(" ") || prof.username || "";
+        }
+        if (!name) {
+          try {
+            const { data: edgeData } = await supabase.functions.invoke("get-parent-profile", {
+              body: { parent_id: startWith },
+            });
+            const p = (edgeData as any)?.profile;
+            if (p) {
+              name = [p.first_name, p.last_name].filter(Boolean).join(" ") || p.username || "";
+            }
+          } catch { /* ignore */ }
+        }
+      }
+      if (!name) name = "Parent";
       const [aId, bId] = [user.id, startWith].sort();
       const { data, error } = await supabase
         .from("series_spaces")
