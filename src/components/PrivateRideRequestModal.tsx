@@ -500,34 +500,13 @@ const PrivateRideRequestModal = ({
                 />
               )}
 
-              {/* Seats Needed */}
-              <FormField
-                control={form.control}
-                name="seats_needed"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>How many seats do you need? *</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(parseInt(value))}
-                      defaultValue={field.value.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} {num === 1 ? 'seat' : 'seats'}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+              {/* Children Riding */}
+              <ChildrenRidingSelector
+                selectedChildIds={selectedChildIds}
+                onSelectionChange={(ids) => { setSelectedChildIds(ids); setChildError(null); }}
+                error={childError}
               />
+
 
               {/* Message */}
               <FormField
