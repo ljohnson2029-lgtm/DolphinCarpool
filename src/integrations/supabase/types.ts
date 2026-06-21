@@ -824,6 +824,35 @@ export type Database = {
         }
         Relationships: []
       }
+      ride_owner_child_selections: {
+        Row: {
+          child_ids: Json
+          created_at: string
+          ride_id: string
+          updated_at: string
+        }
+        Insert: {
+          child_ids?: Json
+          created_at?: string
+          ride_id: string
+          updated_at?: string
+        }
+        Update: {
+          child_ids?: Json
+          created_at?: string
+          ride_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ride_owner_child_selections_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: true
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rides: {
         Row: {
           created_at: string | null
@@ -843,7 +872,6 @@ export type Database = {
           route_details: string | null
           seats_available: number | null
           seats_needed: number | null
-          selected_children: Json | null
           status: string | null
           transaction_type:
             | Database["public"]["Enums"]["transaction_type"]
@@ -870,7 +898,6 @@ export type Database = {
           route_details?: string | null
           seats_available?: number | null
           seats_needed?: number | null
-          selected_children?: Json | null
           status?: string | null
           transaction_type?:
             | Database["public"]["Enums"]["transaction_type"]
@@ -897,7 +924,6 @@ export type Database = {
           route_details?: string | null
           seats_available?: number | null
           seats_needed?: number | null
-          selected_children?: Json | null
           status?: string | null
           transaction_type?:
             | Database["public"]["Enums"]["transaction_type"]
@@ -1076,22 +1102,31 @@ export type Database = {
       }
       series_spaces: {
         Row: {
+          accepted_at: string | null
           created_at: string
+          created_by: string | null
           id: string
           parent_a_id: string
           parent_b_id: string
+          status: string
         }
         Insert: {
+          accepted_at?: string | null
           created_at?: string
+          created_by?: string | null
           id?: string
           parent_a_id: string
           parent_b_id: string
+          status?: string
         }
         Update: {
+          accepted_at?: string | null
           created_at?: string
+          created_by?: string | null
           id?: string
           parent_a_id?: string
           parent_b_id?: string
+          status?: string
         }
         Relationships: []
       }

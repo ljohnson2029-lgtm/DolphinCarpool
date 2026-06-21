@@ -175,7 +175,6 @@ const RideOfferForm = ({
         recurring_days: isRecurring ? recurringDays : null,
         transaction_type: isBroadcast ? 'broadcast' : 'direct',
         recipient_id: isBroadcast ? null : (recipientParentId || null),
-        selected_children: selectedChildIds,
         vehicle_info: selectedVehicleInfo ? {
           car_make: selectedVehicleInfo.car_make,
           car_model: selectedVehicleInfo.car_model,
@@ -187,6 +186,15 @@ const RideOfferForm = ({
       } as any).select();
 
       if (rideError) throw rideError;
+
+      // Store the driver's child selections in the private sibling table
+      if (rideData?.[0] && selectedChildIds && selectedChildIds.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase.from('ride_owner_child_selections') as any).insert({
+          ride_id: rideData[0].id,
+          child_ids: selectedChildIds,
+        });
+      }
 
       // For direct offers, create conversation entry
       if (!isBroadcast && recipientParentId && rideData?.[0]) {
