@@ -104,6 +104,8 @@ const PrivateRideRequestModal = ({
   const [recipientProfile, setRecipientProfile] = useState<Record<string, any> | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [selectedChildIds, setSelectedChildIds] = useState<string[]>([]);
+  const [childError, setChildError] = useState<string | null>(null);
   const [recipientContact, setRecipientContact] = useState<{
     firstName: string;
     lastName: string;
