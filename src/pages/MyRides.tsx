@@ -436,7 +436,7 @@ const MyRides = () => {
 
             // Pickup = passenger parent's home address
             const passengerProfile = profileMap[passengerId];
-            const pickupAddress = passengerProfile?.home_address || 'Passenger home address';
+            const pickupAddress = passengerProfile?.home_address || '';
 
             // Build children list from confirmed series child selections (mirror parent My Rides)
             const parentAChildIds = spaceSelections[parentAId] || [];

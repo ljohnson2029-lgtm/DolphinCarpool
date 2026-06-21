@@ -124,7 +124,9 @@ serve(async (req) => {
     // Phone is mandatory at signup, so it should always be present for parents.
     const includePhone = isSelf || hasRelationship;
     const includeEmail = isSelf || hasRelationship;
-    const includeFullAddress = isSelf; // never share full home address with others
+    // Confirmed carpool partners (and their linked students) need the pickup address
+    // for series rides and accepted ride conversations / private requests.
+    const includeFullAddress = isSelf || hasRelationship;
 
     let email: string | null = null;
     if (includeEmail) {
