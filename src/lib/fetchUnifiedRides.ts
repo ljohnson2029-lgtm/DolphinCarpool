@@ -557,7 +557,7 @@ export async function fetchUnifiedRides(userId: string): Promise<FetchResult> {
 
           // Get passenger parent's address (driver picks up FROM the other parent's home)
           const passengerProfile = driverId === userId ? otherProfile : { ...myProfile, id: userId };
-          const pickupAddress = passengerProfile?.home_address || 'Passenger home address';
+          const pickupAddress = passengerProfile?.home_address || '';
 
           // Get ALL driver vehicles for series rides
           const driverAllVehicles = vehiclesMap[driverId] || [];
