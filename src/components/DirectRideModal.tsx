@@ -168,7 +168,7 @@ const DirectRideModal = ({ open, onClose, recipientId, recipientName, type, onSu
         dropoff_address: values.dropoff_address,
         dropoff_latitude: values.dropoff_latitude,
         dropoff_longitude: values.dropoff_longitude,
-        seats_needed: isRequest ? values.seats : null,
+        seats_needed: isRequest ? selectedChildIds.length : null,
         seats_offered: isRequest ? null : values.seats,
         message: values.message || null,
         status: "pending",
@@ -319,29 +319,35 @@ const DirectRideModal = ({ open, onClose, recipientId, recipientName, type, onSu
               )} />
             </div>
 
-            {/* Seats */}
-            <FormField control={form.control} name="seats" render={({ field }) => (
-              <FormItem>
-                <FormLabel>{isRequest ? "Seats Needed *" : "Seats Available *"}</FormLabel>
-                <Select onValueChange={(v) => field.onChange(parseInt(v))} defaultValue={field.value.toString()}>
-                  <FormControl>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                      <SelectItem key={n} value={n.toString()}>{n} seat{n > 1 ? "s" : ""}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )} />
+            {/* Seats — only for offers; requests auto-derive from selected children */}
+            {!isRequest && (
+              <FormField control={form.control} name="seats" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Seats Available *</FormLabel>
+                  <Select onValueChange={(v) => field.onChange(parseInt(v))} defaultValue={field.value.toString()}>
+                    <FormControl>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+                        <SelectItem key={n} value={n.toString()}>{n} seat{n > 1 ? "s" : ""}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            )}
 
             {/* Children Riding */}
             <ChildrenRidingSelector
               selectedChildIds={selectedChildIds}
-              onSelectionChange={setSelectedChildIds}
+              onSelectionChange={(ids) => {
+                setSelectedChildIds(ids);
+                if (isRequest) form.setValue("seats", Math.max(1, ids.length));
+              }}
             />
+
 
             {/* Vehicle Selection - only for offers */}
             {!isRequest && (
