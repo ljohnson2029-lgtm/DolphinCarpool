@@ -239,7 +239,7 @@ const PrivateRideRequestModal = ({
           dropoff_address: CHADWICK_SCHOOL.address,
           dropoff_latitude: CHADWICK_SCHOOL.latitude,
           dropoff_longitude: CHADWICK_SCHOOL.longitude,
-          seats_needed: values.seats_needed,
+          seats_needed: seatsNeeded,
           seats_offered: null,
           message: values.message || null,
           distance_from_route: distance,
