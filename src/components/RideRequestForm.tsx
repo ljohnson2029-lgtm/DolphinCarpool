@@ -167,11 +167,19 @@ const RideRequestForm = ({
         recurring_days: isRecurring ? recurringDays : null,
         transaction_type: isBroadcast ? 'broadcast' : 'direct',
         recipient_id: isBroadcast ? null : (recipientParentId || null),
-        selected_children: selectedChildIds,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any).select();
 
       if (rideError) throw rideError;
+
+      // Store requester's child selections in the private sibling table
+      if (rideData?.[0] && selectedChildIds && selectedChildIds.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase.from('ride_owner_child_selections') as any).insert({
+          ride_id: rideData[0].id,
+          child_ids: selectedChildIds,
+        });
+      }
 
       // For direct requests, create conversation entry
       if (!isBroadcast && recipientParentId && rideData?.[0]) {
