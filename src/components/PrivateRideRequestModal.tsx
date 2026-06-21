@@ -62,7 +62,7 @@ const requestFormSchema = z.object({
   pickup_time: z.string().min(1, "Please select a pickup time"),
   is_round_trip: z.boolean().default(false),
   return_time: z.string().optional(),
-  seats_needed: z.number().min(1, "Must request at least 1 seat").max(5, "Maximum 5 seats"),
+  seats_needed: z.number().min(1).max(5).optional(),
   message: z.string().max(500, "Message must be less than 500 characters").optional(),
 }).refine((data) => {
   if (data.is_round_trip && !data.return_time) {
