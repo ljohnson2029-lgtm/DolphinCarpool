@@ -984,12 +984,15 @@ const MyRides = () => {
   }, [user, profile]);
 
   const handleAcceptDirect = useCallback(async (requestId: string) => {
-    // Find the ride to show children selector
-    const ride = activeRides.find(r => r.id === requestId);
+    // Direct rides awaiting acceptance live in pendingRides; also check activeRides as a fallback
+    const ride = pendingRides.find(r => r.id === requestId) || activeRides.find(r => r.id === requestId);
     if (ride) {
       setAcceptingDirectRide(ride);
+    } else {
+      console.error('[handleAcceptDirect] ride not found for id', requestId);
+      toast.error('Could not find that ride. Try refreshing.');
     }
-  }, [activeRides]);
+  }, [pendingRides, activeRides]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const confirmAcceptDirect = useCallback(async (selectedChildIds: string[], vehicleInfo?: any) => {
