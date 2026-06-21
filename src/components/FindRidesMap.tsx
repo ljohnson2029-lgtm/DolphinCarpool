@@ -13,7 +13,7 @@ import { Calendar, Clock, MapPin, Users, Car, Hand, X, Loader2, CheckCircle, Gra
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { isParent as checkIsParent, isStudent as checkIsStudent } from "@/lib/permissions";
-import { JoinRideDialog, OfferRideDialog } from "./ConfirmDialogs";
+import { InstantJoinRideDialog, OfferRideDialog } from "./ConfirmDialogs";
 import MapFilterPanel from "./MapFilterPanel";
 import {
   AlertDialog,
@@ -1095,7 +1095,7 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
     }
   }, []);
 
-  const handleConfirmResponse = useCallback(async () => {
+  const handleConfirmResponse = useCallback(async (selectedChildIds?: string[]) => {
     if (!user || !respondingToRide) return;
     setActionLoading(true);
 
@@ -1111,7 +1111,9 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
           respondingToRide.type === "request"
             ? "I can help with your ride request!"
             : "I'd like to join your offered ride!",
-      });
+        selected_children: selectedChildIds && selectedChildIds.length > 0 ? selectedChildIds : null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
 
       if (error) {
         toast({
@@ -1237,12 +1239,15 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
       )}
 
       {/* Confirmation Dialogs */}
-      <JoinRideDialog
+      <InstantJoinRideDialog
         open={showJoinDialog}
         onOpenChange={setShowJoinDialog}
         onConfirm={handleConfirmResponse}
         ownerName={getOwnerName(respondingToRide)}
+        rideDate={respondingToRide?.ride_date || ''}
+        rideTime={respondingToRide?.ride_time || ''}
         loading={actionLoading}
+        maxSeats={respondingToRide?.seats_available || null}
       />
 
       <OfferRideDialog
