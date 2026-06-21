@@ -168,7 +168,7 @@ const DirectRideModal = ({ open, onClose, recipientId, recipientName, type, onSu
         dropoff_address: values.dropoff_address,
         dropoff_latitude: values.dropoff_latitude,
         dropoff_longitude: values.dropoff_longitude,
-        seats_needed: isRequest ? values.seats : null,
+        seats_needed: isRequest ? selectedChildIds.length : null,
         seats_offered: isRequest ? null : values.seats,
         message: values.message || null,
         status: "pending",
