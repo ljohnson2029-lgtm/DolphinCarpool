@@ -13,7 +13,8 @@ import { Calendar, Clock, MapPin, Users, Car, Hand, X, Loader2, CheckCircle, Gra
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { isParent as checkIsParent, isStudent as checkIsStudent } from "@/lib/permissions";
-import { InstantJoinRideDialog, OfferRideDialog } from "./ConfirmDialogs";
+import { InstantJoinRideDialog, InstantOfferRideDialog } from "./ConfirmDialogs";
+import type { VehicleInfo } from "@/hooks/useVehicles";
 import MapFilterPanel from "./MapFilterPanel";
 import {
   AlertDialog,
