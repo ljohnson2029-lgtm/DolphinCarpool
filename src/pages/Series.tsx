@@ -65,7 +65,7 @@ const Series = () => {
       if (!name) {
         try {
           const { data: edgeData } = await supabase.functions.invoke("get-parent-profile", {
-            body: { parent_id: otherId },
+            body: { parentId: otherId },
           });
           const ep = (edgeData as any)?.profile;
           if (ep) {
@@ -141,7 +141,7 @@ const Series = () => {
         if (!name) {
           try {
             const { data: edgeData } = await supabase.functions.invoke("get-parent-profile", {
-              body: { parent_id: startWith },
+              body: { parentId: startWith },
             });
             const p = (edgeData as any)?.profile;
             if (p) {
