@@ -59,16 +59,31 @@ const Series = () => {
       ]);
 
       const p = profileRes.data;
-      const name = p ? [p.first_name, p.last_name].filter(Boolean).join(" ") || p.username : "Parent";
+      let name = p ? [p.first_name, p.last_name].filter(Boolean).join(" ") || p.username || "" : "";
+
+      // Fallback: RLS blocks cross-party profile reads on pending spaces — use edge function
+      if (!name) {
+        try {
+          const { data: edgeData } = await supabase.functions.invoke("get-parent-profile", {
+            body: { parent_id: otherId },
+          });
+          const ep = (edgeData as any)?.profile;
+          if (ep) {
+            name = [ep.first_name, ep.last_name].filter(Boolean).join(" ") || ep.username || "";
+          }
+        } catch { /* ignore */ }
+      }
+
       const lastMsg = msgRes.data?.[0];
 
       enriched.push({
         ...sp,
-        other_parent_name: name,
+        other_parent_name: name || "Partner",
         last_message: lastMsg?.message_text,
         last_message_at: lastMsg?.created_at,
         unread_count: unreadRes.count || 0,
       });
+
     }
 
     setSpaces(enriched);
