@@ -1259,12 +1259,15 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
         maxSeats={respondingToRide?.seats_available || null}
       />
 
-      <OfferRideDialog
+      <InstantOfferRideDialog
         open={showOfferDialog}
         onOpenChange={setShowOfferDialog}
         onConfirm={handleConfirmResponse}
         requesterName={getOwnerName(respondingToRide)}
+        rideDate={respondingToRide?.ride_date || ''}
+        rideTime={respondingToRide?.ride_time || ''}
         loading={actionLoading}
+        maxSeats={respondingToRide?.seats_needed || null}
       />
     </div>
   );
