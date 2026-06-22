@@ -1096,24 +1096,33 @@ const FindRidesMap: React.FC<FindRidesMapProps> = ({
     }
   }, []);
 
-  const handleConfirmResponse = useCallback(async (selectedChildIds?: string[]) => {
+  const handleConfirmResponse = useCallback(async (selectedChildIds?: string[], vehicleInfo?: VehicleInfo) => {
     if (!user || !respondingToRide) return;
     setActionLoading(true);
 
     const ownerName = getOwnerName(respondingToRide);
 
     try {
+      const isOffer = respondingToRide.type === "offer";
       const { error } = await supabase.from("ride_conversations").insert({
         ride_id: respondingToRide.id,
         sender_id: user.id,
         recipient_id: respondingToRide.user_id,
         status: "pending",
-        message:
-          respondingToRide.type === "request"
-            ? "I can help with your ride request!"
-            : "I'd like to join your offered ride!",
+        message: isOffer
+          ? "I'd like to join your offered ride!"
+          : "I can help with your ride request!",
         selected_children: selectedChildIds && selectedChildIds.length > 0 ? selectedChildIds : null,
+        // When offering to fulfill a ride request, sender is the driver — record their vehicle
+        vehicle_info: !isOffer && vehicleInfo ? {
+          car_make: vehicleInfo.car_make,
+          car_model: vehicleInfo.car_model,
+          car_color: vehicleInfo.car_color,
+          license_plate: vehicleInfo.license_plate,
+          vehicle_id: vehicleInfo.vehicle_id,
+        } : null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
       } as any);
 
       if (error) {
